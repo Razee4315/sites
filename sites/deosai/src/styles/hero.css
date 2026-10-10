@@ -1,0 +1,89 @@
+/* ---------- preloader: the blank page ---------- */
+.loader { position: fixed; inset: 0; z-index: 900; display: grid; place-items: center; background: var(--snow); background-image: var(--grain); background-size: 256px; color: var(--ink); }
+.loader__in { display: grid; justify-items: center; gap: 1.1rem; width: min(24rem, 78vw); }
+.loader__line { position: relative; width: 100%; height: 2px; background-image: linear-gradient(90deg, var(--ink) 55%, transparent 0); background-size: 12px 2px; opacity: 0.9; }
+.loader__cut { position: absolute; inset: -1px 0; background: var(--snow); transform-origin: 100% 50%; }
+.loader__sc { position: absolute; top: 50%; left: 0; width: 100%; }
+.loader__sc .ico { position: absolute; left: 0; top: 0; font-size: 1.5rem; margin: -0.78em 0 0 -0.4em; color: var(--vermilion); transform: rotate(-4deg); }
+.loader__row { display: flex; justify-content: space-between; width: 100%; }
+.loader.is-done { pointer-events: none; }
+
+/* ---------- hero ---------- */
+.hero { position: relative; height: 360vh; height: 360svh; }
+.hero__pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--snow); contain: layout paint; }
+
+/* the diorama: every layer is sized in vh so the composition holds on any screen shape */
+.hero__world { --fw: max(108vw, 196vh); position: absolute; inset: 0; will-change: transform; }
+.hero__sky { position: absolute; inset: -2%; background-color: var(--vermilion); background-image: var(--grain); background-size: 256px; }
+.hero__sky::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(42, 17, 69, 0.34), transparent 46%, rgba(255, 198, 41, 0.42) 78%); }
+.layer { position: absolute; left: 50%; width: var(--fw); margin-left: calc(var(--fw) / -2); will-change: transform; }
+.layer > div { will-change: transform; }
+.layer img { width: 100%; height: auto; }
+.layer--peaks { bottom: 39vh; }
+.layer--hills { bottom: 22vh; }
+.layer--plain { bottom: 3vh; }
+.layer--meadow { bottom: -33vh; }
+.layer--haze { bottom: 20vh; height: 30vh; background: linear-gradient(0deg, rgba(246, 242, 232, 0.5), transparent); }
+.prop { position: absolute; will-change: transform; }
+.prop > div { will-change: transform; }
+.prop img { width: 100%; height: auto; }
+.prop--sun { top: 9vh; left: calc(50% + 17vh); width: 27vh; }
+.prop--c1 { top: 11vh; left: calc(50% - 82vh); width: 44vh; }
+.prop--c2 { top: 27vh; left: calc(50% + 46vh); width: 40vh; }
+.prop--c3 { top: 4vh; left: calc(50% - 22vh); width: 22vh; }
+.prop--bear { bottom: 13.5vh; left: calc(50% - 62vh); width: 34vh; }
+.prop--marmot { bottom: 9vh; left: calc(50% + 40vh); width: 9.5vh; }
+
+/* the snow: two torn sheets of white paper with the name cut out of them */
+.hero__sheet { position: absolute; inset: 0; will-change: transform; filter: drop-shadow(0 0.6vh 0.7vh rgba(24, 8, 44, 0.42)); }
+.hero__sheet svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__sheet text {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 96, 'wdth' 75;
+  font-weight: 800;
+  font-size: min(31.5vw, 58vh);
+  letter-spacing: -0.03em;
+  text-anchor: middle;
+}
+.hero__sheet .two { display: none; }
+.hero__ui { position: absolute; inset: 0; pointer-events: none; color: var(--ink); }
+.hero__ui > * { position: absolute; pointer-events: auto; }
+.hero__place { top: clamp(5.2rem, 13vh, 8rem); left: var(--pad); display: grid; gap: 0.3rem; }
+.hero__urdu { top: clamp(4.2rem, 10vh, 6.6rem); right: var(--pad); font-size: clamp(1.7rem, 1.1rem + 2.4vw, 3.4rem); line-height: 1.9; }
+.hero__tag { left: var(--pad); bottom: clamp(1.6rem, 6vh, 4rem); max-width: min(34rem, 80vw); }
+.hero__tag .lede { font-size: clamp(1.3rem, 0.9rem + 1.7vw, 2.4rem); }
+.hero__cue { right: var(--pad); bottom: clamp(1.6rem, 6vh, 4rem); display: flex; align-items: center; gap: 0.9rem; text-decoration: none; }
+.hero__cue i { display: grid; place-items: center; width: 3.4rem; height: 3.4rem; border-radius: 50%; background: var(--vermilion); color: var(--snow); font-size: 1.05rem; font-style: normal; box-shadow: 3px 4px 0 var(--ink); }
+.hero__cue .ico { animation: nudge 1.8s var(--ease-io) infinite; }
+@keyframes nudge { 0%, 100% { transform: translateY(-18%); } 50% { transform: translateY(22%); } }
+
+/* what the opened page says */
+.hero__intro { position: absolute; left: var(--pad); top: 50%; width: min(33rem, calc(100vw - var(--pad) * 2)); z-index: 3; }
+.hero__card { position: relative; margin-top: -50%; padding: clamp(1.4rem, 3vw, 2.5rem); background-color: var(--snow); background-image: var(--grain); background-size: 256px; color: var(--ink); clip-path: polygon(0 2%, 31% 0, 64% 1.6%, 100% 0.4%, 99% 97%, 71% 100%, 38% 98.4%, 1% 99.6%); will-change: transform; }
+.hero__intro-wrap { filter: drop-shadow(0 22px 26px rgba(24, 8, 44, 0.5)); transform: translateY(-50%); }
+.hero__card { margin-top: 0; }
+.hero__card .lede { margin: 0.9rem 0 1rem; }
+.hero__card .body { font-size: 0.98rem; }
+.hero__card .btn { margin-top: 1.5rem; }
+
+@media (max-width: 899px), (max-aspect-ratio: 1/1) {
+  .hero__sheet .one { display: none; }
+  .hero__sheet .two { display: block; }
+  .hero__sheet text { font-size: min(56vw, 34vh); }
+  .hero__urdu { top: 4.4rem; }
+  .hero__place { top: 5.4rem; }
+  .hero__tag { bottom: 6.6rem; }
+  .hero__cue { right: auto; left: var(--pad); bottom: 1.5rem; }
+  .hero__cue i { width: 2.9rem; height: 2.9rem; }
+  .hero__intro { top: auto; bottom: 1.25rem; }
+  .hero__intro-wrap { transform: none; }
+  .prop--bear { width: 27vh; left: calc(50% - 30vh); bottom: 15vh; }
+  .prop--marmot { left: calc(50% + 12vh); }
+  .prop--sun { left: calc(50% + 2vh); top: 7vh; width: 22vh; }
+  .prop--c1 { left: calc(50% - 30vh); top: 16vh; width: 28vh; }
+  .prop--c2 { left: calc(50% + 4vh); top: 30vh; width: 24vh; }
+  .prop--c3 { left: calc(50% - 20vh); top: 5vh; width: 15vh; }
+}
+
+[data-flip] img { scale: -1 1; }
+.hero__pin.is-past .hero__world { visibility: hidden; }

@@ -1,0 +1,603 @@
+/* ── fonts: self-hosted, latin, variable ───────────────────────────────── */
+@font-face {
+  font-family: 'Bodoni Moda';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../fonts/bodoni-moda.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Bodoni Moda';
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../fonts/bodoni-moda-italic.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/hanken-grotesk.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Martian Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-stretch: 75% 112.5%;
+  font-display: swap;
+  src: url('../fonts/martian-mono.woff2') format('woff2-variations');
+}
+
+/* ── tokens ────────────────────────────────────────────────────────────── */
+:root {
+  --ink: #0f1a3d;
+  --paper: #f2ecdf;
+  --red: #e4412b;
+  --red-deep: #b9311f;
+  --indigo: #1f3f8f;
+  --ochre: #e0a22e;
+
+  --display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+  --text: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'Martian Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --pad: clamp(1.25rem, 4.2vw, 4.5rem);
+  --gap: clamp(1rem, 2vw, 2rem);
+
+  --out: cubic-bezier(0.16, 1, 0.3, 1);
+  --soft: cubic-bezier(0.3, 0.7, 0.2, 1);
+  --inout: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+[data-theme='ink'] {
+  --fg: var(--ink);
+  --fg-2: rgba(15, 26, 61, 0.72);
+  --fg-3: rgba(15, 26, 61, 0.2);
+  --bg: var(--paper);
+}
+[data-theme='paper'] {
+  --fg: var(--paper);
+  --fg-2: rgba(242, 236, 223, 0.78);
+  --fg-3: rgba(242, 236, 223, 0.24);
+  --bg: var(--ink);
+}
+
+/* ── reset ─────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+body {
+  margin: 0;
+  background: #f3dcc6;
+  color: var(--ink);
+  font-family: var(--text);
+  font-size: clamp(1rem, 0.94rem + 0.22vw, 1.16rem);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+ol,
+ul,
+dl,
+dd,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+ol,
+ul {
+  list-style: none;
+}
+fieldset {
+  border: 0;
+  min-width: 0;
+}
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+img {
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+}
+button {
+  cursor: pointer;
+}
+em {
+  font-style: italic;
+}
+::selection {
+  background: var(--red);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+[data-theme='paper'] :focus-visible {
+  outline-color: var(--ochre);
+}
+
+.skip {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 200;
+  padding: 0.8rem 1.1rem;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 0.7rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(-300%);
+}
+.skip:focus {
+  transform: none;
+}
+
+/* ── shared pieces ─────────────────────────────────────────────────────── */
+.wrap {
+  position: relative;
+  width: 100%;
+  max-width: 1760px;
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+.eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1.4rem;
+  font: 500 0.66rem/1.4 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.eyebrow__no {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.3em;
+  padding: 0.32em 0.5em 0.28em;
+  border: 1px solid currentColor;
+  border-radius: 99px;
+  font-weight: 600;
+}
+
+.title {
+  font: 400 clamp(2.6rem, 7.4vw, 8.2rem) / 0.96 var(--display);
+  letter-spacing: -0.035em;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.title em {
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+
+.lead {
+  font: 400 clamp(1.35rem, 1.1rem + 1vw, 2.05rem) / 1.22 var(--display);
+  letter-spacing: -0.012em;
+}
+
+/* word-by-word masks (built by JS from [data-split]) */
+.w {
+  display: inline-block;
+  overflow: clip;
+  overflow-clip-margin: 0;
+  padding: 0.14em 0.09em 0.22em;
+  margin: -0.14em -0.09em -0.22em;
+  vertical-align: top;
+}
+.w > i {
+  display: inline-block;
+  font-style: inherit;
+  will-change: transform;
+}
+
+/* picture that is revealed by a sliding mask */
+.mask {
+  position: relative;
+  overflow: hidden;
+  background: rgba(15, 26, 61, 0.08);
+}
+.mask img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* buttons */
+.btn {
+  --b-fg: var(--paper);
+  --b-bg: var(--ink);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  height: 3.35rem;
+  padding: 0 1.5rem;
+  border-radius: 99px;
+  font: 500 0.68rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--b-fg);
+  isolation: isolate;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border-radius: inherit;
+  background: var(--b-bg);
+}
+.btn::after {
+  /* the wash that blows across on hover */
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--red);
+  transform: translateX(-102%) skewX(-18deg);
+  transform-origin: left;
+  transition: transform 0.6s var(--out);
+}
+.btn__label {
+  display: inline-block;
+  transition: transform 0.6s var(--out);
+}
+.btn__icon {
+  position: relative;
+  width: 1.5em;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.6s var(--out);
+  transform-origin: left;
+}
+.btn__icon::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0.5em;
+  height: 0.5em;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+}
+.btn__icon--up {
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+.btn--line {
+  --b-fg: var(--fg);
+  --b-bg: transparent;
+  box-shadow: inset 0 0 0 1px var(--fg);
+}
+.btn--light {
+  --b-fg: var(--ink);
+  --b-bg: var(--paper);
+}
+.btn--line.btn--light {
+  --b-fg: var(--paper);
+  --b-bg: transparent;
+  box-shadow: inset 0 0 0 1px var(--paper);
+}
+@media (hover: hover) {
+  .btn:hover::after {
+    transform: translateX(0) skewX(0deg);
+  }
+  .btn:hover {
+    color: var(--paper);
+  }
+  .btn:hover .btn__icon:not(.btn__icon--up) {
+    transform: scaleX(1.35);
+  }
+  .btn:hover .btn__icon--up {
+    transform: rotate(-90deg) translateX(4px);
+  }
+}
+.btn:active .btn__label {
+  transform: scale(0.96);
+}
+
+.link {
+  position: relative;
+  font: 500 0.68rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding-block: 0.5rem;
+}
+.link::after,
+.foot__cols a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.15rem;
+  height: 1px;
+  background: currentColor;
+  transform-origin: right;
+  transition: transform 0.5s var(--out);
+}
+@media (hover: hover) {
+  .link:hover::after {
+    transform: scaleX(0);
+  }
+}
+
+/* ── the sky ───────────────────────────────────────────────────────────── */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  isolation: isolate;
+  pointer-events: none;
+  contain: strict;
+}
+.sky__l,
+.sky__stars,
+.sky__grain {
+  position: absolute;
+  inset: 0;
+}
+.sky__l {
+  will-change: opacity;
+}
+.sky__l--dawn {
+  background: linear-gradient(180deg, #9cc3e4 0%, #cfe0ea 34%, #f1dfcd 62%, #f7c9a8 86%, #f4b28d 100%);
+}
+.sky__l--morning {
+  opacity: 0;
+  background: linear-gradient(180deg, #5c9fe2 0%, #93c4ef 52%, #d3e9f6 100%);
+}
+.sky__l--noon {
+  opacity: 0;
+  background: linear-gradient(180deg, #3f8ae4 0%, #6fb0ee 48%, #b3d8f5 100%);
+}
+.sky__l--gold {
+  opacity: 0;
+  background: linear-gradient(180deg, #6f9fd8 0%, #b5c6d6 36%, #f1d2ab 68%, #f5ae80 100%);
+}
+.sky__l--dusk {
+  opacity: 0;
+  background: linear-gradient(180deg, #090e30 0%, #141a52 46%, #2a2a6b 78%, #46357a 100%);
+}
+.sky__stars {
+  opacity: 0;
+  will-change: opacity;
+  background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 42%, #fff 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 44% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 58% 33%, #fff 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 71% 9%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 83% 27%, #fff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 93% 48%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 6% 56%, #fff 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 36% 64%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 66% 58%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 20% 80%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 78% 72%, rgba(255, 255, 255, 0.7) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 51% 46%, rgba(255, 255, 255, 0.8) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 6%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 3% 30%, #fff 50%, transparent 51%);
+}
+.sky__grain {
+  /* the whole sky is a sheet of dyed paper */
+  background: url('/img/tex-washi.webp') 0 0 / 760px 760px;
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* ── things that drift on the wind ─────────────────────────────────────── */
+.drift {
+  position: absolute;
+  will-change: transform;
+  pointer-events: none;
+}
+.drift img {
+  width: 100%;
+  filter: drop-shadow(0 0.7vw 0.9vw rgba(15, 26, 61, 0.16));
+}
+.kite {
+  position: absolute;
+  will-change: transform;
+  transform-origin: 50% 50%;
+}
+.kite img {
+  width: 100%;
+  filter: drop-shadow(0 1.4vw 1.6vw rgba(15, 26, 61, 0.22));
+}
+.rig {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── loader ────────────────────────────────────────────────────────────── */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  pointer-events: none;
+}
+.loader__sheet {
+  position: absolute;
+  inset: -2px;
+  background: var(--paper) url('/img/tex-paper.webp') 0 0 / 700px 700px;
+  transform-origin: top;
+}
+.loader__inner {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1.4rem;
+}
+.loader__mark {
+  font: 500 clamp(2.4rem, 5vw, 3.6rem) / 1 var(--display);
+  letter-spacing: -0.03em;
+}
+.loader__line {
+  position: relative;
+  width: 1px;
+  height: clamp(5rem, 16vh, 9rem);
+  background: rgba(15, 26, 61, 0.16);
+  overflow: hidden;
+}
+.loader__line i {
+  position: absolute;
+  inset: 0;
+  background: var(--red);
+  transform: scaleY(0);
+  transform-origin: top;
+}
+.loader__read {
+  font: 500 0.64rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.loader__num {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.is-ready .loader {
+  visibility: hidden;
+}
+
+/* ── the vane: a small companion to the cursor that points downwind ───── */
+.vane {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 90;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+  color: var(--ink);
+}
+.vane.is-on {
+  opacity: 1;
+}
+.vane.is-paper {
+  color: var(--paper);
+}
+.vane__dot {
+  position: absolute;
+  left: -15px;
+  top: -15px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0.55;
+  will-change: transform;
+}
+.vane__arm {
+  position: absolute;
+  left: 0;
+  top: -0.5px;
+  width: 26px;
+  height: 1px;
+  background: var(--red);
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+.vane__label {
+  position: absolute;
+  left: 22px;
+  top: 14px;
+  font: 500 0.56rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.vane.has-label .vane__label {
+  opacity: 1;
+}
+@media (hover: none), (pointer: coarse) {
+  .vane {
+    display: none;
+  }
+}
+
+/* ── reduced motion: everything is simply there ────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .vane {
+    display: none;
+  }
+}

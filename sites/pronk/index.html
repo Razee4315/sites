@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Pronk — a still life, until you sit down</title>
+    <meta name="description" content="Pronk is a supper for twelve in Haarlem. Once a month we lay a table the way Willem Heda painted one in 1648. Then you eat it." />
+    <meta name="theme-color" content="#0b0907" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>html{background:#0b0907}body{visibility:hidden}</style>
+    <script>document.documentElement.classList.add('js')</script>
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#supper">Skip to the supper</a>
+
+    <!-- ─────────────── loader ─────────────── -->
+    <div class="loader" aria-hidden="true">
+      <div class="loader__inner">
+        <div class="loader__flame"><i></i></div>
+        <p class="loader__line">Laying the table</p>
+        <ol class="loader__places">
+          <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+        </ol>
+        <p class="loader__count"><span class="js-loader-n">0</span> of XII places</p>
+      </div>
+    </div>
+
+    <!-- ─────────────── cursor + grain ─────────────── -->
+    <div class="cursor" aria-hidden="true"><span class="cursor__dot"></span><span class="cursor__ring"><b class="cursor__label"></b></span></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- ─────────────── nav ─────────────── -->
+    <header class="nav">
+      <a class="nav__mark" href="#top" aria-label="Pronk, back to top">Pronk</a>
+      <nav class="nav__links" aria-label="Sections">
+        <a href="#supper"><span>The Supper</span></a>
+        <a href="#inventory"><span>The Inventory</span></a>
+        <a href="#house"><span>The House</span></a>
+        <a href="#past"><span>Past Tables</span></a>
+      </nav>
+      <a class="nav__cta" href="#reserve"><span class="nav__cta-dot"></span>Take a chair</a>
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu"><span class="nav__burger-label">Menu</span><i></i><i></i></button>
+    </header>
+
+    <div class="menu" id="menu" aria-hidden="true">
+      <nav class="menu__links" aria-label="Menu">
+        <a href="#supper"><small>I</small><span>The Supper</span></a>
+        <a href="#inventory"><small>II</small><span>The Inventory</span></a>
+        <a href="#house"><small>III</small><span>The House</span></a>
+        <a href="#past"><small>IV</small><span>Past Tables</span></a>
+        <a href="#reserve"><small>V</small><span>Take a chair</span></a>
+      </nav>
+      <p class="menu__foot">Supper Nº 42 — Saturday 14 November, at dusk</p>
+    </div>
+
+    <main>
+      <!-- ─────────────── hero ─────────────── -->
+      <section class="hero" id="top" data-theme="dark">
+        <div class="hero__glow" aria-hidden="true"></div>
+
+        <div class="hero__stage" aria-hidden="true">
+          <!-- behind the wordmark -->
+          <div class="hobj hobj--tulip" data-depth="0.25"><div class="hobj__m"><div class="hobj__f"><img data-img="tulip" sizes="(max-width: 760px) 40vw, 20vw" alt="" /></div></div></div>
+          <div class="hobj hobj--roemer" data-depth="0.35"><div class="hobj__m"><div class="hobj__f"><img data-img="roemer" sizes="(max-width: 760px) 34vw, 15vw" alt="" /></div></div></div>
+          <div class="hobj hobj--nautilus" data-depth="0.3"><div class="hobj__m"><div class="hobj__f"><img data-img="nautilus" sizes="(max-width: 760px) 30vw, 14vw" alt="" /></div></div></div>
+          <div class="hobj hobj--grapes" data-depth="0.2"><div class="hobj__m"><div class="hobj__f"><img data-img="grapes" sizes="(max-width: 760px) 30vw, 14vw" alt="" /></div></div></div>
+        </div>
+
+        <h1 class="hero__word" aria-label="Pronk">
+          <span class="hero__ch"><i>P</i></span><span class="hero__ch"><i>r</i></span><span class="hero__ch"><i>o</i></span><span class="hero__ch"><i>n</i></span><span class="hero__ch"><i>k</i></span>
+        </h1>
+
+        <div class="hero__stage hero__stage--front" aria-hidden="true">
+          <!-- in front of the wordmark -->
+          <div class="hobj hobj--lobster" data-depth="0.7"><div class="hobj__m"><div class="hobj__f"><img data-img="lobster" sizes="(max-width: 760px) 70vw, 34vw" alt="" /></div></div></div>
+          <div class="hobj hobj--lemon" data-depth="0.9"><div class="hobj__m"><div class="hobj__f"><img data-img="lemon" sizes="(max-width: 760px) 34vw, 17vw" alt="" /></div></div></div>
+          <div class="hobj hobj--oyster" data-depth="1.1"><div class="hobj__m"><div class="hobj__f"><img data-img="oyster" sizes="(max-width: 760px) 30vw, 13vw" alt="" /></div></div></div>
+          <div class="hobj hobj--knife" data-depth="0.8"><div class="hobj__m"><div class="hobj__f"><img data-img="knife" sizes="(max-width: 760px) 60vw, 26vw" alt="" /></div></div></div>
+          <div class="hobj hobj--cherries" data-depth="1.3"><div class="hobj__m"><div class="hobj__f"><img data-img="cherries" sizes="(max-width: 760px) 18vw, 8vw" alt="" /></div></div></div>
+          <div class="moth"><div class="moth__in"><img data-img="moth" sizes="(max-width: 760px) 16vw, 7vw" alt="" /></div></div>
+        </div>
+
+        <div class="hero__meta hero__meta--tl">
+          <p class="label"><span>Supper Nº 42</span></p>
+          <p class="label"><span>Sat. 14 November, at dusk</span></p>
+        </div>
+        <div class="hero__meta hero__meta--tr">
+          <p class="label"><span>Bakenessergracht 91</span></p>
+          <p class="label"><span>Haarlem, NL</span></p>
+        </div>
+
+        <div class="hero__foot">
+          <p class="hero__tag"><span class="line"><span>A still life,</span></span> <span class="line"><span>until you sit down.</span></span></p>
+          <p class="hero__lede">Once a month we lay one table the way Willem Heda painted his in 1648. Twelve guests arrive at dusk. By dawn there is nothing left to paint.</p>
+          <a class="hero__cue" href="#manifesto"><span class="hero__cue-line"></span><span class="label">Scroll to begin eating</span></a>
+        </div>
+      </section>
+
+      <!-- ─────────────── manifesto ─────────────── -->
+      <section class="manifesto" id="manifesto" data-theme="dark">
+        <p class="manifesto__def">
+          <b>pronk</b> <span class="ipa">/prɔŋk/</span> <i>Dutch, noun &amp; verb.</i> Display; to show off. A <i>pronkstilleven</i> is a still life painted to flaunt what the owner could afford to let go cold.
+        </p>
+
+        <h2 class="manifesto__text js-words">
+          For four hundred years the Dutch painted suppers that nobody was allowed to eat. The lemon
+          <span class="inl inl--lemon"><img data-img="lemon" sizes="120px" alt="" loading="lazy" /></span>
+          stayed half-peeled. The oysters
+          <span class="inl inl--oyster"><img data-img="oyster" sizes="160px" alt="" loading="lazy" /></span>
+          stayed open. The glass
+          <span class="inl inl--roemer"><img data-img="roemer" sizes="110px" alt="" loading="lazy" /></span>
+          stayed full. <em>We think that is a terrible waste of a lemon.</em>
+        </h2>
+
+        <div class="drift drift--pome" data-speed="0.5" aria-hidden="true"><img data-img="pomegranate" sizes="18vw" alt="" loading="lazy" /></div>
+
+        <ol class="manifesto__steps">
+          <li class="step">
+            <span class="step__n">I</span>
+            <h3 class="step__t">Composed</h3>
+            <p>Every table is arranged by a painter, object by object, over two days. Light from the left. One thing always about to fall.</p>
+          </li>
+          <li class="step">
+            <span class="step__n">II</span>
+            <h3 class="step__t">Portrayed</h3>
+            <p>At twenty to six the finished table sits for its portrait. That picture is the only menu you will get, and it hangs in the hall for a month.</p>
+          </li>
+          <li class="step">
+            <span class="step__n">III</span>
+            <h3 class="step__t">Ruined</h3>
+            <p>At six the painter leaves the room and twelve of you sit down. Nobody serves. Nobody clears. What you can see is what there is.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ─────────────── the supper: one painting, eaten by scroll ─────────────── -->
+      <section class="supper-head" id="supper" data-theme="dark">
+        <p class="label reveal">The Supper — Nº 42</p>
+        <h2 class="supper-head__title js-lines">The Long <em>Banquet</em></h2>
+        <p class="supper-head__lede reveal">Two days to compose, twenty minutes to paint, one night to eat. Keep scrolling. It is rude to stare at food this long.</p>
+      </section>
+
+      <section class="supper" data-theme="dark" aria-label="The supper, course by course">
+        <div class="supper__pin">
+          <div class="supper__camera">
+            <img data-img="table-1" class="supper__state" alt="A long banquet table painted as a Dutch still life: oysters and a peeled lemon, bread and herring, a candle, a lobster, a raised pie, a bowl of fruit." />
+            <img data-img="table-2" class="supper__state" alt="" loading="lazy" />
+            <img data-img="table-3" class="supper__state" alt="" loading="lazy" />
+            <img data-img="table-4" class="supper__state" alt="" loading="lazy" />
+            <img data-img="table-5" class="supper__state" alt="" loading="lazy" />
+            <img data-img="table-6" class="supper__state" alt="The same table at dawn: empty shells, crumbs, a toppled glass and a burnt-out candle." loading="lazy" />
+            <div class="supper__craq" aria-hidden="true"></div>
+            <div class="supper__dawn" aria-hidden="true"></div>
+          </div>
+
+          <p class="supper__cap supper__cap--a"><span class="label"><b>Fig. 1</b> The table at 17:40, before you. Oil on panel.</span><span class="label supper__cap-cue">Scroll to sit down</span></p>
+          <p class="supper__cap supper__cap--b"><span class="label"><b>Fig. 2</b> The same table at 05:52. Crumbs on panel.</span><span class="label supper__cap-cue">Twelve hours, twelve guests</span></p>
+
+          <div class="supper__panel">
+            <div class="supper__clock" aria-hidden="true">
+              <span class="d">1</span><span class="d">7</span><span class="c">:</span><span class="d">4</span><span class="d">0</span>
+            </div>
+
+            <ol class="supper__courses">
+              <li class="course course--intro">
+                <p class="course__n label">Portrait taken 17:40</p>
+                <h3 class="course__t">The table, <em>before you</em></h3>
+                <p class="course__d">Everything is still where the painter put it. Look while you can.</p>
+              </li>
+              <li class="course">
+                <p class="course__n label"><b>I</b><span>First course — 18:00</span></p>
+                <h3 class="course__t">Oysters, a lemon, <em>Rhine wine</em></h3>
+                <p class="course__d">Six Zeeland flats on pewter. The lemon arrives half-peeled, as it has been since 1648. You are the first person in four centuries permitted to finish the job.</p>
+                <p class="course__left label">Left on the table — six shells, one rind</p>
+              </li>
+              <li class="course">
+                <p class="course__n label"><b>II</b><span>Second course — 19:20</span></p>
+                <h3 class="course__t">Bread, butter, <em>two herrings</em></h3>
+                <p class="course__d">A sober course, as the Calvinists would have wanted. Torn, not sliced. The knife has been hanging over the edge of the table all evening, asking to be picked up.</p>
+                <p class="course__left label">Left on the table — two backbones, a heel of crust</p>
+              </li>
+              <li class="course">
+                <p class="course__n label"><b>III</b><span>Third course — 21:05</span></p>
+                <h3 class="course__t">The <em>lobster</em></h3>
+                <p class="course__d">Boiled at five, painted at twenty to six, eaten at nine. In the old pictures it stood for a world turned backwards. Here it means roll up your sleeves.</p>
+                <p class="course__left label">Left on the table — armour</p>
+              </li>
+              <li class="course">
+                <p class="course__n label"><b>IV</b><span>Fourth course — 23:30</span></p>
+                <h3 class="course__t">A raised <em>pie</em></h3>
+                <p class="course__d">Hare, prunes and mace behind a wall of pastry built to be looked at. It took two days to raise. It takes about eleven minutes to bring down.</p>
+                <p class="course__left label">Left on the table — rubble, one spoon</p>
+              </li>
+              <li class="course">
+                <p class="course__n label"><b>V</b><span>Fifth course — 02:10</span></p>
+                <h3 class="course__t">Cheese, fruit, <em>whatever is left</em></h3>
+                <p class="course__d">The candle is a third of itself and nobody is using a plate. Figs, grapes, a Gouda old enough to vote. Somebody will knock over the glass. Somebody always does.</p>
+                <p class="course__left label">Left on the table — stalks, stones, shells</p>
+              </li>
+              <li class="course course--dawn">
+                <p class="course__n label">Second portrait taken 05:52</p>
+                <h3 class="course__t">The table, <em>after you</em></h3>
+                <p class="course__d">The candle is out. So, more or less, are you.</p>
+              </li>
+            </ol>
+
+            <ol class="supper__ticks" aria-hidden="true">
+              <li>I</li><li>II</li><li>III</li><li>IV</li><li>V</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="supper-foot" data-theme="dark">
+        <p class="label reveal">05:52 — Dawn</p>
+        <h2 class="supper-foot__title js-lines">Nothing left <em>to paint.</em></h2>
+        <div class="drift drift--tazza" data-speed="0.3" aria-hidden="true"><img data-img="tazza" sizes="(max-width: 760px) 46vw, 24vw" alt="" loading="lazy" /></div>
+        <div class="drift drift--walnut" data-speed="1.3" aria-hidden="true"><img data-img="walnut" sizes="(max-width: 760px) 22vw, 10vw" alt="" loading="lazy" /></div>
+        <p class="supper-foot__lede reveal">We open the shutters, put out bread and the butter you did not finish, and paint the table once more: the same picture, twelve hours older. That one you take home.</p>
+      </section>
+
+      <!-- ─────────────── the inventory ─────────────── -->
+      <section class="inventory" id="inventory" data-theme="light" aria-label="The inventory">
+        <div class="inventory__pin">
+          <div class="inventory__track">
+            <header class="inventory__intro">
+              <p class="label">The Inventory — ten lots</p>
+              <h2 class="inventory__title">Nothing on a Dutch table was <em>only food.</em></h2>
+              <p class="inventory__lede">Every object was a small sermon about how short life is and how badly you are spending it. We have kept the objects and edited the sermons.</p>
+              <p class="inventory__hint label"><span class="inventory__hint-arrow"></span><span class="inventory__hint-desk">Keep scrolling</span><span class="inventory__hint-touch">Swipe</span></p>
+            </header>
+
+            <article class="lot lot--lemon">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="lemon" sizes="(max-width: 760px) 50vw, 22vw" alt="A half-peeled lemon, its rind hanging in a spiral" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 01</p>
+                <h3 class="lot__t">The peeled lemon</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>Lovely to look at, sour to taste. A warning about luxury, and an excuse for the painter to show off.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>Squeezed over the oysters. The warning has not worked once.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--oyster">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="oyster" sizes="(max-width: 760px) 60vw, 24vw" alt="An open oyster on the half shell" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 02</p>
+                <h3 class="lot__t">The oyster</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>Appetite, and every pleasure that does not keep until morning.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>Appetite. They still do not keep. Eat it.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--roemer">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="roemer" sizes="(max-width: 760px) 44vw, 18vw" alt="A green roemer glass of white wine" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 03</p>
+                <h3 class="lot__t">The roemer</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>A full glass is a fragile thing. Usually painted beside one already tipped over.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>Rhine wine, refilled without asking until two. After two, you ask.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--lobster">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="lobster" sizes="(max-width: 760px) 80vw, 34vw" alt="A boiled red lobster" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 04</p>
+                <h3 class="lot__t">The lobster</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>A creature that walks backwards: fortune that will not hold still.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>Course three.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--watch">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="watch" sizes="(max-width: 760px) 66vw, 26vw" alt="An open silver pocket watch on a blue ribbon" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 05</p>
+                <h3 class="lot__t">The watch</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>Time is passing. Moderate yourself.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>The only clock in the room. We wind it at dusk and nobody looks at it again.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--tulip">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="tulip" sizes="(max-width: 760px) 50vw, 20vw" alt="A red and white flamed tulip dropping a petal" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 06</p>
+                <h3 class="lot__t">The tulip</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>In 1637 a single bulb cost a canal house. A flower about money, and about fools.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>One stem, always about to drop a petal. We have never worked out how the painter times it.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--nautilus">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="nautilus" sizes="(max-width: 760px) 46vw, 19vw" alt="A nautilus shell cup mounted in gilt silver" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 07</p>
+                <h3 class="lot__t">The nautilus cup</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>The far side of the world, mounted in gilt and used for nothing.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>Used. Whoever sits at the head drinks from it. We draw lots.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--knife">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="knife" sizes="(max-width: 760px) 80vw, 34vw" alt="A table knife with an agate handle" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 08</p>
+                <h3 class="lot__t">The knife</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>Always painted hanging over the edge, to break out of the picture and into your room.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>Take it.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--candle">
+              <div class="lot__fig"><div class="lot__shadow"></div><img data-img="candle" sizes="(max-width: 760px) 44vw, 18vw" alt="A burnt-down candle in a brass candlestick" loading="lazy" /></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 09</p>
+                <h3 class="lot__t">The candle</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>A life: short, and shorter while you watch.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>A timetable. When it is out, so are you.</dd></div>
+                </dl>
+              </div>
+            </article>
+
+            <article class="lot lot--fly">
+              <div class="lot__fig lot__fig--fly"><button class="fly" type="button" aria-label="A fly. Try to touch it."><img data-img="fly" sizes="90px" alt="" loading="lazy" /></button></div>
+              <div class="lot__txt">
+                <p class="lot__n label">Lot 10</p>
+                <h3 class="lot__t">The fly</h3>
+                <dl class="lot__dl">
+                  <div><dt class="label">In 1650</dt><dd>Painted on the picture itself, so that you would try to brush it away and admire the painter while you failed.</dd></div>
+                  <div><dt class="label">At our table</dt><dd>Not on the guest list. It comes anyway. Go on, try.</dd></div>
+                </dl>
+              </div>
+            </article>
+          </div>
+
+          <div class="inventory__bar" aria-hidden="true"><span class="inventory__bar-n label"><b class="js-lot-n">00</b> / 10</span><span class="inventory__bar-line"><i></i></span></div>
+        </div>
+      </section>
+
+      <!-- ─────────────── the house ─────────────── -->
+      <section class="house" id="house" data-theme="dark">
+        <div class="house__fig">
+          <div class="house__frame">
+            <div class="house__par">
+              <img data-img="room-1" class="house__img" sizes="(max-width: 760px) 92vw, 42vw" alt="The dining room by day: a long table under a tall leaded window, black and white tiles." loading="lazy" />
+              <img data-img="room-2" class="house__img house__img--night" sizes="(max-width: 760px) 92vw, 42vw" alt="The same room at night, lit by candles." loading="lazy" />
+            </div>
+          </div>
+          <p class="house__cap label"><span class="house__cap-day">The room at 15:00</span><span class="house__cap-night">The room at 21:00</span></p>
+        </div>
+
+        <div class="house__body">
+          <p class="label reveal">The House</p>
+          <h2 class="house__title js-lines">One room, one table, <em>twelve chairs.</em></h2>
+          <p class="house__lede reveal">A merchant’s house on the Bakenessergracht, built in 1642 and not much improved since. The window faces west, for the light at twenty to six. There is no kitchen you can see and no music you can hear.</p>
+
+          <h3 class="label house__rules-h reveal">House rules</h3>
+          <ol class="rules">
+            <li class="rule"><span class="rule__n">1</span><p>Arrive at dusk. The table is still sitting for its portrait. You may look. You may not touch.</p></li>
+            <li class="rule"><span class="rule__n">2</span><p>There is no menu. If you can see it, you can eat it.</p></li>
+            <li class="rule"><span class="rule__n">3</span><p>No phones on the linen. The table has been painted enough for one day.</p></li>
+            <li class="rule"><span class="rule__n">4</span><p>Nobody clears. What is eaten stays where it fell.</p></li>
+            <li class="rule"><span class="rule__n">5</span><p>We end when the candle does.</p></li>
+          </ol>
+
+          <dl class="house__facts">
+            <div class="reveal"><dt class="label">A chair</dt><dd>€240</dd></div>
+            <div class="reveal"><dt class="label">Included</dt><dd>Wine, breakfast, the mess</dd></div>
+            <div class="reveal"><dt class="label">Sits</dt><dd>Twelve, at one table</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ─────────────── past tables ─────────────── -->
+      <section class="past" id="past" data-theme="dark">
+        <header class="past__head">
+          <p class="label reveal">Past Tables</p>
+          <h2 class="past__title js-lines">Portrait on the left. <em>Morning after on the right.</em></h2>
+          <p class="past__lede reveal">Each supper leaves two paintings and no leftovers. Drag across a table to eat it again.</p>
+          <div class="past__bowl drift" data-speed="0.6" aria-hidden="true"><img data-img="bowl" sizes="18vw" alt="" loading="lazy" /></div>
+        </header>
+
+        <div class="past__grid">
+          <article class="ba-card">
+            <div class="ba" data-ba tabindex="0" role="slider" aria-label="Fish Friday, before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              <img data-img="past-fish-2" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="The fish table the morning after: skeletons and empty shells." loading="lazy" />
+              <div class="ba__clip"><div class="ba__clip-in"><img data-img="past-fish-1" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="A still life of raw fish, crab, shrimp and salmon on a stone table." loading="lazy" /></div></div>
+              <div class="ba__bar"><span class="ba__knob"></span></div>
+              <span class="ba__tag ba__tag--l label">17:40</span><span class="ba__tag ba__tag--r label">04:15</span>
+            </div>
+            <div class="ba-card__cap">
+              <p class="ba-card__n label">Nº 41 — October</p>
+              <h3 class="ba-card__t">Fish Friday</h3>
+              <p class="ba-card__d">After Abraham van Beijeren. Left on the table: four skeletons and a scorched pan.</p>
+            </div>
+          </article>
+
+          <article class="ba-card">
+            <div class="ba" data-ba tabindex="0" role="slider" aria-label="The Cheese Stack, before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              <img data-img="past-cheese-2" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="The cheese table the morning after: hollow rinds and crumbs." loading="lazy" />
+              <div class="ba__clip"><div class="ba__clip-in"><img data-img="past-cheese-1" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="A still life of stacked cheeses, butter, pretzels and almonds." loading="lazy" /></div></div>
+              <div class="ba__bar"><span class="ba__knob"></span></div>
+              <span class="ba__tag ba__tag--l label">17:40</span><span class="ba__tag ba__tag--r label">03:40</span>
+            </div>
+            <div class="ba-card__cap">
+              <p class="ba-card__n label">Nº 40 — September</p>
+              <h3 class="ba-card__t">The Cheese Stack</h3>
+              <p class="ba-card__d">After Clara Peeters. Left on the table: rind.</p>
+            </div>
+          </article>
+
+          <article class="ba-card">
+            <div class="ba" data-ba tabindex="0" role="slider" aria-label="A Sober Breakfast, before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              <img data-img="past-breakfast-2" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="The breakfast table afterwards: a herring backbone, an empty glass, nutshells." loading="lazy" />
+              <div class="ba__clip"><div class="ba__clip-in"><img data-img="past-breakfast-1" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="A sober breakfast still life: herring, a bread roll, a glass of beer, nuts." loading="lazy" /></div></div>
+              <div class="ba__bar"><span class="ba__knob"></span></div>
+              <span class="ba__tag ba__tag--l label">17:40</span><span class="ba__tag ba__tag--r label">01:10</span>
+            </div>
+            <div class="ba-card__cap">
+              <p class="ba-card__n label">Nº 39 — August</p>
+              <h3 class="ba-card__t">A Sober Breakfast</h3>
+              <p class="ba-card__d">After Pieter Claesz. Our shortest night. Left on the table: one backbone.</p>
+            </div>
+          </article>
+
+          <article class="ba-card">
+            <div class="ba" data-ba tabindex="0" role="slider" aria-label="The Sugar Banquet, before and after" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+              <img data-img="past-sugar-2" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="The sugar banquet afterwards: a bare tazza, broken wafers, fallen rose petals." loading="lazy" />
+              <div class="ba__clip"><div class="ba__clip-in"><img data-img="past-sugar-1" class="ba__img" sizes="(max-width: 760px) 92vw, 46vw" alt="A banquet of sweets: sugared almonds, quince paste, wafers, a marzipan tart, a rose." loading="lazy" /></div></div>
+              <div class="ba__bar"><span class="ba__knob"></span></div>
+              <span class="ba__tag ba__tag--l label">17:40</span><span class="ba__tag ba__tag--r label">05:05</span>
+            </div>
+            <div class="ba-card__cap">
+              <p class="ba-card__n label">Nº 38 — July</p>
+              <h3 class="ba-card__t">The Sugar Banquet</h3>
+              <p class="ba-card__d">After Georg Flegel. Left on the table: two almonds and most of a rose.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ─────────────── reserve ─────────────── -->
+      <section class="reserve" id="reserve" data-theme="light">
+        <header class="reserve__head">
+          <p class="label reveal">Reservations</p>
+          <h2 class="reserve__title js-lines">Take a <em>chair.</em></h2>
+          <p class="reserve__lede reveal">Twelve chairs a night, seen here from the ceiling. A napkin means somebody got there first. Put a lemon on any plate that is still bare.</p>
+        </header>
+
+        <div class="drift drift--napkin" data-speed="0.5" aria-hidden="true"><img data-img="napkin" sizes="22vw" alt="" loading="lazy" /></div>
+        <div class="drift drift--snail" data-creep aria-hidden="true"><img data-img="snail" sizes="(max-width: 760px) 26vw, 10vw" alt="" loading="lazy" /></div>
+
+        <form class="reserve__form" novalidate>
+          <fieldset class="nights">
+            <legend class="label">1 — Choose a night</legend>
+            <label class="night"><input type="radio" name="night" value="42" checked /><span class="night__in"><b>Nº 42</b><span>Sat. 14 November</span><i class="js-left" data-night="42"></i></span></label>
+            <label class="night"><input type="radio" name="night" value="43" /><span class="night__in"><b>Nº 43</b><span>Sat. 12 December</span><i class="js-left" data-night="43"></i></span></label>
+            <label class="night"><input type="radio" name="night" value="44" /><span class="night__in"><b>Nº 44</b><span>Sat. 16 January</span><i class="js-left" data-night="44"></i></span></label>
+          </fieldset>
+
+          <fieldset class="seats">
+            <legend class="label">2 — Choose your plates</legend>
+            <div class="tabletop">
+              <div class="tabletop__cloth"><img data-img="linen" alt="" loading="lazy" /></div>
+              <div class="tabletop__row tabletop__row--a"></div>
+              <div class="tabletop__mid" aria-hidden="true">
+                <img data-img="knife" class="tabletop__knife" sizes="200px" alt="" loading="lazy" />
+                <span class="tabletop__window label">Window end</span>
+                <span class="tabletop__door label">Door end</span>
+              </div>
+              <div class="tabletop__row tabletop__row--b"></div>
+            </div>
+            <p class="seats__key label"><span><i class="k k--bare"></i>Bare — free</span><span><i class="k k--napkin"></i>Napkin — taken</span><span><i class="k k--lemon"></i>Lemon — yours</span></p>
+          </fieldset>
+
+          <fieldset class="details">
+            <legend class="label">3 — Tell us who is coming</legend>
+            <div class="field"><input id="f-name" name="name" type="text" autocomplete="name" placeholder=" " required /><label for="f-name">Your name</label><span class="field__line"></span><span class="field__err label">We need a name for the place card</span></div>
+            <div class="field"><input id="f-mail" name="email" type="email" autocomplete="email" placeholder=" " required /><label for="f-mail">Email</label><span class="field__line"></span><span class="field__err label">That does not look like an address</span></div>
+            <div class="field"><input id="f-note" name="note" type="text" placeholder=" " /><label for="f-note">Anything you will not eat?</label><span class="field__line"></span><span class="field__hint label">We will paint around it</span></div>
+
+            <div class="reserve__sum">
+              <p class="reserve__total"><span class="js-chairs">No chairs yet</span><b class="js-price"></b></p>
+              <button class="btn" type="submit"><span class="btn__bg"></span><span class="btn__t">Hold my chair</span></button>
+            </div>
+            <p class="reserve__fine label">Nothing is sent anywhere. Pronk is a fiction; see the colophon.</p>
+          </fieldset>
+
+          <div class="reserve__done" aria-live="polite" hidden>
+            <div class="placecard">
+              <p class="label">Reserved</p>
+              <p class="placecard__name js-done-name">—</p>
+              <p class="placecard__line js-done-line"></p>
+              <p class="placecard__note">A lemon is on your plate. Come hungry, and come at dusk.</p>
+              <button class="link" type="button" data-again>Change my mind</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- ─────────────── footer ─────────────── -->
+    <footer class="foot" data-theme="dark">
+      <div class="foot__hero">
+        <div class="foot__pic" aria-hidden="true">
+          <div class="foot__par"><img data-img="table-6" alt="" loading="lazy" /></div>
+          <div class="foot__dawn"></div>
+        </div>
+        <div class="foot__top">
+          <p class="foot__line js-lines">Come at dusk.<br /><em>Leave crumbs.</em></p>
+          <a class="btn btn--light" href="#reserve"><span class="btn__bg"></span><span class="btn__t">Take a chair</span></a>
+        </div>
+      </div>
+      <div class="foot__cols">
+        <div>
+          <p class="label">Where</p>
+          <p>Bakenessergracht 91<br />2011 JV Haarlem</p>
+        </div>
+        <div>
+          <p class="label">When</p>
+          <p>One Saturday a month,<br />dusk until the candle is out</p>
+        </div>
+        <div>
+          <p class="label">Write</p>
+          <p><a class="link" href="mailto:table@pronk.example">table@pronk.example</a><br /><a class="link" href="#top">Back to the top</a></p>
+        </div>
+        <div class="foot__colophon">
+          <p class="label">Colophon</p>
+          <p>Pronk is an invented supper club. No such house stands at Bakenessergracht 91, and nobody will hold you a chair. Every painting and object on this page was generated by OpenAI Codex. Set in the Fell Types, bought in Holland for Oxford in the 1670s, in Igino Marini’s digital revival, with DM Mono. Designed and built by Claude.</p>
+        </div>
+      </div>
+      <p class="foot__word" aria-hidden="true">Pronk</p>
+    </footer>
+  </body>
+</html>

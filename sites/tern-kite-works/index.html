@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Tern Kite Works — paper kites, made by hand, for wind that means it</title>
+    <meta name="description" content="Tern is a small (and invented) kite works. Six paper-and-bamboo kites, one for every wind worth going out in." />
+    <meta name="theme-color" content="#f3dcc6" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 27 13 16 30 5 13Z' fill='%23e4412b'/%3E%3Cpath d='M9.6 20 16 30 22.4 20Z' fill='%23f2ecdf'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to the kites</a>
+
+    <!-- loader: line being paid out -->
+    <div class="loader" aria-hidden="true">
+      <div class="loader__sheet"></div>
+      <div class="loader__inner">
+        <span class="loader__mark">Tern</span>
+        <span class="loader__line"><i></i></span>
+        <span class="loader__read"><b class="loader__num">000</b> m of line out</span>
+      </div>
+    </div>
+
+    <!-- the sky: one day, crossfaded by scroll -->
+    <div class="sky" aria-hidden="true">
+      <div class="sky__l sky__l--dawn"></div>
+      <div class="sky__l sky__l--morning"></div>
+      <div class="sky__l sky__l--noon"></div>
+      <div class="sky__l sky__l--gold"></div>
+      <div class="sky__l sky__l--dusk"></div>
+      <div class="sky__stars"></div>
+      <div class="sky__grain"></div>
+    </div>
+
+    <header class="hud" data-theme="ink">
+      <a class="hud__mark" href="#top" aria-label="Tern Kite Works, back to the top">
+        <span class="hud__mark-name">Tern</span>
+        <span class="hud__mark-sub">Kite Works</span>
+      </a>
+      <nav class="hud__nav" aria-label="Sections">
+        <a href="#fleet"><span>The fleet</span></a>
+        <a href="#anatomy"><span>Anatomy</span></a>
+        <a href="#workshop"><span>Workshop</span></a>
+        <a href="#wind"><span>Wind</span></a>
+        <a href="#commission"><span>Commission</span></a>
+      </nav>
+      <div class="hud__right">
+        <p class="hud__read" aria-hidden="true">
+          <span class="hud__clock">05:41</span>
+          <span class="hud__force">F3 · SW</span>
+        </p>
+        <button class="hud__sound" type="button" aria-pressed="false" aria-label="Wind sound">
+          <span class="hud__sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="hud__sound-label">Sound</span>
+        </button>
+        <button class="hud__menu" type="button" aria-expanded="false" aria-controls="menu">
+          <span class="hud__menu-label">Menu</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu" id="menu" aria-hidden="true">
+      <div class="menu__sheet"></div>
+      <nav class="menu__nav" aria-label="Sections">
+        <a href="#fleet"><i>01</i><span>The fleet</span></a>
+        <a href="#anatomy"><i>02</i><span>Anatomy</span></a>
+        <a href="#workshop"><i>03</i><span>Workshop</span></a>
+        <a href="#wind"><i>04</i><span>Wind</span></a>
+        <a href="#commission"><i>05</i><span>Commission</span></a>
+      </nav>
+      <p class="menu__foot">Force 3, south-westerly. A good day for it.</p>
+    </div>
+
+    <!-- how much line you have let out -->
+    <aside class="meter" aria-hidden="true" data-theme="ink">
+      <span class="meter__rail"><i class="meter__fill"></i><i class="meter__kite"></i></span>
+      <span class="meter__read"><b class="meter__num">000</b> m</span>
+      <span class="meter__label">Line out</span>
+    </aside>
+
+    <main id="main">
+      <!-- ───────────────────────── HERO ───────────────────────── -->
+      <section class="hero" id="top" data-sky="dawn" data-theme="ink">
+        <div class="hero__stage" aria-hidden="true">
+          <div class="hero__sun"><img data-i="sun" alt="" decoding="async" /></div>
+
+          <div class="drift drift--h1" data-speed="0.35" data-par="0.12"><img data-i="cloud-e" alt="" /></div>
+          <div class="drift drift--h2" data-speed="0.5" data-par="0.2"><img data-i="cloud-b" alt="" /></div>
+
+          <div class="hero__land hero__land--far"><img data-i="land-far" alt="" /></div>
+          <div class="hero__land hero__land--mid"><img data-i="land-mid" alt="" /></div>
+        </div>
+
+        <h1 class="hero__word" aria-label="Tern Kite Works">
+          <span class="hero__letter"><span>T</span></span><span class="hero__letter"><span>e</span></span><span class="hero__letter"><span>r</span></span><span class="hero__letter"><span>n</span></span>
+        </h1>
+
+        <div class="hero__stage hero__stage--front" aria-hidden="true">
+          <div class="drift drift--h3" data-speed="0.8" data-par="0.38"><img data-i="cloud-a" alt="" /></div>
+          <div class="drift drift--h4" data-speed="1.1" data-par="0.55"><img data-i="cloud-c" alt="" /></div>
+          <canvas class="rig" data-rig="hero"></canvas>
+          <div class="kite kite--hero" data-flyer="hero">
+            <img data-i="ostro-1" alt="" fetchpriority="high" />
+          </div>
+          <div class="hero__land hero__land--near"><img data-i="land-near" alt="" /></div>
+          <div class="drift drift--h5" data-speed="1.6" data-par="0.9"><img data-i="cloud-f" alt="" /></div>
+        </div>
+
+        <div class="hero__copy">
+          <p class="eyebrow hero__eyebrow"><span>Paper, bamboo &amp; linen line</span><span>Thirty-eight kites a season</span></p>
+          <p class="hero__lede" data-split="intro">Kites made by hand, for wind that <em>means it.</em></p>
+          <div class="hero__actions">
+            <a class="btn btn--solid" href="#fleet"><span class="btn__label">Meet the fleet</span><span class="btn__icon" aria-hidden="true"></span></a>
+            <a class="btn btn--line" href="#commission"><span class="btn__label">Commission one</span></a>
+          </div>
+        </div>
+
+        <p class="hero__hint" aria-hidden="true"><span>Let out line</span><i></i></p>
+      </section>
+
+      <!-- ───────────────────────── CREED ───────────────────────── -->
+      <section class="creed" id="creed" data-sky="morning" data-theme="ink">
+        <div class="creed__sky" aria-hidden="true">
+          <div class="drift drift--c1" data-speed="0.5" data-par="0.25"><img data-i="cloud-d" alt="" loading="lazy" /></div>
+          <div class="drift drift--c2" data-speed="0.9" data-par="0.5"><img data-i="cloud-c" alt="" loading="lazy" /></div>
+          <div class="bird bird--1"><img data-i="tern-2" alt="" loading="lazy" /></div>
+          <div class="bird bird--2"><img data-i="tern-1" alt="" loading="lazy" /></div>
+          <div class="bird bird--3"><img data-i="tern-3" alt="" loading="lazy" /></div>
+        </div>
+
+        <div class="wrap">
+          <p class="eyebrow"><span class="eyebrow__no">01</span><span>What we think</span></p>
+          <h2 class="creed__say" data-scrub-words>
+            A kite is the shortest distance between <em>a person</em> and <em>the weather.</em>
+          </h2>
+
+          <div class="creed__grid">
+            <figure class="creed__fig creed__fig--a" data-par-y="-6">
+              <div class="mask" data-mask><img data-i="ph-rafters" sizes="(min-width: 900px) 46vw, 92vw" alt="A whitewashed workshop with paper kites hanging from the roof beams to dry." loading="lazy" /></div>
+              <figcaption>The drying loft, on a Tuesday. Nothing in here is finished.</figcaption>
+            </figure>
+
+            <div class="creed__text">
+              <p class="lead" data-reveal>Tern is four people and one long bench, on a headland where the wind seldom takes a day off.</p>
+              <p data-reveal>Since 2009 we have made kites the slow way. Bamboo split by hand. Paper dyed in the yard, in whatever weather there is. Every knot tied by someone who will fly the thing before you do.</p>
+              <p data-reveal>A kite that was rushed flies like it. So we make thirty-eight a season, test each one off the cliff, and send it out with three hundred metres of waxed linen and a note about the wind it likes.</p>
+            </div>
+
+            <figure class="creed__fig creed__fig--b" data-par-y="10">
+              <div class="mask" data-mask><img data-i="ph-drying" sizes="(min-width: 900px) 30vw, 70vw" alt="Sheets of indigo, white and vermilion paper pegged on a line outdoors, lifting in the wind." loading="lazy" /></div>
+              <figcaption>Dye day. The red one is always somebody's birthday.</figcaption>
+            </figure>
+          </div>
+
+          <dl class="creed__facts">
+            <div data-reveal><dt><span data-count="38">38</span></dt><dd>kites a season, each one spoken for by name</dd></div>
+            <div data-reveal><dt><span data-count="300">300</span><small>m</small></dt><dd>of waxed linen line on every reel</dd></div>
+            <div data-reveal><dt><span data-count="0">0</span><small>g</small></dt><dd>of plastic, carbon or ripstop, anywhere</dd></div>
+            <div data-reveal><dt><span data-count="4">4</span></dt><dd>people, and one employer that doesn't take meetings</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── FLEET ───────────────────────── -->
+      <section class="fleet" id="fleet" data-sky="noon" data-theme="ink">
+        <header class="fleet__head wrap">
+          <p class="eyebrow"><span class="eyebrow__no">02</span><span>The fleet</span></p>
+          <h2 class="title" data-split>Six kites. One for every wind <em>worth going out in.</em></h2>
+        </header>
+
+        <div class="fleet__stage">
+          <div class="fleet__sky" aria-hidden="true">
+            <div class="drift drift--f1" data-speed="0.45"><img data-i="cloud-d" alt="" loading="lazy" /></div>
+            <div class="drift drift--f2" data-speed="0.7"><img data-i="cloud-b" alt="" loading="lazy" /></div>
+            <div class="drift drift--f3" data-speed="1.2"><img data-i="cloud-f" alt="" loading="lazy" /></div>
+          </div>
+          <canvas class="rig" data-rig="fleet" aria-hidden="true"></canvas>
+
+          <ol class="fleet__list">
+            <li class="craft" data-kite="zephyr" data-wind="1-2">
+              <div class="craft__text">
+                <p class="craft__no"><b>01</b><span>/ 06</span><span class="craft__type">Delta</span></p>
+                <h3 class="craft__name">Zephyr</h3>
+                <p class="craft__motto">Flies on a rumour.</p>
+                <p class="craft__desc">For the still evenings when the smoke goes straight up and everyone else has gone home. The thinnest paper we dare paste, on spars you could lose in a drawer.</p>
+                <dl class="craft__spec">
+                  <div><dt>Wind</dt><dd class="craft__beaufort"><span>Force 1–2</span></dd></div>
+                  <div><dt>Span</dt><dd>1.6 m</dd></div>
+                  <div><dt>Weight</dt><dd>84 g</dd></div>
+                  <div><dt>From</dt><dd>£210</dd></div>
+                </dl>
+              </div>
+              <figure class="craft__fig"><div class="kite" data-flyer="zephyr"><img data-i="zephyr" alt="Zephyr: a wide, pale paper delta kite with an indigo trailing edge." loading="lazy" /></div></figure>
+            </li>
+
+            <li class="craft" data-kite="ostro" data-wind="2-4">
+              <div class="craft__text">
+                <p class="craft__no"><b>02</b><span>/ 06</span><span class="craft__type">Diamond</span></p>
+                <h3 class="craft__name">Ostro</h3>
+                <p class="craft__motto">The one you drew as a child.</p>
+                <p class="craft__desc">Two sticks, one sheet, a tail. It hasn't been improved on in two thousand years, so we didn't try. We just made it properly.</p>
+                <dl class="craft__spec">
+                  <div><dt>Wind</dt><dd class="craft__beaufort"><span>Force 2–4</span></dd></div>
+                  <div><dt>Height</dt><dd>1.0 m</dd></div>
+                  <div><dt>Weight</dt><dd>120 g</dd></div>
+                  <div><dt>From</dt><dd>£140</dd></div>
+                </dl>
+              </div>
+              <figure class="craft__fig"><div class="kite" data-flyer="ostro"><img data-i="ostro-1" alt="Ostro: a vermilion and white diamond kite with an indigo band." loading="lazy" /></div></figure>
+            </li>
+
+            <li class="craft" data-kite="mistral" data-wind="3-5">
+              <div class="craft__text">
+                <p class="craft__no"><b>03</b><span>/ 06</span><span class="craft__type">Rokkaku</span></p>
+                <h3 class="craft__name">Mistral</h3>
+                <p class="craft__motto">Steady as a held note.</p>
+                <p class="craft__desc">Six sides, no tail, and a bowed back that sits in the sky as if it were nailed there. Will fly all afternoon without asking you a single question.</p>
+                <dl class="craft__spec">
+                  <div><dt>Wind</dt><dd class="craft__beaufort"><span>Force 3–5</span></dd></div>
+                  <div><dt>Height</dt><dd>1.2 m</dd></div>
+                  <div><dt>Weight</dt><dd>190 g</dd></div>
+                  <div><dt>From</dt><dd>£260</dd></div>
+                </dl>
+              </div>
+              <figure class="craft__fig"><div class="kite" data-flyer="mistral"><img data-i="mistral" alt="Mistral: a tall six-sided indigo kite with a pale moon disc." loading="lazy" /></div></figure>
+            </li>
+
+            <li class="craft" data-kite="levanter" data-wind="3-5">
+              <div class="craft__text">
+                <p class="craft__no"><b>04</b><span>/ 06</span><span class="craft__type">Edo</span></p>
+                <h3 class="craft__name">Levanter</h3>
+                <p class="craft__motto">A door left open in the sky.</p>
+                <p class="craft__desc">Fourteen bridle lines, and the patience to tie them. It climbs slowly, like someone carrying something up a ladder, and then it simply stays.</p>
+                <dl class="craft__spec">
+                  <div><dt>Wind</dt><dd class="craft__beaufort"><span>Force 3–5</span></dd></div>
+                  <div><dt>Height</dt><dd>1.3 m</dd></div>
+                  <div><dt>Weight</dt><dd>210 g</dd></div>
+                  <div><dt>From</dt><dd>£320</dd></div>
+                </dl>
+              </div>
+              <figure class="craft__fig"><div class="kite" data-flyer="levanter"><img data-i="levanter" alt="Levanter: a tall rectangular kite with diagonal indigo stripes and one red stripe." loading="lazy" /></div></figure>
+            </li>
+
+            <li class="craft" data-kite="sirocco" data-wind="4-6">
+              <div class="craft__text">
+                <p class="craft__no"><b>05</b><span>/ 06</span><span class="craft__type">Box</span></p>
+                <h3 class="craft__name">Sirocco</h3>
+                <p class="craft__motto">A room with no walls.</p>
+                <p class="craft__desc">Mr Hargrave's box, in paper. It wants a real wind and pulls like a dog that has seen the beach. Gloves are not an affectation.</p>
+                <dl class="craft__spec">
+                  <div><dt>Wind</dt><dd class="craft__beaufort"><span>Force 4–6</span></dd></div>
+                  <div><dt>Height</dt><dd>0.9 m</dd></div>
+                  <div><dt>Weight</dt><dd>260 g</dd></div>
+                  <div><dt>From</dt><dd>£290</dd></div>
+                </dl>
+              </div>
+              <figure class="craft__fig"><div class="kite" data-flyer="sirocco"><img data-i="sirocco" alt="Sirocco: a box kite with two paper cells printed with ochre, vermilion and indigo circles." loading="lazy" /></div></figure>
+            </li>
+
+            <li class="craft" data-kite="williwaw" data-wind="2-6">
+              <div class="craft__text">
+                <p class="craft__no"><b>06</b><span>/ 06</span><span class="craft__type">Fighter</span></p>
+                <h3 class="craft__name">Williwaw</h3>
+                <p class="craft__motto">Bad manners, on purpose.</p>
+                <p class="craft__desc">No tail, no stability, no apology. Slack the line and it spins; pull, and it goes wherever it happens to be pointing. Learn it and nothing else will do.</p>
+                <dl class="craft__spec">
+                  <div><dt>Wind</dt><dd class="craft__beaufort"><span>Force 2–6</span></dd></div>
+                  <div><dt>Span</dt><dd>0.5 m</dd></div>
+                  <div><dt>Weight</dt><dd>38 g</dd></div>
+                  <div><dt>From</dt><dd>£95</dd></div>
+                </dl>
+              </div>
+              <figure class="craft__fig"><div class="kite" data-flyer="williwaw"><img data-i="williwaw" alt="Williwaw: a small black fighter kite with a red disc." loading="lazy" /></div></figure>
+            </li>
+          </ol>
+
+          <nav class="fleet__nav" aria-label="Choose a kite">
+            <button type="button" data-go="0" aria-label="Zephyr"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 5 27 21 14 17 1 21Z" /></svg></button>
+            <button type="button" data-go="1" aria-label="Ostro"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 1 23 11 14 27 5 11Z" /></svg></button>
+            <button type="button" data-go="2" aria-label="Mistral"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 1 23 7 23 21 14 27 5 21 5 7Z" /></svg></button>
+            <button type="button" data-go="3" aria-label="Levanter"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M6 2H22V26H6Z" /></svg></button>
+            <button type="button" data-go="4" aria-label="Sirocco"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M7 2H21V10H7Z M7 18H21V26H7Z" /></svg></button>
+            <button type="button" data-go="5" aria-label="Williwaw"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 3 25 14 14 25 3 14Z" /></svg></button>
+            <span class="fleet__nav-hint" aria-hidden="true">Scroll, or pick one</span>
+          </nav>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── ANATOMY ───────────────────────── -->
+      <section class="anatomy sheet" id="anatomy" data-theme="ink">
+        <div class="sheet__edge sheet__edge--top" aria-hidden="true"><img data-i="edge" alt="" loading="lazy" /></div>
+
+        <div class="anatomy__bench" aria-hidden="true">
+          <div class="tool tool--bamboo" data-par-y="-14" data-par-r="-4"><img data-i="obj-bamboo" alt="" loading="lazy" /></div>
+          <div class="tool tool--brush" data-par-y="12" data-par-r="6"><img data-i="obj-brush" alt="" loading="lazy" /></div>
+          <div class="tool tool--snips" data-par-y="-8" data-par-r="10"><img data-i="obj-snips" alt="" loading="lazy" /></div>
+          <div class="tool tool--thread" data-par-y="16" data-par-r="-12"><img data-i="obj-thread" alt="" loading="lazy" /></div>
+        </div>
+
+        <div class="wrap">
+          <header class="anatomy__head">
+            <p class="eyebrow"><span class="eyebrow__no">03</span><span>Anatomy</span></p>
+            <h2 class="title" data-split>Four things <em>and a knot.</em></h2>
+            <p class="anatomy__intro" data-reveal>Paper, bamboo, thread, paste. That is the whole list. The knot took us eleven years, and we will not be writing it down.</p>
+          </header>
+          <figure class="anatomy__print" data-par-y="-8" data-par-r="3">
+            <div class="mask" data-mask><img data-i="ph-knot" sizes="(min-width: 900px) 18vw, 40vw" alt="A close view of two bamboo spars lashed together with waxed linen thread." loading="lazy" /></div>
+            <figcaption>A knot. Not the knot.</figcaption>
+          </figure>
+
+          <div class="anatomy__plate">
+            <ol class="parts parts--left">
+              <li class="part" data-part="sail" data-reveal>
+                <span class="part__no">A</span>
+                <h3>Sail</h3>
+                <p>Kozo washi, 28&nbsp;gsm. Long fibres, so it tears like cloth and not like paper. Dyed in the yard.</p>
+              </li>
+              <li class="part" data-part="spar" data-reveal>
+                <span class="part__no">B</span>
+                <h3>Spar</h3>
+                <p>Bent over a candle to a bow of one in ten. The bow is the whole trick; flat kites sulk.</p>
+              </li>
+              <li class="part" data-part="tail" data-reveal>
+                <span class="part__no">C</span>
+                <h3>Tail</h3>
+                <p>Not decoration. A rudder, made from whatever was left over on dye day.</p>
+              </li>
+            </ol>
+
+            <div class="specimen" data-specimen>
+              <div class="specimen__kite">
+                <img class="specimen__front" data-i="light-1" alt="The back of an Ostro kite, showing its bamboo spine and bowed spar." loading="lazy" />
+                <div class="specimen__lens" aria-hidden="true">
+                  <img class="specimen__back" data-i="light-2" alt="" loading="lazy" />
+                </div>
+                <span class="specimen__ring" aria-hidden="true"></span>
+                <svg class="specimen__marks" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true">
+                  <circle data-dot="sail" cx="30" cy="30" r="0.9" />
+                  <circle data-dot="spar" cx="24" cy="50.5" r="0.9" />
+                  <circle data-dot="tail" cx="50" cy="146" r="0.9" />
+                  <circle data-dot="spine" cx="50" cy="22" r="0.9" />
+                  <circle data-dot="bridle" cx="50" cy="47.5" r="0.9" />
+                  <circle data-dot="band" cx="72" cy="88" r="0.9" />
+                </svg>
+              </div>
+              <button class="specimen__toggle" type="button" aria-pressed="false">
+                <span class="specimen__toggle-dot" aria-hidden="true"></span>
+                <span class="specimen__toggle-on">Hold it up to the light</span>
+                <span class="specimen__toggle-off">Put it down again</span>
+              </button>
+              <p class="specimen__hint" aria-hidden="true">Move across the kite</p>
+            </div>
+
+            <ol class="parts parts--right">
+              <li class="part" data-part="spine" data-reveal>
+                <span class="part__no">D</span>
+                <h3>Spine</h3>
+                <p>Madake bamboo, split by hand and never sawn. A saw cuts the very fibres the wind is going to ask for.</p>
+              </li>
+              <li class="part" data-part="bridle" data-reveal>
+                <span class="part__no">E</span>
+                <h3>Bridle</h3>
+                <p>Two legs of waxed linen. Move the knot a finger's width and you have a different kite.</p>
+              </li>
+              <li class="part" data-part="band" data-reveal>
+                <span class="part__no">F</span>
+                <h3>Seam</h3>
+                <p>Rice paste, a thumb, and a four-millimetre overlap. It will outlast the string.</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── WORKSHOP ───────────────────────── -->
+      <section class="works sheet" id="workshop" data-theme="ink">
+        <div class="wrap">
+          <header class="works__head">
+            <p class="eyebrow"><span class="eyebrow__no">04</span><span>Workshop</span></p>
+            <h2 class="title" data-split>Five days, <em>most of them waiting.</em></h2>
+          </header>
+
+          <div class="works__body">
+            <div class="works__frame" aria-hidden="true">
+              <div class="works__shots">
+                <div class="works__shot is-on" data-shot="0"><img data-i="ph-split" sizes="(min-width: 900px) 40vw, 92vw" alt="" loading="lazy" /></div>
+                <div class="works__shot" data-shot="1"><img data-i="ph-dye" sizes="(min-width: 900px) 40vw, 92vw" alt="" loading="lazy" /></div>
+                <div class="works__shot" data-shot="2"><img data-i="ph-paste" sizes="(min-width: 900px) 60vw, 140vw" alt="" loading="lazy" /></div>
+                <div class="works__shot" data-shot="3"><img data-i="ph-balance" sizes="(min-width: 900px) 40vw, 92vw" alt="" loading="lazy" /></div>
+              </div>
+              <p class="works__count"><b>01</b><span>/ 04</span></p>
+              <div class="tool tool--knife" data-par-y="-10" data-par-r="8"><img data-i="obj-knife" alt="" loading="lazy" /></div>
+            </div>
+
+            <ol class="works__steps">
+              <li class="step" data-step="0">
+                <div class="step__shot"><img data-i="ph-split" sizes="92vw" alt="Hands splitting a length of bamboo with a small knife." loading="lazy" /></div>
+                <p class="step__day">Monday</p>
+                <h3 class="step__name">Split</h3>
+                <p class="step__text">A culm of madake is split in two, then four, then eight, and so on until it is either a spar or kindling. About one in three makes it. The stove does well out of us.</p>
+              </li>
+              <li class="step" data-step="1">
+                <div class="step__shot"><img data-i="ph-dye" sizes="92vw" alt="A sheet of paper being lifted, half blue, from a vat of indigo." loading="lazy" /></div>
+                <p class="step__day">Tuesday</p>
+                <h3 class="step__name">Dye</h3>
+                <p class="step__text">Indigo wants a cold morning. The paper goes in white and comes out the colour of four o'clock in winter, then hangs on the line until the wind says it is done.</p>
+              </li>
+              <li class="step" data-step="2">
+                <div class="step__shot"><img data-i="ph-paste" sizes="92vw" alt="A brush pasting red paper over a bamboo kite frame on a bench." loading="lazy" /></div>
+                <p class="step__day">Wednesday</p>
+                <h3 class="step__name">Paste</h3>
+                <p class="step__text">Rice paste, a wide brush, and nobody talks. The paper is folded over a thread that runs the whole way round, so the edge can take a gust without taking offence.</p>
+              </li>
+              <li class="step" data-step="3">
+                <div class="step__shot"><img data-i="ph-balance" sizes="92vw" alt="A finished kite hanging level from a single thread." loading="lazy" /></div>
+                <p class="step__day">Thursday</p>
+                <h3 class="step__name">Balance</h3>
+                <p class="step__text">Hung from a single thread. If it leans, a shaving comes off the heavy side. Then another. This is the day that decides whether it is a kite or a nice object.</p>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Friday: the last step is the only one that happens outside -->
+          <figure class="friday">
+            <div class="friday__img mask" data-mask><img data-i="ph-fly" sizes="96vw" alt="A small figure on a windswept headland flying a red kite high over a pale sea." loading="lazy" /></div>
+            <figcaption class="friday__cap">
+              <p class="step__day">Friday</p>
+              <h3 class="friday__name" data-split>Fly</h3>
+              <p class="friday__text" data-reveal>Every kite goes up before it goes out. If there is no wind, we wait. There is always wind.</p>
+            </figcaption>
+            <div class="tool tool--reel" data-par-y="-12" data-par-r="-9"><img data-i="obj-reel" alt="" loading="lazy" /></div>
+          </figure>
+        </div>
+        <div class="sheet__edge sheet__edge--bottom" aria-hidden="true"><img data-i="edge" alt="" loading="lazy" /></div>
+      </section>
+
+      <!-- ───────────────────────── WIND ───────────────────────── -->
+      <section class="wind" id="wind" data-sky="gold" data-theme="ink">
+        <div class="wind__sky" aria-hidden="true">
+          <div class="drift drift--w1" data-speed="0.6"><img data-i="cloud-b" alt="" loading="lazy" /></div>
+          <div class="drift drift--w2" data-speed="1"><img data-i="cloud-a" alt="" loading="lazy" /></div>
+          <div class="drift drift--w3" data-speed="1.7"><img data-i="cloud-e" alt="" loading="lazy" /></div>
+          <div class="wind__scraps"></div>
+        </div>
+        <canvas class="rig" data-rig="wind" aria-hidden="true"></canvas>
+        <div class="kite kite--wind" data-flyer="wind" aria-hidden="true"><img data-i="ostro-2" alt="" loading="lazy" /></div>
+
+        <div class="wrap wind__wrap">
+          <header class="wind__head">
+            <p class="eyebrow"><span class="eyebrow__no">05</span><span>Wind</span></p>
+            <h2 class="title" data-split>What's it doing <em>outside?</em></h2>
+          </header>
+
+          <div class="dial">
+            <div class="dial__read" aria-live="polite">
+              <p class="dial__force"><span class="dial__label">Force</span><span class="dial__num"><b>3</b></span></p>
+              <div class="dial__words">
+                <p class="dial__name">Gentle breeze</p>
+                <p class="dial__knots">7–10 knots</p>
+                <p class="dial__say">Leaves in constant motion. Perfect. Cancel something.</p>
+              </div>
+            </div>
+
+            <div class="dial__control">
+              <label class="dial__caption" for="force">Drag the wind</label>
+              <div class="dial__track">
+                <input class="dial__input" id="force" type="range" min="0" max="7" step="1" value="3" aria-describedby="dial-hint" />
+                <span class="dial__ticks" aria-hidden="true"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i></span>
+                <span class="dial__thumb" aria-hidden="true"></span>
+              </div>
+              <p class="dial__hint" id="dial-hint">Beaufort scale. Arrow keys work too.</p>
+            </div>
+
+            <div class="dial__fly">
+              <p class="dial__fly-label">Take out</p>
+              <ul class="dial__kites">
+                <li data-k="zephyr"><a href="#fleet" data-fleet="0">Zephyr</a></li>
+                <li data-k="ostro"><a href="#fleet" data-fleet="1">Ostro</a></li>
+                <li data-k="mistral"><a href="#fleet" data-fleet="2">Mistral</a></li>
+                <li data-k="levanter"><a href="#fleet" data-fleet="3">Levanter</a></li>
+                <li data-k="sirocco"><a href="#fleet" data-fleet="4">Sirocco</a></li>
+                <li data-k="williwaw"><a href="#fleet" data-fleet="5">Williwaw</a></li>
+              </ul>
+              <p class="dial__none">Nothing. Put the kettle on.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────────────────── COMMISSION ───────────────────────── -->
+      <section class="send" data-sky="dusk" data-theme="paper">
+        <!-- the day ends: a screen of nothing but sky while the sun goes down -->
+        <div class="send__sky" aria-hidden="true">
+          <div class="send__sun"><img data-i="sun" alt="" loading="lazy" /></div>
+          <div class="drift drift--s1" data-speed="0.4"><img data-i="cloud-dusk-a" alt="" loading="lazy" /></div>
+          <div class="drift drift--s2" data-speed="0.7"><img data-i="cloud-dusk-b" alt="" loading="lazy" /></div>
+        </div>
+
+        <div class="wrap send__wrap" id="commission">
+          <header class="send__head">
+            <p class="eyebrow"><span class="eyebrow__no">06</span><span>Commission</span></p>
+            <h2 class="title" data-split>Send <em>word.</em></h2>
+            <p class="send__intro" data-reveal>Each season's kites are spoken for by name. Tell us where you fly and what the wind is like there, and we'll write back with a place in the queue and a question or two.</p>
+            <ul class="send__terms" data-reveal>
+              <li><b>Eleven weeks</b><span>from first letter to first flight, weather permitting</span></li>
+              <li><b>From £95</b><span>reel, line and a spare tail included</span></li>
+            </ul>
+          </header>
+
+          <div class="send__dye">
+            <div class="dye" data-dye>
+              <div class="dye__stack">
+                <img class="is-on" data-i="ostro-1" alt="Ostro kite dyed vermilion." loading="lazy" />
+                <img data-i="ostro-2" alt="" loading="lazy" />
+                <img data-i="ostro-3" alt="" loading="lazy" />
+                <img data-i="ostro-4" alt="" loading="lazy" />
+              </div>
+              <p class="dye__name"><span>Dyed to order</span><b>Vermilion</b></p>
+            </div>
+          </div>
+
+          <form class="form" novalidate>
+            <fieldset class="form__dyes">
+              <legend>Dye</legend>
+              <label class="swatch" style="--c: #e4412b"><input type="radio" name="dye" value="Vermilion" checked /><span class="swatch__chip"></span><span class="swatch__name">Vermilion</span></label>
+              <label class="swatch" style="--c: #1f3f8f"><input type="radio" name="dye" value="Indigo" /><span class="swatch__chip"></span><span class="swatch__name">Indigo</span></label>
+              <label class="swatch" style="--c: #e0a22e"><input type="radio" name="dye" value="Ochre" /><span class="swatch__chip"></span><span class="swatch__name">Ochre</span></label>
+              <label class="swatch" style="--c: #2a2a2e"><input type="radio" name="dye" value="Sumi" /><span class="swatch__chip"></span><span class="swatch__name">Sumi</span></label>
+            </fieldset>
+
+            <div class="field">
+              <label for="f-name">Your name</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required placeholder="As you'd like it on the label" />
+              <p class="field__err" id="e-name" hidden>We do need something to write on the label.</p>
+            </div>
+            <div class="field">
+              <label for="f-mail">Where we write back</label>
+              <input id="f-mail" name="email" type="email" autocomplete="email" required placeholder="you@somewhere.windy" />
+              <p class="field__err" id="e-mail" hidden>That doesn't look like an address we could reach.</p>
+            </div>
+            <div class="field field--half">
+              <label for="f-kite">Which kite</label>
+              <div class="select">
+                <select id="f-kite" name="kite">
+                  <option>Not sure yet</option>
+                  <option>Zephyr</option>
+                  <option selected>Ostro</option>
+                  <option>Mistral</option>
+                  <option>Levanter</option>
+                  <option>Sirocco</option>
+                  <option>Williwaw</option>
+                </select>
+              </div>
+            </div>
+            <div class="field field--half">
+              <label for="f-where">Where you fly</label>
+              <input id="f-where" name="where" type="text" placeholder="A beach, a hill, a car park" />
+            </div>
+            <div class="field">
+              <label for="f-note">Anything the wind should know</label>
+              <textarea id="f-note" name="note" rows="3" placeholder="It's for a seven-year-old. It's for me. Both."></textarea>
+            </div>
+
+            <div class="form__foot">
+              <button class="btn btn--solid btn--light" type="submit"><span class="btn__label">Send word</span><span class="btn__icon" aria-hidden="true"></span></button>
+              <p class="form__note">Tern is invented. Nothing you type here is sent or stored.</p>
+            </div>
+
+            <div class="form__done" role="status" aria-live="polite" hidden>
+              <p class="form__done-big">Word received,<br /><em>in spirit.</em></p>
+              <p class="form__done-text"></p>
+              <button class="link" type="button" data-again>Write another</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ───────────────────────── FOOTER ───────────────────────── -->
+    <footer class="foot" data-sky="dusk" data-theme="paper">
+      <div class="foot__stage" aria-hidden="true">
+        <div class="foot__moon"><img data-i="moon" alt="" loading="lazy" /></div>
+        <canvas class="rig" data-rig="foot"></canvas>
+        <div class="kite kite--foot" data-flyer="foot"><img data-i="williwaw" alt="" loading="lazy" /></div>
+        <div class="foot__land foot__land--far"><img data-i="land-far" alt="" loading="lazy" /></div>
+        <div class="foot__land foot__land--mid"><img data-i="land-mid" alt="" loading="lazy" /></div>
+        <div class="foot__land foot__land--near"><img data-i="land-near" alt="" loading="lazy" /></div>
+      </div>
+
+      <div class="wrap foot__wrap">
+        <p class="foot__say" data-split>Wind drops at dusk. <em>Wind it in.</em></p>
+        <button class="btn btn--line btn--light foot__top" type="button" data-top><span class="btn__label">Wind in the line</span><span class="btn__icon btn__icon--up" aria-hidden="true"></span></button>
+
+        <div class="foot__cols">
+          <div>
+            <h4>The works</h4>
+            <p>The Old Net Loft<br />Skerry Head<br />Open when the flag is up</p>
+          </div>
+          <div>
+            <h4>Sections</h4>
+            <ul>
+              <li><a href="#fleet">The fleet</a></li>
+              <li><a href="#anatomy">Anatomy</a></li>
+              <li><a href="#workshop">Workshop</a></li>
+              <li><a href="#wind">Wind</a></li>
+              <li><a href="#commission">Commission</a></li>
+            </ul>
+          </div>
+          <div class="foot__colophon">
+            <h4>Colophon</h4>
+            <p>Tern Kite Works is a fiction: the kites, the headland and the four people are invented. Every photograph and paper object was generated with OpenAI Codex. Design, words and code by Claude.</p>
+            <p>Set in Bodoni Moda, Hanken Grotesk and Martian Mono.</p>
+          </div>
+        </div>
+      </div>
+      <p class="foot__word" aria-hidden="true">Tern</p>
+    </footer>
+
+    <div class="vane" aria-hidden="true"><i class="vane__dot"></i><i class="vane__arm"></i><span class="vane__label"></span></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

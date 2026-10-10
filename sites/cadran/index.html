@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cadran — Parfums d'heures</title>
+    <meta name="description" content="Five fragrances, one for each hour of light. Wear the one the sky is wearing." />
+    <meta name="theme-color" content="#D9DFE6" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23EEE9DE' stroke='%2318202E' stroke-width='1.5'/%3E%3Cpath d='M16 16 7 9' stroke='%2318202E' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <link rel="preload" as="image" href="/img/bottle-1.webp" />
+  </head>
+  <body>
+    <div class="loader" aria-hidden="true">
+      <span class="loader__name">Cadran</span>
+      <span class="loader__time mono" data-loader-time>00:00</span>
+      <span class="loader__bar"><i data-loader-bar></i></span>
+    </div>
+
+    <div class="sun" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="top">
+      <a class="top__mark" href="#top" aria-label="Cadran, back to top">Cadran</a>
+      <nav class="top__nav mono" aria-label="Primary">
+        <a class="link" href="#hours">The hours</a>
+        <a class="link" href="#atelier">Atelier</a>
+        <a class="link" href="#discovery">Discovery set</a>
+        <a class="link top__bag" href="#discovery">Bag (<span data-bag>0</span>)</a>
+      </nav>
+    </header>
+
+    <aside class="dial" aria-live="off">
+      <svg class="dial__face" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="30.5" />
+        <g class="dial__ticks"></g>
+        <line class="dial__hand" x1="32" y1="32" x2="32" y2="6" />
+        <circle class="dial__pin" cx="32" cy="32" r="2" />
+      </svg>
+      <p class="dial__read mono">
+        <span class="dial__time" data-dial-time>05:40</span>
+        <span class="dial__name" data-dial-name>Lauds</span>
+      </p>
+    </aside>
+
+    <main id="top">
+      <div class="day">
+        <!-- one bottle for the whole day; everything in here is built by src/main.js -->
+        <div class="stage" aria-hidden="true">
+          <div class="stage__words"></div>
+          <div class="stage__notes stage__notes--back"></div>
+          <div class="rig">
+            <div class="rig__glow"></div>
+            <div class="rig__shadow"></div>
+            <div class="rig__bottles"></div>
+          </div>
+          <div class="stage__notes stage__notes--front"></div>
+        </div>
+
+        <div class="day__flow">
+          <section class="hero">
+            <h1 class="sr">Cadran. Five fragrances, one for each hour of light.</h1>
+            <div class="hero__view">
+              <p class="hero__tag" data-hero>Five fragrances.<br />One for each hour of light.</p>
+              <a class="hero__now" href="#hours" data-hero data-now-link>
+                <span class="mono">It is <span data-now>--:--</span> where you are</span>
+                <em>Your hour is <span data-now-hour>Sext</span></em>
+              </a>
+              <span class="hero__cue mono" data-hero>Scroll to turn the day</span>
+            </div>
+          </section>
+
+          <section class="manifesto">
+            <p class="manifesto__label mono" data-reveal>Parfums d'heures</p>
+            <p class="manifesto__text">
+              Perfume is sold by the season. We find that far too slow. The light at six in the morning has nothing to
+              say to the light at six at night, so we compose by the hour. Five fragrances. Wear the one the sky is
+              wearing.
+            </p>
+          </section>
+
+          <section class="hours" id="hours" aria-label="The five fragrances">
+            <div class="hours__pin">
+              <div class="hours__panels"></div>
+              <nav class="hours__nav mono" aria-label="Jump to a fragrance"></nav>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <section class="atelier" id="atelier">
+        <p class="mono atelier__label" data-reveal>The atelier</p>
+        <h2 class="display atelier__title" data-lines>Composed slowly,<br />in one room.</h2>
+
+        <div class="atelier__row">
+          <figure class="frame atelier__fig-a" data-clip>
+            <img src="/img/atelier-organ.webp" alt="Tiers of small glass bottles on oak shelves, lit by a low afternoon sun" data-parallax loading="lazy" />
+          </figure>
+          <div class="atelier__copy">
+            <p data-reveal>
+              Every Cadran formula begins the same way: one hour, one place, a notebook. We go back to the same wall,
+              the same field, the same cloister until the light has been written down properly.
+            </p>
+            <p data-reveal>
+              Then the organ. Between forty and sixty materials for each fragrance, weighed by hand, adjusted a drop at
+              a time until smelling it and standing there are the same thing.
+            </p>
+          </div>
+        </div>
+
+        <div class="atelier__row atelier__row--b">
+          <ol class="facts">
+            <li data-reveal>
+              <span class="mono">01</span>
+              <h3>One hand</h3>
+              <p>Each formula is composed, weighed and signed by the same perfumer.</p>
+            </li>
+            <li data-reveal>
+              <span class="mono">02</span>
+              <h3>Forty days</h3>
+              <p>Every batch rests in the dark for forty days before it is filtered and bottled.</p>
+            </li>
+            <li data-reveal>
+              <span class="mono">03</span>
+              <h3>Glass and stone</h3>
+              <p>A refillable bottle, a travertine cap cut from offcuts. No box you would throw away.</p>
+            </li>
+          </ol>
+          <figure class="frame atelier__fig-b" data-clip>
+            <img src="/img/atelier-blotters.webp" alt="A fan of paper scent blotters casting long shadows across a stone desk" data-parallax loading="lazy" />
+          </figure>
+        </div>
+      </section>
+
+      <div class="marquee" aria-hidden="true"><div class="marquee__track"></div></div>
+
+      <section class="discovery" id="discovery">
+        <figure class="frame discovery__fig" data-grow>
+          <img src="/img/discovery-set.webp" alt="Five small vials in a row, each throwing a long coloured shadow" loading="lazy" />
+        </figure>
+        <div class="discovery__copy">
+          <p class="mono" data-reveal>Discovery set</p>
+          <h2 class="display" data-lines>Not sure of your hour?<br />Take all five.</h2>
+          <p class="discovery__text" data-reveal>
+            Five vials of 7.5 ml, one for each hour. Wear them for a week and notice which one you reach for at which
+            time. The price comes off your first full bottle.
+          </p>
+          <div class="buy" data-reveal>
+            <span class="mono">5 × 7.5 ml — €38</span>
+            <button class="btn" type="button" data-add>
+              <span class="btn__label">Add the set to your bag</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p class="mono foot__label" data-reveal>Right now</p>
+      <p class="foot__now display">
+        <span class="rise"><span>It is <span data-now>--:--</span>.</span></span>
+        <span class="rise"><span><em>Wear <span data-now-hour>Sext</span>.</em></span></span>
+      </p>
+
+      <div class="foot__grid">
+        <form class="news" data-news novalidate>
+          <label class="mono" for="email">One letter a season. Nothing else.</label>
+          <div class="news__row">
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@somewhere.com" required />
+            <button class="news__go mono" type="submit">Subscribe</button>
+          </div>
+          <p class="news__msg mono" data-news-msg role="status"></p>
+        </form>
+        <ul class="foot__links mono">
+          <li><a class="link" href="#hours">The hours</a></li>
+          <li><a class="link" href="#atelier">Atelier</a></li>
+          <li><a class="link" href="#discovery">Discovery set</a></li>
+          <li><a class="link" href="#top">Back to dawn</a></li>
+        </ul>
+        <p class="foot__fine mono">
+          Cadran is a fictional house.<br />Every photograph here was generated by Codex; the site was built by Claude.
+        </p>
+      </div>
+
+      <p class="foot__mark" aria-hidden="true">Cadran</p>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

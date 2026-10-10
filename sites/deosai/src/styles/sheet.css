@@ -1,0 +1,147 @@
+/* ---------- the specimen sheet ---------- */
+.sheet { position: fixed; inset: 0; z-index: 400; }
+.sheet[hidden] { display: none; }
+.sheet__veil { position: absolute; inset: 0; background: rgba(15, 5, 30, 0.62); }
+.sheet__paper {
+  position: absolute;
+  inset: clamp(0.5rem, 2vw, 1.75rem);
+  top: clamp(2.6rem, 6vh, 4rem);
+  bottom: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  box-shadow: 0 -2px 0 rgba(255, 255, 255, 0.12), 0 -30px 80px -20px rgba(10, 2, 24, 0.8);
+  clip-path: polygon(0 1.2vh, 7% 0.2vh, 19% 1.5vh, 33% 0, 47% 1.1vh, 62% 0.1vh, 78% 1.4vh, 91% 0, 100% 0.9vh, 100% 100%, 0 100%);
+  will-change: transform;
+}
+
+/* stage */
+.sheet__stage { --rx: 0; --ry: 0; position: relative; min-height: 0; overflow: hidden; perspective: 1400px; }
+.sheet__stage::before {
+  /* a second sheet of darker paper behind the portrait */
+  content: '';
+  position: absolute;
+  inset: 9% 7% 11% 9%;
+  background: var(--fg);
+  opacity: 0.1;
+  clip-path: polygon(3% 0, 100% 4%, 96% 100%, 0 95%);
+}
+.sheet__stack { position: absolute; inset: 0; display: grid; place-items: center; }
+.sheet__cut, .sheet__print { position: absolute; display: block; transition: transform 1s var(--ease-out); will-change: transform; }
+.sheet__cut img, .sheet__print img { width: 100%; height: 100%; object-fit: contain; }
+
+.sheet__cut {
+  inset: 12% 10% 14%;
+  z-index: 2;
+  transform: translate3d(calc(var(--rx) * 26px), calc(var(--ry) * 20px), 0) rotate(-2deg);
+}
+.sheet__print {
+  right: 6%;
+  bottom: 9%;
+  width: 34%;
+  aspect-ratio: 4 / 5;
+  z-index: 1;
+  transform: translate3d(calc(var(--rx) * -18px), calc(var(--ry) * -14px), 0) rotate(7deg);
+}
+.sheet__print-in { display: block; width: 100%; height: 100%; padding: 4.5% 4.5% 15%; background: var(--snow); background-image: var(--grain); background-size: 256px; box-shadow: var(--lift-lg); }
+.sheet__print img { object-fit: cover; }
+
+/* swapped: the photograph comes forward, the paper portrait becomes the small one */
+.sheet__stack[data-mode='photo'] .sheet__print {
+  z-index: 3;
+  transform: translate3d(calc(-46% + var(--rx) * 22px), calc(-8% + var(--ry) * 18px), 0) rotate(-2.5deg) scale(1.86);
+}
+.sheet__stack[data-mode='photo'] .sheet__cut {
+  z-index: 1;
+  transform: translate3d(calc(30% + var(--rx) * -16px), calc(27% + var(--ry) * -12px), 0) rotate(9deg) scale(0.34);
+}
+.sheet__stack.no-photo .sheet__cut { cursor: default; }
+
+.sheet__stamp {
+  position: absolute;
+  left: 50%;
+  bottom: 3.5%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
+  font-size: 0.6rem;
+  color: var(--ink);
+  transform: translateX(-50%);
+  transition: opacity 0.4s;
+}
+.sheet__cut .sheet__stamp { bottom: -7%; padding: 0.5em 0.8em; background: var(--accent); color: var(--on-accent); clip-path: polygon(0 8%, 100% 0, 98% 100%, 2% 92%); font-size: 0.64rem; }
+.sheet__stack[data-mode='photo'] .sheet__cut .sheet__stamp { opacity: 0; }
+.sheet__stack[data-mode='photo'] .sheet__print .sheet__stamp { font-size: 0.34rem; }
+
+/* panel */
+.sheet__panel { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--fg) transparent; }
+.sheet__panel-in { padding: clamp(3.4rem, 9vh, 6.5rem) clamp(1.25rem, 4vw, 4rem) 8.5rem clamp(0.5rem, 2vw, 2rem); max-width: 44rem; }
+.sheet__kicker { display: flex; align-items: center; gap: 1em; margin-bottom: 1.6rem; }
+.sheet__kicker > span:last-child { opacity: 0.75; }
+.sheet__name { font-size: clamp(2.6rem, 1.4rem + 4.6vw, 6.2rem); text-wrap: balance; }
+.sheet__sci { margin-top: 0.7rem; font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem); line-height: 1.1; color: var(--accent); }
+[data-world='water'] .sheet__sci, [data-world='mountains'] .sheet__sci { color: var(--fg); opacity: 0.8; }
+.sheet__local { margin-top: 0.8rem; font-size: 0.98rem; }
+.sheet__local .mono { margin-right: 0.6em; opacity: 0.7; }
+.sheet__line { margin-top: 2rem; font-size: clamp(1.25rem, 1rem + 1vw, 1.8rem); }
+.sheet__text { margin-top: 1.1rem; opacity: 0.92; }
+.sheet__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem 1.6rem; margin-top: 2.2rem; padding-top: 1.6rem; border-top: 2px dashed color-mix(in srgb, var(--fg) 38%, transparent); }
+.sheet__fact dt { display: flex; align-items: center; gap: 0.6em; color: var(--accent); }
+[data-world='water'] .sheet__fact dt, [data-world='mountains'] .sheet__fact dt { color: var(--fg); }
+.sheet__fact dt .mono { color: var(--fg); opacity: 0.72; }
+.sheet__fact dd { margin-top: 0.35rem; font-size: 0.98rem; line-height: 1.35; }
+.sheet__credit { margin-top: 2.2rem; display: grid; gap: 0.7rem; font-size: 0.8rem; line-height: 1.45; opacity: 0.86; }
+.sheet__credit p { display: flex; gap: 0.75em; }
+.sheet__credit .ico { margin-top: 0.22em; }
+.sheet__credit a { text-underline-offset: 0.2em; }
+
+/* controls */
+.sheet__close {
+  position: absolute;
+  top: clamp(1.4rem, 3.4vh, 2.4rem);
+  right: clamp(0.9rem, 2vw, 1.75rem);
+  width: 3.4rem;
+  height: 3.4rem;
+  display: grid;
+  place-items: center;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 1.15rem;
+  border-radius: 50%;
+  z-index: 5;
+  transition: transform 0.5s var(--ease-back);
+}
+.sheet__close .ico { transition: transform 0.6s var(--ease-out); }
+.sheet__close:hover { transform: scale(1.1); }
+.sheet__close:hover .ico { transform: rotate(90deg); }
+.sheet__bar {
+  position: absolute;
+  right: clamp(0.9rem, 2vw, 1.75rem);
+  bottom: clamp(1rem, 3vh, 1.75rem);
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.45rem;
+  background: var(--fg);
+  color: var(--bg);
+  clip-path: polygon(0 5%, 100% 0, 99% 100%, 1% 96%);
+  z-index: 5;
+}
+.sheet__nav { width: 2.9rem; height: 2.9rem; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); font-size: 1rem; transition: transform 0.45s var(--ease-back); }
+.sheet__nav .flip { transform: scaleX(-1); }
+.sheet__nav:hover { transform: scale(1.12) rotate(-4deg); }
+.sheet__nav:active { transform: scale(0.94); }
+.sheet__count { padding: 0 0.4rem; font-size: 0.66rem; }
+
+@media (max-width: 899px) {
+  .sheet__paper { inset: 0; top: 1.25rem; display: block; overflow-y: auto; overscroll-behavior: contain; clip-path: polygon(0 1vh, 12% 0.2vh, 30% 1.2vh, 52% 0, 71% 1.1vh, 88% 0.1vh, 100% 0.9vh, 100% 100%, 0 100%); }
+  .sheet__stage { height: min(58vh, 104vw); position: sticky; top: 0; }
+  .sheet__cut { inset: 13% 8% 13%; }
+  .sheet__print { width: 36%; right: 5%; bottom: 7%; }
+  .sheet__stack[data-mode='photo'] .sheet__print { transform: translate3d(-40%, -9%, 0) rotate(-2.5deg) scale(1.7); }
+  .sheet__panel { position: relative; overflow: visible; background-color: var(--bg); background-image: var(--grain); background-size: 256px; box-shadow: 0 -18px 30px -18px rgba(10, 2, 24, 0.5); }
+  .sheet__panel-in { padding: 1.9rem var(--pad) 7.5rem; }
+  .sheet__facts { grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+  .sheet__bar { position: fixed; left: 50%; right: auto; bottom: 0.9rem; transform: translateX(-50%); }
+  .sheet__close { position: fixed; top: 2.1rem; right: 0.9rem; width: 3rem; height: 3rem; }
+}

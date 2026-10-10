@@ -1,0 +1,23 @@
+{
+  "name": "tern-kite-works",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5273 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 5274 --strictPort",
+    "images": "node tools/generate.mjs",
+    "process": "python tools/process.py"
+  },
+  "devDependencies": {
+    "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "@fontsource-variable/bodoni-moda": "^5.3.0",
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@fontsource-variable/martian-mono": "^5.3.0",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26"
+  }
+}

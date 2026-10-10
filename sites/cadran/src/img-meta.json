@@ -1,0 +1,134 @@
+{
+ "bottle-1": {
+  "w": 442,
+  "h": 1404
+ },
+ "bottle-2": {
+  "w": 442,
+  "h": 1404
+ },
+ "bottle-3": {
+  "w": 442,
+  "h": 1404
+ },
+ "bottle-4": {
+  "w": 442,
+  "h": 1404
+ },
+ "bottle-5": {
+  "w": 442,
+  "h": 1404
+ },
+ "atelier-blotters": {
+  "w": 1536,
+  "h": 1024
+ },
+ "atelier-organ": {
+  "w": 1536,
+  "h": 1024
+ },
+ "compline-incense": {
+  "w": 900,
+  "h": 878
+ },
+ "compline-iris": {
+  "w": 666,
+  "h": 900
+ },
+ "compline-oud": {
+  "w": 900,
+  "h": 870
+ },
+ "compline-vanilla": {
+  "w": 900,
+  "h": 887
+ },
+ "discovery-set": {
+  "w": 1672,
+  "h": 941
+ },
+ "lauds-bergamot": {
+  "w": 880,
+  "h": 900
+ },
+ "lauds-figleaf": {
+  "w": 899,
+  "h": 900
+ },
+ "lauds-stone": {
+  "w": 900,
+  "h": 741
+ },
+ "lauds-tea": {
+  "w": 900,
+  "h": 767
+ },
+ "light-compline": {
+  "w": 1000,
+  "h": 1500
+ },
+ "light-lauds": {
+  "w": 1000,
+  "h": 1500
+ },
+ "light-sext": {
+  "w": 1000,
+  "h": 1500
+ },
+ "light-terce": {
+  "w": 1000,
+  "h": 1500
+ },
+ "light-vespers": {
+  "w": 1000,
+  "h": 1500
+ },
+ "sext-driftwood": {
+  "w": 900,
+  "h": 683
+ },
+ "sext-immortelle": {
+  "w": 795,
+  "h": 900
+ },
+ "sext-lemon": {
+  "w": 900,
+  "h": 847
+ },
+ "sext-salt": {
+  "w": 887,
+  "h": 900
+ },
+ "terce-blossom": {
+  "w": 900,
+  "h": 797
+ },
+ "terce-mandarin": {
+  "w": 900,
+  "h": 851
+ },
+ "terce-mint": {
+  "w": 900,
+  "h": 845
+ },
+ "terce-peel": {
+  "w": 696,
+  "h": 900
+ },
+ "vespers-apricot": {
+  "w": 900,
+  "h": 866
+ },
+ "vespers-honeycomb": {
+  "w": 869,
+  "h": 900
+ },
+ "vespers-saffron": {
+  "w": 891,
+  "h": 900
+ },
+ "vespers-tobacco": {
+  "w": 603,
+  "h": 900
+ }
+}

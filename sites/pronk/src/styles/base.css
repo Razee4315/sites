@@ -1,0 +1,168 @@
+/* ─────────────── fonts: the Fell Types (Igino Marini's revival) + DM Mono, self-hosted ─────────────── */
+@font-face {
+  font-family: 'Fell Canon';
+  src: url('../../node_modules/@fontsource/im-fell-french-canon/files/im-fell-french-canon-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Fell Canon';
+  src: url('../../node_modules/@fontsource/im-fell-french-canon/files/im-fell-french-canon-latin-400-italic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Fell Pica';
+  src: url('../../node_modules/@fontsource/im-fell-dw-pica/files/im-fell-dw-pica-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Fell Pica';
+  src: url('../../node_modules/@fontsource/im-fell-dw-pica/files/im-fell-dw-pica-latin-400-italic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('../../node_modules/@fontsource/dm-mono/files/dm-mono-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+/* ─────────────── tokens ─────────────── */
+:root {
+  --ink: #0b0907;
+  --ink-2: #14100c;
+  --umber: #2a2017;
+  --bone: #e9e0cd;
+  --bone-2: #dbcfb7;
+  --bone-3: #c9bb9f;
+  --lead: #f6f0e3;
+  --lemon: #ecc94a;
+  --lobster: #c23a22;
+  --pewter: #918d82;
+
+  --display: 'Fell Canon', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --text: 'Fell Pica', 'Iowan Old Style', Georgia, serif;
+  --mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --out: cubic-bezier(0.16, 1, 0.3, 1);
+  --io: cubic-bezier(0.65, 0, 0.35, 1);
+  --soft: cubic-bezier(0.33, 1, 0.68, 1);
+
+  --pad: clamp(18px, 3.4vw, 60px);
+  --nav-h: clamp(56px, 6vw, 84px);
+}
+
+/* ─────────────── reset ─────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scrollbar-width: thin; scrollbar-color: #3a2e22 var(--ink); }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--text);
+  font-size: clamp(17px, 1.18vw, 21px);
+  line-height: 1.42;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+h1, h2, h3, p, ol, ul, dl, dd, figure, fieldset, legend { margin: 0; padding: 0; }
+h1, h2, h3 { font-weight: 400; }
+ol, ul { list-style: none; }
+fieldset { border: 0; min-width: 0; }
+img { display: block; max-width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+em, i { font-style: italic; }
+::selection { background: var(--lemon); color: var(--ink); }
+
+:focus { outline: none; }
+:focus-visible { outline: 1.5px solid var(--lemon); outline-offset: 4px; border-radius: 2px; }
+[data-theme='light'] :focus-visible { outline-color: var(--ink); }
+
+.skip {
+  position: fixed; left: 12px; top: 12px; z-index: 200;
+  padding: 10px 16px; background: var(--lemon); color: var(--ink);
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  transform: translateY(-200%); transition: transform 0.3s var(--out);
+}
+.skip:focus-visible { transform: none; }
+
+/* ─────────────── type utilities ─────────────── */
+.label {
+  font-family: var(--mono);
+  font-size: clamp(10.5px, 0.74vw, 12.5px);
+  line-height: 1.5;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-style: normal;
+}
+.label b { font-weight: 400; }
+
+.link {
+  display: inline-block; position: relative;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px; background-position: 0 100%; background-repeat: no-repeat;
+  transition: opacity 0.3s;
+  cursor: pointer;
+}
+.link:hover { opacity: 0.6; }
+
+/* lines split by JS: each .ln masks a .ln__in that rises */
+.ln { display: block; overflow: hidden; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.ln__in { display: block; will-change: transform; }
+
+/* word-by-word scrub */
+.w { display: inline-block; opacity: 0.14; will-change: opacity; }
+
+/* ─────────────── button ─────────────── */
+.btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  height: 56px; padding: 0 30px; border-radius: 999px; overflow: hidden; isolation: isolate;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--bone); background: var(--ink);
+  cursor: pointer;
+}
+.btn__bg {
+  position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--lemon);
+  transform: translateY(101%); transition: transform 0.55s var(--out);
+}
+.btn__t { display: block; transition: transform 0.55s var(--out); }
+.btn:hover, .btn:focus-visible { color: var(--ink); }
+.btn:hover .btn__bg, .btn:focus-visible .btn__bg { transform: none; }
+.btn { transition: color 0.3s; }
+.btn:active .btn__t { transform: scale(0.96); }
+.btn--light { background: var(--bone); color: var(--ink); }
+
+/* ─────────────── grain ─────────────── */
+.grain {
+  position: fixed; inset: -60px; z-index: 90; pointer-events: none;
+  opacity: 0.5;
+  background-size: 220px 220px;
+}
+
+/* ─────────────── reveal defaults (JS adds .is-in) ─────────────── */
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.9s var(--out), transform 1.1s var(--out); transition-delay: var(--d, 0s); }
+.js .reveal.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { transform: none; transition: opacity 0.4s linear; }
+  .w { opacity: 1; }
+}
+
+/* the head hides the body until this sheet has arrived */
+html body { visibility: visible; }
+.has-cursor, .has-cursor * { cursor: none !important; }
+
+/* lot text rises as each lot arrives */
+.js .lot .lot__txt > * { opacity: 0; transform: translateY(22px); transition: opacity 0.9s var(--out), transform 1.2s var(--out); }
+.js .lot .lot__txt > :nth-child(2) { transition-delay: 0.08s; }
+.js .lot .lot__txt > :nth-child(3) { transition-delay: 0.16s; }
+.js .lot.is-in .lot__txt > * { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js .lot .lot__txt > *, .js .step > *, .js .rule > *, .js .ba-card { transform: none !important; }
+  .hero__cue-line::after, .loader__flame i, .loader__flame::after { animation: none; }
+}

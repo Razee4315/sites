@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Quire — an opera house cut from paper</title>
+    <meta name="description" content="Quire is a paper opera house in Leipzig: five operas a season, staged at one-twelfth scale for twenty-four people at a time. An invented house; images generated with OpenAI Codex." />
+    <meta name="theme-color" content="#efe8da" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23efe8da'/%3E%3Cpath d='M8 6h16v20H8z' fill='%230d1a52'/%3E%3Cpath d='M16 6v20' stroke='%23efe8da' stroke-width='2'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <a class="skip" href="#house">Skip the stage, go to the text</a>
+
+    <header class="nav" id="nav">
+      <a class="tag nav__mark" href="#top" aria-label="Quire, back to the top">
+        <span class="nav__word">Quire</span>
+        <span class="nav__sub">Paper opera, Leipzig</span>
+      </a>
+      <nav class="tag nav__links" aria-label="Sections">
+        <a href="#season">Season</a>
+        <a href="#house">House</a>
+        <a href="#workshop">Workshop</a>
+        <a href="#cast">Company</a>
+      </nav>
+      <a class="tag tag--red nav__cta" href="#seats"><span>Take a sheet</span></a>
+      <button class="tag nav__burger" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="nav__burger-a">Menu</span><span class="nav__burger-b">Close</span>
+      </button>
+    </header>
+
+    <div class="menu" id="menu" hidden>
+      <div class="menu__sheet">
+        <nav class="menu__links" aria-label="Sections">
+          <a href="#season"><i>I</i><span>Season</span></a>
+          <a href="#house"><i>II</i><span>House</span></a>
+          <a href="#workshop"><i>III</i><span>Workshop</span></a>
+          <a href="#cast"><i>IV</i><span>Company</span></a>
+          <a href="#seats"><i>V</i><span>Seats</span></a>
+        </nav>
+        <p class="menu__foot">Falzgasse 24, Leipzig<br />The house folds flat on Mondays.</p>
+      </div>
+    </div>
+
+    <main id="top">
+      <!-- ───────────── I. The stage: hero + season ───────────── -->
+      <section class="theatre" id="season" aria-label="The season, on stage">
+        <div class="theatre__pin" id="pin">
+          <h1 class="vh">Quire — an opera house cut from paper</h1>
+
+          <div class="stage" id="stage">
+            <div class="stage__scenes" id="scenes"></div>
+            <div class="stage__light" aria-hidden="true">
+              <i class="stage__foot"></i>
+              <i class="stage__spot" id="spot"></i>
+              <i class="stage__dim" id="dim"></i>
+            </div>
+            <div class="stage__frames" id="frames" aria-hidden="true"></div>
+            <i class="stage__edge" aria-hidden="true"></i>
+          </div>
+
+          <div class="prog" id="prog"></div>
+
+          <div class="tui" id="tui">
+            <ol class="tui__acts" id="acts" aria-label="Productions"></ol>
+            <p class="tui__hint"><i></i><span class="tui__hint-fine">Your pointer is the follow-spot</span><span class="tui__hint-coarse">Scroll for the scene change</span></p>
+            <div class="tui__arrows">
+              <button type="button" id="prev" aria-label="Previous production"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7.5 12l7 7" /></svg></button>
+              <button type="button" id="next" aria-label="Next production"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5 7 7-7 7" /></svg></button>
+            </div>
+          </div>
+
+          <div class="fold" id="fold" aria-hidden="true">
+            <div class="leaf leaf--a">
+              <div class="leaf__in">
+                <div class="leaf__art"></div>
+                <div class="leaf__copy leaf__copy--a">
+                  <p class="label">Season IX &nbsp;·&nbsp; 2026–27</p>
+                  <p class="hero__line">An opera house,<br /><em>cut from paper.</em></p>
+                </div>
+                <i class="leaf__shade"></i>
+              </div>
+            </div>
+            <div class="leaf leaf--b">
+              <div class="leaf__in">
+                <div class="leaf__art"></div>
+                <div class="leaf__copy leaf__copy--b">
+                  <p class="hero__body">Five operas a season, staged at one-twelfth scale for twenty-four people at a time. Every tree, wave and star was drawn, cut and coloured by hand.</p>
+                  <p class="hero__cue"><span class="hero__cue-line"></span><span>Scroll to open the house</span></p>
+                </div>
+                <i class="leaf__shade"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="loader" id="loader" role="status" aria-live="polite">
+            <span class="loader__text">Cutting sheet <b id="loader-n">01</b> of 24</span>
+            <span class="loader__bar"><i id="loader-bar"></i></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── II. The house ───────────── -->
+      <section class="house paper" id="house">
+        <div class="wrap">
+          <p class="label house__label" data-rise>II &nbsp;—&nbsp; The house</p>
+          <h2 class="house__say" data-lines>
+            A whole opera house, built at <em>one-twelfth</em> the size. The stage is as wide as an open newspaper. The singers standing behind it are <em>the usual size.</em>
+          </h2>
+        </div>
+
+        <div class="wrap house__grid">
+          <figure class="house__photo" data-photo>
+            <div class="photo"><img data-img="doc-house" alt="A dark former bookbindery. At the far end a tiny paper theatre glows on a table; two dozen people sit on wooden chairs in front of it." /></div>
+            <figcaption class="cap"><span>Falzgasse 24, a Thursday in March.</span><span>The stage is the bright thing at the back.</span></figcaption>
+          </figure>
+
+          <aside class="card house__card" data-rise>
+            <h3 class="card__title">House notes</h3>
+            <dl class="specs">
+              <div><dt>Stage opening</dt><dd><b data-count="740">740</b> × <b data-count="510">510</b> mm</dd></div>
+              <div><dt>Depth</dt><dd><b>Seven</b> sheets</dd></div>
+              <div><dt>Seats</dt><dd><b data-count="24">24</b> — one quire</dd></div>
+              <div><dt>Orchestra</dt><dd><b>Six</b> players</dd></div>
+              <div><dt>Lamps</dt><dd><b data-count="38">38</b>, none brighter than a candle</dd></div>
+              <div><dt>Longest scene change</dt><dd><b data-count="11">11</b> seconds</dd></div>
+            </dl>
+          </aside>
+
+          <div class="house__text">
+            <p data-rise>Quire began in 2017 with a secondhand toy theatre and an argument about whether <i>Tosca</i> needed a chorus. It turned out it needed forty people, which was the end of the argument, and the beginning of this.</p>
+            <p data-rise>We work in a former bindery on Falzgasse. The stage sits on the old guillotine table. Four singers and six players stand behind a gauze, unamplified, close enough that you will hear them breathe in before the high notes.</p>
+            <p data-rise>A <b>quire</b> is twenty-four sheets of paper. It is also an old spelling of <i>choir.</i> We did not plan the second part.</p>
+          </div>
+
+          <figure class="house__tree" data-rise>
+            <img data-img="obj-tree" data-drift="26" alt="A tiny autumn tree cut from paper, glued to a wooden stick." />
+            <figcaption>A beech from act two. On most screens this is close to its real size.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ───────────── III. Anatomy of a scene ───────────── -->
+      <section class="anatomy paper" id="anatomy" aria-labelledby="anatomy-h">
+        <div class="anatomy__pin">
+          <div class="anatomy__copy">
+            <p class="label">Rusalka, act one &nbsp;·&nbsp; exploded</p>
+            <h2 class="display" id="anatomy-h"><span>Seven</span> <span>sheets</span> <span>deep</span></h2>
+            <p class="anatomy__lede">Every scene is seven layers of paper standing in grooves, thirty millimetres apart. Nothing is painted to look far away. It simply is further away.</p>
+            <ol class="sheets" id="sheets"></ol>
+          </div>
+          <div class="rig" id="rig" aria-hidden="true">
+            <div class="rig__set" id="rig-set"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── IV. Workshop ───────────── -->
+      <section class="making paper" id="workshop">
+        <div class="wrap making__head">
+          <p class="label" data-rise>III &nbsp;—&nbsp; The workshop</p>
+          <h2 class="display display--xl" data-chars>From sheet<br />to scene</h2>
+          <p class="making__lede" data-rise>One production takes about eleven hundred hours and forty sheets. This is the Dutchman's ship, four times, on the same table.</p>
+        </div>
+
+        <div class="wrap making__body">
+          <div class="making__stick">
+            <div class="making__frame" id="make-frame">
+              <img data-img="make-1" alt="A pencil drawing of a three-masted ship on waves with a full moon, on cream paper on a cutting mat." class="is-on" />
+              <img data-img="make-2" alt="The same ship with every shape now cut from bare cream paper and laid back in place." />
+              <img data-img="make-3" alt="The same ship in coloured paper: black hull, oxblood red sails, grey-green waves, white moon on slate." />
+              <img data-img="make-4" alt="The same paper ship in the dark, lit by one warm lamp from the lower left." />
+              <div class="making__count"><b id="make-n">01</b><span>/ 04</span></div>
+            </div>
+            <div class="making__bar"><i id="make-bar"></i></div>
+          </div>
+
+          <ol class="steps" id="steps">
+            <li class="step" data-step="0">
+              <img class="step__obj step__obj--quire" data-img="obj-quire" data-shadow alt="" />
+              <p class="step__n">01</p>
+              <h3 class="step__t">Draw</h3>
+              <p class="step__p">Each scene starts as a single pencil drawing at full size, which is to say very small. If it doesn't read from the back row — four metres — it is drawn again.</p>
+              <p class="step__f"><b>140</b> hours of drawing per opera</p>
+            </li>
+            <li class="step" data-step="1">
+              <img class="step__obj step__obj--scalpel" data-img="obj-scalpel" data-shadow alt="" />
+              <p class="step__n">02</p>
+              <h3 class="step__t">Cut</h3>
+              <p class="step__p">Everything is cut with a scalpel on bare cartridge paper first, to find out where it will tear. A blade lasts about forty minutes. We keep the dull ones in a jar, for humility.</p>
+              <p class="step__f"><b>300</b> blades, give or take</p>
+            </li>
+            <li class="step" data-step="2">
+              <img class="step__obj step__obj--gouache" data-img="obj-gouache" data-shadow alt="" />
+              <p class="step__n">03</p>
+              <h3 class="step__t">Colour</h3>
+              <p class="step__p">Paper first, paint second. Sugar paper for skies, mulberry for mist, and gouache only where the mill doesn't make the colour. Each opera is allowed five colours and one accent.</p>
+              <p class="step__f"><b>5 + 1</b> colours, no exceptions</p>
+            </li>
+            <li class="step" data-step="3">
+              <img class="step__obj step__obj--thread" data-img="obj-thread" data-shadow alt="" />
+              <p class="step__n">04</p>
+              <h3 class="step__t">Light</h3>
+              <p class="step__p">Thirty-eight lamps, each the size of a lentil. Once they are on, the edges of the paper start to glow and the scissors stop mattering. That is the moment we are working towards.</p>
+              <p class="step__f"><b>38</b> lamps, one dimmer, one hand</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="wrap bench">
+          <figure class="bench__a" data-photo>
+            <div class="photo"><img data-img="doc-hands" alt="Hands cutting a small tree from ochre paper with a scalpel on a green mat, surrounded by curls of blue and red paper." /></div>
+            <figcaption class="cap"><span>The beech for <i>The Cunning Little Vixen.</i></span><span>Attempt four.</span></figcaption>
+          </figure>
+          <figure class="bench__b" data-photo>
+            <div class="photo"><img data-img="doc-backstage" alt="Backstage: layers of blue paper scenery standing in wooden grooves, paper stars on threads, a hand sliding a small figure forward." /></div>
+            <figcaption class="cap"><span>From the slide side.</span><span>Six grooves, one hand.</span></figcaption>
+          </figure>
+          <p class="bench__quote" data-lines>“People ask whether it is fiddly. It is exactly as fiddly as an orchestra, only smaller and it doesn't need lunch.”</p>
+          <p class="bench__by" data-rise>Henrike Vossberg, who cuts every sheet</p>
+          <img class="bench__obj bench__obj--scissors" data-img="obj-scissors" data-shadow data-drift="-60" alt="" />
+          <img class="bench__obj bench__obj--offcuts" data-img="obj-offcuts" data-drift="40" alt="" />
+          <img class="bench__obj bench__obj--folder" data-img="obj-folder" data-shadow data-drift="-30" alt="" />
+        </div>
+      </section>
+
+      <!-- ───────────── V. Cast ───────────── -->
+      <section class="cast" id="cast" aria-labelledby="cast-h">
+        <div class="cast__pin">
+          <header class="cast__head">
+            <p class="label">IV &nbsp;—&nbsp; The company</p>
+            <h2 class="display" id="cast-h">Cut to size</h2>
+            <p class="cast__lede">Ten of the forty-one figures in this season's box. Each stands on a strip of grey card and is pushed on from the wings, on a count, in the dark.</p>
+          </header>
+          <div class="cast__view" id="cast-view">
+            <ul class="cast__rail" id="cast-rail"></ul>
+          </div>
+          <div class="cast__foot">
+            <span class="label" id="cast-count">01 / 10</span>
+            <span class="cast__track"><i id="cast-bar"></i></span>
+            <span class="label cast__drag">Drag, or keep scrolling</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── The humans ───────────── -->
+      <section class="people paper" id="company">
+        <div class="wrap">
+          <div class="people__head">
+            <h2 class="display" data-chars>And the<br />full-size ones</h2>
+            <p class="people__lede" data-rise>Eight people make every performance. We have no photographs of them, because Henrike thinks cameras are cheating. She cut these instead, in one sitting each.</p>
+          </div>
+          <ul class="people__grid" id="people"></ul>
+        </div>
+      </section>
+
+      <!-- ───────────── VI. Seats ───────────── -->
+      <section class="seats" id="seats" aria-labelledby="seats-h">
+        <div class="wrap seats__wrap">
+          <header class="seats__head">
+            <p class="label">V &nbsp;—&nbsp; Seats</p>
+            <h2 class="display display--xl" id="seats-h" data-chars>Take<br />a sheet</h2>
+            <p class="seats__lede" data-rise>Twenty-four seats a night. We call them sheets; a full house is a quire. Pick a night, pick your sheets, and we will hold them at the door.</p>
+          </header>
+
+          <div class="seats__nights">
+            <h3 class="label">1 &nbsp;·&nbsp; Choose a night</h3>
+            <div class="nights" id="nights" role="radiogroup" aria-label="Performances"></div>
+          </div>
+
+          <div class="seats__plan">
+            <h3 class="label">2 &nbsp;·&nbsp; Choose your sheets</h3>
+            <div class="plan">
+              <div class="plan__stage"><span>Stage &nbsp;·&nbsp; 740 mm</span></div>
+              <div class="plan__grid" id="plan" role="group" aria-label="Seat plan, 24 sheets"></div>
+              <ul class="plan__key">
+                <li><i class="k k--free"></i>Free</li>
+                <li><i class="k k--sel"></i>Yours</li>
+                <li><i class="k k--gone"></i>Gone</li>
+              </ul>
+            </div>
+
+            <form class="book" id="book" novalidate>
+              <h3 class="label">3 &nbsp;·&nbsp; Tell us who is coming</h3>
+              <p class="book__sum" id="book-sum" aria-live="polite">No sheets chosen yet.</p>
+              <div class="field">
+                <label for="f-name">Name</label>
+                <input id="f-name" name="name" type="text" autocomplete="name" required />
+                <span class="field__err" id="e-name" role="alert"></span>
+              </div>
+              <div class="field">
+                <label for="f-mail">Email</label>
+                <input id="f-mail" name="email" type="email" autocomplete="email" required />
+                <span class="field__err" id="e-mail" role="alert"></span>
+              </div>
+              <button class="btn btn--light" type="submit"><span class="btn__t">Hold my sheets</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg></button>
+              <p class="book__fine">€38 a sheet, paid at the door. Nothing is charged here — see the note below.</p>
+            </form>
+          </div>
+
+          <div class="stub" id="stub" hidden>
+            <div class="stub__slot"></div>
+            <div class="stub__clip">
+              <article class="ticket" id="ticket" tabindex="-1">
+                <div class="ticket__main">
+                  <p class="label">Quire &nbsp;·&nbsp; Season IX</p>
+                  <h3 class="ticket__opera" id="t-opera"></h3>
+                  <p class="ticket__when" id="t-when"></p>
+                  <p class="ticket__name">Held for <b id="t-name"></b></p>
+                </div>
+                <div class="ticket__side">
+                  <p class="label">Sheets</p>
+                  <p class="ticket__seats" id="t-seats"></p>
+                  <p class="ticket__door">Doors 19:00<br />Falzgasse 24</p>
+                </div>
+              </article>
+            </div>
+            <p class="stub__note">An imaginary house prints imaginary tickets. Nothing was charged, nothing was sent and no seat was held — but this is the one we would have cut for you.</p>
+            <button class="link" type="button" id="stub-again">Choose again</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ───────────── Footer ───────────── -->
+    <footer class="foot paper" id="foot">
+      <div class="wrap foot__grid">
+        <div class="foot__col">
+          <h2 class="label">Visit</h2>
+          <p>Quire<br />Falzgasse 24<br />04109 Leipzig</p>
+          <p>Five minutes from the Thomaskirche, through the yard with the fig tree, up the iron stairs.</p>
+        </div>
+        <div class="foot__col">
+          <h2 class="label">Hours</h2>
+          <p>Performances Thursday to Sunday, 19:30.<br />Sunday matinée, 15:00.</p>
+          <p>The house folds flat on Mondays.</p>
+        </div>
+        <div class="foot__col">
+          <h2 class="label">Write</h2>
+          <p><a class="link" href="mailto:door@quire.example">door@quire.example</a><br />We answer by hand, so allow a week.</p>
+        </div>
+        <form class="foot__col foot__news" id="news" novalidate>
+          <h2 class="label"><label for="n-mail">The Offcut</label></h2>
+          <p>A letter, four times a year, with whatever fell on the floor.</p>
+          <div class="news__row">
+            <input id="n-mail" type="email" placeholder="you@somewhere" autocomplete="email" required />
+            <button type="submit" aria-label="Subscribe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg></button>
+          </div>
+          <p class="news__msg" id="news-msg" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <!-- the name again, cut through to the last scene of the season -->
+      <div class="foot__mark" id="foot-mark" aria-hidden="true">
+        <div class="foot__scene" id="foot-scene"></div>
+        <div class="foot__sheet leaf__art" id="foot-sheet"></div>
+      </div>
+
+      <div class="wrap foot__base">
+        <p><b>Colophon.</b> Quire is an invented opera house: the building, the people, the season and the tickets do not exist. Every piece of scenery, every figure, object, silhouette and photograph on this page was generated with OpenAI Codex. Design, words and code by Claude.</p>
+        <p>Set in Big Shoulders Stencil, Bodoni Moda and Instrument Sans.<br /><a class="link" href="#top">Back to the top</a></p>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

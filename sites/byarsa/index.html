@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Byarsa — Guides to Deosai, the Land of Giants</title>
+    <meta name="description" content="Deosai is the second-highest plateau on earth and it is open for about a hundred days a year. Byarsa walks small groups across it from Skardu, Baltistan." />
+    <meta name="theme-color" content="#070a12" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070a12'/%3E%3Ccircle cx='16' cy='20' r='7' fill='%23f2a33c'/%3E%3Cpath d='M0 21l8-7 6 5 7-8 11 11v10H0z' fill='%23eee6d6'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/css/index.css" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#name">Skip to content</a>
+
+    <!-- ───────────── loader ───────────── -->
+    <div class="loader" aria-hidden="true">
+      <div class="loader__inner">
+        <p class="loader__from mono">Skardu <span>2,228 m</span></p>
+        <p class="loader__alt"><span class="loader__num">2,228</span><span class="loader__unit">m</span></p>
+        <p class="loader__to mono">Deosai <span>4,114 m</span></p>
+      </div>
+      <div class="loader__bar"><i></i></div>
+    </div>
+
+    <!-- ───────────── nav + clock ───────────── -->
+    <nav class="nav" aria-label="Primary" data-theme="dark">
+      <a class="nav__mark" href="#top" aria-label="Byarsa, back to top">
+        <span class="nav__word">Byarsa</span>
+        <span class="nav__sub mono">Guides to Deosai</span>
+      </a>
+
+      <div class="hud mono" role="status" aria-label="Time of day on the plateau">
+        <span class="hud__dial" aria-hidden="true"><i></i></span>
+        <span class="hud__time">04:47</span>
+        <span class="hud__sep" aria-hidden="true"></span>
+        <span class="hud__temp">−3°C</span>
+        <span class="hud__sep hud__wide" aria-hidden="true"></span>
+        <span class="hud__phase hud__wide">Blue hour</span>
+      </div>
+
+      <ul class="nav__links mono">
+        <li><a href="#flora">Flora</a></li>
+        <li><a href="#residents">Residents</a></li>
+        <li><a href="#water">Water</a></li>
+        <li><a href="#crossings">Crossings</a></li>
+        <li><a class="nav__cta" href="#dates"><span>Ask for a date</span></a></li>
+      </ul>
+
+      <button class="nav__burger mono" type="button" aria-expanded="false" aria-controls="menu">
+        <span class="nav__burger-a">Menu</span><span class="nav__burger-b">Close</span>
+      </button>
+    </nav>
+
+    <div class="menu" id="menu" aria-hidden="true">
+      <ul class="menu__list">
+        <li><a href="#name"><span class="mono">06:10</span>The name</a></li>
+        <li><a href="#flora"><span class="mono">07:30</span>Flora</a></li>
+        <li><a href="#residents"><span class="mono">10:20</span>Residents</a></li>
+        <li><a href="#water"><span class="mono">13:10</span>Water</a></li>
+        <li><a href="#weather"><span class="mono">15:40</span>Weather</a></li>
+        <li><a href="#crossings"><span class="mono">17:30</span>Crossings</a></li>
+        <li><a href="#dates"><span class="mono">22:40</span>Ask for a date</a></li>
+      </ul>
+      <p class="menu__foot mono">35.03° N · 75.42° E · 4,114 m</p>
+    </div>
+
+    <div class="grain" aria-hidden="true"></div>
+    <div class="cursor" aria-hidden="true"><span class="cursor__label mono"></span></div>
+
+    <main>
+      <!-- ───────────── 04:47 hero ───────────── -->
+      <header class="hero" id="top" data-time="04:47" data-theme="dark">
+        <div class="hero__pin">
+          <div class="hero__sky">
+            <div class="sky sky--night"></div>
+            <div class="sky sky--blue"></div>
+            <div class="sky sky--glow"></div>
+            <div class="sky sky--day"></div>
+            <canvas class="hero__stars" aria-hidden="true"></canvas>
+            <div class="hero__sun" aria-hidden="true"></div>
+            <div class="hero__clouds" aria-hidden="true">
+              <img data-i="cut-cloud-a" data-eager class="hero__cloud hero__cloud--a" alt="" />
+              <img data-i="cut-cloud-b" data-eager class="hero__cloud hero__cloud--b" alt="" />
+            </div>
+          </div>
+
+          <h1 class="hero__title" aria-label="Deosai">
+            <span class="hero__row" aria-hidden="true"><span class="g"><b>D</b></span><span class="g"><b>E</b></span><span class="g"><b>O</b></span></span><span class="hero__row" aria-hidden="true"><span class="g"><b>S</b></span><span class="g"><b>A</b></span><span class="g"><b>I</b></span></span>
+          </h1>
+
+          <div class="hero__layer hero__far" aria-hidden="true">
+            <div class="stack">
+              <img data-i="hero-far-night" data-eager alt="" />
+              <img data-i="hero-far-blue" data-eager alt="" />
+              <img data-i="hero-far-glow" data-eager alt="" />
+              <img data-i="hero-far-day" data-eager alt="" />
+            </div>
+          </div>
+          <div class="hero__layer hero__near" aria-hidden="true">
+            <div class="stack">
+              <img data-i="hero-near-night" data-eager alt="" />
+              <img data-i="hero-near-blue" data-eager alt="" />
+              <img data-i="hero-near-glow" data-eager alt="" />
+              <img data-i="hero-near-day" data-eager alt="" />
+            </div>
+          </div>
+          <div class="hero__shade" aria-hidden="true"></div>
+
+          <div class="hero__ui">
+          <p class="hero__urdu" lang="ur" dir="rtl" aria-hidden="true">دیوسائی</p>
+          <p class="hero__kicker mono"><span>The Land of Giants</span><span>Gilgit-Baltistan, Pakistan</span></p>
+
+          <div class="hero__copy">
+            <p class="hero__lead">The second-highest plateau on earth is open for about a hundred days a year. We spend all of them up there, and we take a few people with us.</p>
+            <a class="hero__cue mono" href="#name"><i aria-hidden="true"></i><span>Scroll to start the day</span></a>
+          </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ───────────── 06:10 the name ───────────── -->
+      <section class="name paper" id="name" data-time="06:10" data-theme="light">
+        <div class="wrap name__top">
+          <p class="label mono"><span>06:10</span>The name</p>
+          <h2 class="h-xl" data-split>Deo, a giant. <em>Sai,</em> its shadow.</h2>
+        </div>
+
+        <div class="shadowplay" aria-hidden="true">
+          <div class="shadowplay__sun"><i></i></div>
+          <div class="shadowplay__stage">
+            <div class="shadowplay__word"><span class="shadowplay__cast">Land of giants</span><span class="shadowplay__type">Land of giants</span></div>
+          </div>
+          <div class="shadowplay__ground"></div>
+        </div>
+
+        <div class="wrap name__grid">
+          <div class="name__text">
+            <p class="lede" data-lines>The Shina-speaking herders who come up from Astore named it for what it does to you. Three and a half thousand square kilometres of grass at the height of an Alpine summit, and not one tree to tell you how far away anything is.</p>
+            <p data-lines>A boulder turns out to be a hill. The hill turns out to be forty minutes away. You are the smallest thing you can see, and you stay that way for days.</p>
+            <p data-lines>On the Skardu side the Balti call it <em>Byarsa</em>, the summer’s place, which is the more practical name: from November to May it belongs to the snow. We borrowed the word for ourselves.</p>
+          </div>
+          <figure class="name__fig" data-parallax>
+            <div class="frame"><img data-i="ph-aerial" sizes="(min-width: 900px) 34vw, 86vw" alt="Braided streams wandering across green and gold grassland, seen from directly above." /></div>
+            <figcaption class="mono">Shatung drainage, from above. No scale intended.</figcaption>
+          </figure>
+        </div>
+
+        <dl class="facts wrap">
+          <div class="fact"><dt><span data-count="4114">4,114</span><small>m</small></dt><dd><b>Mean elevation.</b> Higher than every summit in the Pyrenees.</dd></div>
+          <div class="fact"><dt><span data-count="3584">3,584</span><small>km²</small></dt><dd><b>National park since 1993.</b> Larger than Luxembourg, with fewer cafés.</dd></div>
+          <div class="fact"><dt><span data-count="100">100</span><small>days</small></dt><dd><b>Open, roughly.</b> Between the snow leaving and the snow coming back.</dd></div>
+          <div class="fact"><dt><span data-count="0">0</span><small>trees</small></dt><dd><b>Above the treeline, edge to edge.</b> Nothing here is taller than a bear.</dd></div>
+        </dl>
+      </section>
+
+      <!-- ───────────── 07:30 flora ───────────── -->
+      <section class="flora paper" id="flora" data-time="07:30" data-theme="light">
+        <div class="wrap flora__head">
+          <div>
+            <p class="label mono"><span>07:30</span>The ground</p>
+            <h2 class="h-lg" data-split>For six weeks the plateau is mostly flowers.</h2>
+          </div>
+          <div class="flora__intro">
+            <figure class="flora__fig" data-parallax><div class="frame"><img data-i="ph-meadow" sizes="(min-width: 900px) 18vw, 44vw" alt="A dense carpet of yellow, violet and blue alpine flowers with the plain and a snowy ridge behind." /></div><figcaption class="mono">Above Kala Pani, mid-July</figcaption></figure>
+            <p data-lines>The thaw reaches four thousand metres in late June. Everything that grows here has until the first September frost to flower, set seed and go back under, so it all happens at once. Walk slowly. Most of it is ankle height.</p>
+            <p class="hint mono"><i aria-hidden="true"></i><span class="hint--fine">Move through the meadow. Pick one.</span><span class="hint--touch">Swipe through the meadow.</span></p>
+          </div>
+        </div>
+
+        <div class="meadow">
+          <ul class="meadow__track">
+            <li class="plant" style="--x:0.5;--h:46;--d:1"><button type="button" aria-describedby="p1"><img data-i="fl-primula" sizes="(min-width: 900px) 18vw, 50vw" alt="Purple primrose" /></button>
+              <div class="plant__card" id="p1"><span class="mono">No. 01 · late June</span><h3>Purple primrose</h3><i>Primula macrophylla</i><p>First through the snowmelt, often with ice still at its feet.</p></div></li>
+            <li class="plant" style="--x:8.5;--h:62;--d:3"><button type="button" aria-describedby="p2"><img data-i="fl-aconite" sizes="(min-width: 900px) 18vw, 50vw" alt="Monkshood" /></button>
+              <div class="plant__card" id="p2"><span class="mono">No. 02 · August</span><h3>Monkshood</h3><i>Aconitum violaceum</i><p>Handsome, and poisonous from root to tip. The marmots leave it alone and so should you.</p></div></li>
+            <li class="plant" style="--x:17.5;--h:38;--d:2"><button type="button" aria-describedby="p3"><img data-i="fl-potentilla" sizes="(min-width: 900px) 18vw, 50vw" alt="Golden cinquefoil" /></button>
+              <div class="plant__card" id="p3"><span class="mono">No. 03 · July</span><h3>Golden cinquefoil</h3><i>Potentilla argyrophylla</i><p>The yellow you can see from the jeep. Whole hillsides of it by mid-July.</p></div></li>
+            <li class="plant is-active" style="--x:26;--h:54;--d:1"><button type="button" aria-describedby="p4"><img data-i="fl-gentian" sizes="(min-width: 900px) 18vw, 50vw" alt="Trumpet gentian" /></button>
+              <div class="plant__card" id="p4"><span class="mono">No. 04 · July to September</span><h3>Trumpet gentian</h3><i>Gentiana carinata</i><p>Opens only in direct sun and closes when a cloud passes. A reliable weather report.</p></div></li>
+            <li class="plant" style="--x:35;--h:40;--d:3"><button type="button" aria-describedby="p5"><img data-i="fl-edelweiss" sizes="(min-width: 900px) 18vw, 50vw" alt="Himalayan edelweiss" /></button>
+              <div class="plant__card" id="p5"><span class="mono">No. 05 · July</span><h3>Himalayan edelweiss</h3><i>Leontopodium himalayanum</i><p>Felted against the frost. Common on the dry ridges, where nothing else bothers.</p></div></li>
+            <li class="plant" style="--x:43;--h:58;--d:2"><button type="button" aria-describedby="p6"><img data-i="fl-poppy" sizes="(min-width: 900px) 18vw, 50vw" alt="Himalayan blue poppy" /></button>
+              <div class="plant__card" id="p6"><span class="mono">No. 06 · July, briefly</span><h3>Blue poppy</h3><i>Meconopsis aculeata</i><p>Rare. Among boulders on north-facing slopes. We know where; we don’t publish it.</p></div></li>
+            <li class="plant" style="--x:52.5;--h:36;--d:1"><button type="button" aria-describedby="p7"><img data-i="fl-aster" sizes="(min-width: 900px) 18vw, 50vw" alt="Alpine aster" /></button>
+              <div class="plant__card" id="p7"><span class="mono">No. 07 · August</span><h3>Alpine aster</h3><i>Aster flaccidus</i><p>Marmots eat the heads like apples. Look for the ones they missed.</p></div></li>
+            <li class="plant" style="--x:59.5;--h:50;--d:3"><button type="button" aria-describedby="p8"><img data-i="fl-pedicularis" sizes="(min-width: 900px) 18vw, 50vw" alt="Lousewort" /></button>
+              <div class="plant__card" id="p8"><span class="mono">No. 08 · July</span><h3>Lousewort</h3><i>Pedicularis punctata</i><p>Half a parasite. It taps the roots of the grass beside it and flowers on the proceeds.</p></div></li>
+            <li class="plant" style="--x:68.5;--h:42;--d:2"><button type="button" aria-describedby="p9"><img data-i="fl-bistort" sizes="(min-width: 900px) 18vw, 50vw" alt="Himalayan fleeceflower" /></button>
+              <div class="plant__card" id="p9"><span class="mono">No. 09 · August</span><h3>Fleeceflower</h3><i>Bistorta affinis</i><p>Turns the stream banks pink for the last fortnight of summer.</p></div></li>
+            <li class="plant" style="--x:75;--h:56;--d:1"><button type="button" aria-describedby="p10"><img data-i="fl-geranium" sizes="(min-width: 900px) 18vw, 50vw" alt="Meadow cranesbill" /></button>
+              <div class="plant__card" id="p10"><span class="mono">No. 10 · July</span><h3>Meadow cranesbill</h3><i>Geranium pratense</i><p>Wet ground around Bara Pani. Bears dig beside it for roots.</p></div></li>
+            <li class="plant" style="--x:84.5;--h:37;--d:2"><button type="button" aria-describedby="p11"><img data-i="fl-rhodiola" sizes="(min-width: 900px) 18vw, 50vw" alt="Roseroot" /></button>
+              <div class="plant__card" id="p11"><span class="mono">No. 11 · July</span><h3>Roseroot</h3><i>Rhodiola heterodonta</i><p>Grows out of cracks in bare granite, which is most of what it needs.</p></div></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ───────────── 10:20 residents ───────────── -->
+      <section class="res" id="residents" data-time="10:20" data-theme="dark">
+        <div class="res__pin">
+          <div class="res__head wrap">
+            <p class="label mono"><span>10:20</span>The residents</p>
+            <h2 class="h-lg" data-split>Nothing here is taller than a bear.</h2>
+          </div>
+
+          <ol class="res__index" aria-label="Residents">
+            <li><button type="button" data-go="0"><span class="mono">01</span>Brown bear</button></li>
+            <li><button type="button" data-go="1"><span class="mono">02</span>Golden marmot</button></li>
+            <li><button type="button" data-go="2"><span class="mono">03</span>Red fox</button></li>
+            <li><button type="button" data-go="3"><span class="mono">04</span>Ibex</button></li>
+            <li><button type="button" data-go="4"><span class="mono">05</span>Lammergeier</button></li>
+          </ol>
+
+          <div class="res__stage">
+            <article class="beast" data-beast="bear">
+              <span class="beast__no" aria-hidden="true">01</span>
+              <figure class="beast__fig"><img data-i="an-bear-stand" sizes="(min-width: 900px) 34vw, 70vw" alt="A Himalayan brown bear standing upright on its hind legs." /><span class="scale mono" style="--len:45%"><i></i>1 m</span></figure>
+              <div class="beast__text">
+                <h3>Himalayan brown bear</h3>
+                <p class="beast__latin">Ursus arctos isabellinus</p>
+                <p class="beast__body">The reason the park exists. Sandy, shaggy and mostly vegetarian: roots, grass, the occasional careless marmot. Seen at dawn and dusk on the slopes above Bara Pani, through a scope, from a long way off.</p>
+                <dl class="spec mono"><div><dt>Standing</dt><dd>to 2.2 m</dd></div><div><dt>In the park</dt><dd>70 or more</dd></div><div><dt>Odds, five days</dt><dd>about 1 in 2</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="beast" data-beast="marmot">
+              <span class="beast__no" aria-hidden="true">02</span>
+              <figure class="beast__fig"><img data-i="an-marmot" sizes="(min-width: 900px) 30vw, 60vw" alt="A golden marmot standing upright as a sentinel." /><span class="scale mono" style="--len:38%"><i></i>20 cm</span></figure>
+              <div class="beast__text">
+                <h3>Golden marmot</h3>
+                <p class="beast__latin">Marmota caudata</p>
+                <p class="beast__body">The plateau’s alarm system. One stands sentinel while the colony feeds, and when it whistles everything within two hundred metres is suddenly underground. Asleep beneath the snow for seven months of the year.</p>
+                <dl class="spec mono"><div><dt>Length</dt><dd>50 cm, and tail</dd></div><div><dt>Hibernates</dt><dd>Oct to April</dd></div><div><dt>Odds, five days</dt><dd>certain</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="beast" data-beast="fox">
+              <span class="beast__no" aria-hidden="true">03</span>
+              <figure class="beast__fig"><img data-i="an-fox" sizes="(min-width: 900px) 42vw, 86vw" alt="A red fox with a pale thick coat trotting." /><span class="scale mono" style="--len:26%"><i></i>30 cm</span></figure>
+              <div class="beast__text">
+                <h3>Tibetan red fox</h3>
+                <p class="beast__latin">Vulpes vulpes montana</p>
+                <p class="beast__body">Hunts voles and marmot pups along the stream banks. Usually seen as a pair of ears above the grass in the first hour of light, and then as nothing at all.</p>
+                <dl class="spec mono"><div><dt>Weight</dt><dd>4 to 7 kg</dd></div><div><dt>Active</dt><dd>dawn, dusk</dd></div><div><dt>Odds, five days</dt><dd>about 1 in 3</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="beast" data-beast="ibex">
+              <span class="beast__no" aria-hidden="true">04</span>
+              <figure class="beast__fig"><img data-i="an-ibex" sizes="(min-width: 900px) 32vw, 66vw" alt="A male Himalayan ibex with long back-swept horns." /><span class="scale mono" style="--len:36%"><i></i>50 cm</span></figure>
+              <div class="beast__text">
+                <h3>Himalayan ibex</h3>
+                <p class="beast__latin">Capra sibirica</p>
+                <p class="beast__body">Keeps to the rim rather than the plain: the crags above Sadpara and the Burji La, where the plateau falls away. An old male carries horns longer than your arm.</p>
+                <dl class="spec mono"><div><dt>Horns</dt><dd>to 1.3 m</dd></div><div><dt>Where</dt><dd>the eastern rim</dd></div><div><dt>Odds, five days</dt><dd>about 1 in 5</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="beast" data-beast="bird">
+              <span class="beast__no" aria-hidden="true">05</span>
+              <figure class="beast__fig beast__fig--wide"><span class="beast__shadow" aria-hidden="true"><img data-i="an-lammergeier" sizes="(min-width: 900px) 60vw, 100vw" alt="" /></span><img data-i="an-lammergeier" sizes="(min-width: 900px) 60vw, 100vw" alt="A bearded vulture gliding with wings fully spread." /><span class="scale mono" style="--len:36%"><i></i>1 m</span></figure>
+              <div class="beast__text">
+                <h3>Lammergeier</h3>
+                <p class="beast__latin">Gypaetus barbatus</p>
+                <p class="beast__body">A wingspan close to three metres and a diet of bone, which it drops onto rock from height to get at the marrow. On a treeless plain you notice the shadow first.</p>
+                <dl class="spec mono"><div><dt>Wingspan</dt><dd>to 2.8 m</dd></div><div><dt>Eats</dt><dd>bone, mostly</dd></div><div><dt>Odds, five days</dt><dd>most days</dd></div></dl>
+              </div>
+            </article>
+          </div>
+
+          <p class="res__count mono" aria-hidden="true"><b>01</b> / 05</p>
+        </div>
+      </section>
+
+      <!-- ───────────── the bear count ───────────── -->
+      <section class="bears" data-time="11:40" data-theme="dark">
+        <div class="bears__walk" aria-hidden="true"><img data-i="an-bear-walk" sizes="(min-width: 900px) 30vw, 60vw" alt="" /></div>
+        <div class="wrap bears__grid">
+          <div class="bears__text">
+            <p class="label mono"><span>11:40</span>The count</p>
+            <p class="bears__num"><span class="bears__from">19</span><i aria-hidden="true"></i><span class="bears__to"><span data-count="70">70</span>+</span></p>
+            <p class="lede" data-lines>In 1993 there were nineteen brown bears left on the plateau. The park was drawn around them that year. The recent counts put the number above seventy.</p>
+            <p data-lines>They stay because people keep their distance. We watch from three hundred metres or more, never leave the track in a vehicle, and never keep food in the open. If a bear changes what it is doing because of us, we are too close.</p>
+          </div>
+          <figure class="loupe">
+            <div class="loupe__img"><img data-i="ph-bearland" sizes="(min-width: 900px) 52vw, 92vw" alt="An immense green valley with a winding stream; one brown bear is a tiny shape in the grass." /></div>
+            <div class="loupe__lens" aria-hidden="true"><div class="loupe__zoom"><img data-i="ph-bearland" sizes="200vw" alt="" /></div></div>
+            <figcaption class="mono"><span>There is one bear in this photograph.</span><span class="hint--fine">Use the glass.</span><span class="hint--touch">Drag the glass.</span></figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ───────────── 13:10 water ───────────── -->
+      <section class="water" id="water" data-time="13:10" data-theme="dark">
+        <div class="lake" data-cursor="ring">
+          <img data-i="ph-sheosar" class="lake__img" alt="Sheosar Lake lying perfectly still, reflecting green hills and the snow of Nanga Parbat." />
+          <canvas class="lake__gl" aria-hidden="true"></canvas>
+          <div class="lake__text wrap">
+            <p class="label mono"><span>13:10</span>Water</p>
+            <h2 class="h-xl" data-split>Sheosar, <em>the blind lake.</em></h2>
+          </div>
+          <div class="lake__foot wrap">
+            <p class="lake__body">No inlet you can find and no outlet you can follow, which is one explanation for the name. On a windless morning it holds Nanga Parbat upside down, from sixty kilometres away.</p>
+            <dl class="spec spec--row mono"><div><dt>Surface</dt><dd>4,142 m</dd></div><div><dt>Length</dt><dd>2.3 km</dd></div><div><dt>Depth</dt><dd>40 m</dd></div></dl>
+            <p class="hint mono"><i aria-hidden="true"></i><span class="hint--fine">Touch the water.</span><span class="hint--touch">Touch the water.</span></p>
+          </div>
+        </div>
+
+        <div class="rivers wrap">
+          <figure class="rivers__fig" data-parallax>
+            <div class="frame"><img data-i="ph-barapani" sizes="(min-width: 900px) 62vw, 92vw" alt="A broad shallow river braiding across a flat green plain under small clouds." /></div>
+          </figure>
+          <div class="rivers__text">
+            <ul class="rivers__names" aria-label="Rivers of the plateau">
+              <li><b>Bara Pani</b><span class="mono">big water</span></li>
+              <li><b>Kala Pani</b><span class="mono">black water</span></li>
+              <li><b>Shatung</b><span class="mono">the far one</span></li>
+            </ul>
+            <p data-lines>The rivers are named plainly. They are cold enough to hurt and clear enough to count the snow trout, and all three end up in the Indus. We camp beside the first for two nights.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── 15:40 weather ───────────── -->
+      <section class="weather" id="weather" data-time="15:40" data-theme="dark">
+        <div class="wrap weather__head">
+          <p class="label mono"><span>15:40</span>Weather</p>
+          <h2 class="h-xl" data-split>By mid-afternoon the sky has made <em>other plans.</em></h2>
+        </div>
+        <div class="pano" aria-hidden="false">
+          <div class="pano__strip"><img data-i="ph-storm" sizes="300vh" alt="A panorama of the plateau: sunlit plain on the left, a huge dark storm cloud with curtains of rain on the right." />
+            <ol class="pano__ticks mono" aria-hidden="true"><li>14:50</li><li>15:10</li><li>15:30</li><li>15:50</li><li>16:10</li></ol></div>
+        </div>
+        <div class="wrap weather__grid">
+          <p class="lede" data-lines>Deosai makes its own weather. A clear noon becomes hail by three and sun again by five, and you can watch each of them coming from an hour away.</p>
+          <div>
+            <table class="temps mono">
+              <caption>What to pack for, in °C</caption>
+              <thead><tr><th scope="col">Month</th><th scope="col">Noon</th><th scope="col">Night</th><th scope="col">Snow</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">June</th><td>10°</td><td>−4°</td><td>likely</td></tr>
+                <tr><th scope="row">July</th><td>15°</td><td>1°</td><td>possible</td></tr>
+                <tr><th scope="row">August</th><td>14°</td><td>0°</td><td>possible</td></tr>
+                <tr><th scope="row">September</th><td>9°</td><td>−6°</td><td>likely</td></tr>
+              </tbody>
+            </table>
+            <p class="weather__note" data-lines>Snow can fall in any month. We carry for all of it and do the walking in the mornings.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── 17:30 crossings ───────────── -->
+      <section class="cross sand" id="crossings" data-time="17:30" data-theme="light">
+        <div class="wrap cross__head">
+          <p class="label mono"><span>17:30</span>Crossings</p>
+          <h2 class="h-xl" data-split>Three ways across.</h2>
+          <p class="cross__intro" data-lines>Small groups, four to eight. A jeep and driver from Skardu, canvas tents, a cook, a kettle that is never cold, and a guide who grew up underneath the plateau. Park fees and sleeping bags rated to minus ten are in the price.</p>
+        </div>
+
+        <ol class="trips wrap">
+          <li class="trip">
+            <a href="#dates" data-trip="The Crossing" data-cursor="ask">
+              <div class="trip__img frame"><img data-i="ph-track" sizes="(min-width: 900px) 30vw, 92vw" alt="A two-rut jeep track running straight across the plain to the horizon." /></div>
+              <p class="trip__meta mono"><span>01</span><span>5 days · July to September</span></p>
+              <h3>The Crossing</h3>
+              <p class="trip__body">The whole plateau, east to west. Up past Sadpara, over Ali Malik, two nights at Bara Pani and one at Sheosar, then down through Chilim to Astore.</p>
+              <p class="trip__price mono"><b>USD 890</b> per person <i aria-hidden="true">→</i></p>
+            </a>
+          </li>
+          <li class="trip">
+            <a href="#dates" data-trip="Bear Country" data-cursor="ask">
+              <div class="trip__img frame"><img data-i="ph-scope" sizes="(min-width: 900px) 30vw, 92vw" alt="A spotting scope on a tripod on a frosty ridge at dawn, aimed across a wide valley." /></div>
+              <p class="trip__meta mono"><span>02</span><span>6 days · August</span></p>
+              <h3>Bear Country</h3>
+              <p class="trip__body">Three dawns and three dusks behind a spotting scope with a park wildlife guard, in the side valleys above Bara Pani. Slow, cold and usually worth it.</p>
+              <p class="trip__price mono"><b>USD 1,240</b> per person <i aria-hidden="true">→</i></p>
+            </a>
+          </li>
+          <li class="trip">
+            <a href="#dates" data-trip="Dark Sky" data-cursor="ask">
+              <div class="trip__img frame"><img data-i="ph-dusk" sizes="(min-width: 900px) 30vw, 92vw" alt="The last band of orange sunset over dark hills and a still tarn, with the first stars above." /></div>
+              <p class="trip__meta mono"><span>03</span><span>4 days · each new moon</span></p>
+              <h3>Dark Sky</h3>
+              <p class="trip__body">Two nights at Sheosar under the darkest sky you are ever likely to stand beneath. Bring a tripod. We bring the tea.</p>
+              <p class="trip__price mono"><b>USD 760</b> per person <i aria-hidden="true">→</i></p>
+            </a>
+          </li>
+        </ol>
+
+        <div class="route" data-time="18:10">
+          <div class="wrap route__head">
+            <h3 class="h-md" data-split>Skardu to Astore, <em>a hundred and sixty kilometres.</em></h3>
+            <p class="mono route__legend">Elevation profile of the jeep track · approximate</p>
+            <figure class="route__fig" data-parallax><div class="frame"><img data-i="ph-sadpara" sizes="(min-width: 900px) 16vw, 40vw" alt="Sadpara Lake, turquoise between bare rock walls, with the jeep track cut into the slope above it." /></div><figcaption class="mono">Km 9 · Sadpara Lake</figcaption></figure>
+          </div>
+          <div class="route__scroll" tabindex="0" role="group" aria-label="Elevation profile of the route, scrollable">
+            <div class="route__plot">
+              <svg class="route__svg" viewBox="0 0 1600 520" preserveAspectRatio="none" role="img" aria-label="Elevation profile from Skardu at 2,228 metres, over the Ali Malik pass at 4,080 metres, across the plateau to Sheosar at 4,142 metres, and down to Astore at 2,546 metres."></svg>
+              <ol class="route__stops mono"></ol>
+              <div class="route__jeep" aria-hidden="true"><img data-i="cut-jeep" sizes="140px" alt="" /></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="camp wrap" data-time="18:50">
+          <figure class="camp__a" data-parallax>
+            <div class="frame"><img data-i="ph-camp" sizes="(min-width: 900px) 56vw, 92vw" alt="Four low canvas tents beside a stream at golden hour, a kettle smoking on a stone hearth." /></div>
+            <figcaption class="mono">Bara Pani camp, 18:50</figcaption>
+          </figure>
+          <div class="camp__text">
+            <p class="label mono"><span>18:50</span>Camp</p>
+            <h3 class="h-md" data-split>Four tents, one kettle, <em>no signal.</em></h3>
+            <p data-lines>Camp is up before you arrive. Dinner is dal, rice and whatever came up from Skardu that week, eaten in every layer you own. The herders who summer here with their flocks sometimes walk over to compare weather.</p>
+            <ul class="camp__list mono">
+              <li>Canvas ridge tents, two to a tent</li>
+              <li>Bags to −10°, foam and wool underneath</li>
+              <li>Kitchen tent, cook, bottomless chai</li>
+              <li>Satellite messenger, oxygen, a medic’s kit</li>
+            </ul>
+          </div>
+          <figure class="camp__b" data-parallax>
+            <div class="frame"><img data-i="ph-kettle" sizes="(min-width: 900px) 22vw, 44vw" alt="A blackened kettle steaming on embers beside three enamel cups of milky tea." /></div>
+          </figure>
+          <figure class="camp__c" data-parallax>
+            <div class="frame"><img data-i="ph-herders" sizes="(min-width: 900px) 30vw, 60vw" alt="A distant flock of sheep and goats with two herders, the dust lit gold by evening sun." /></div>
+            <figcaption class="mono">Summer herders, east of Kala Pani</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ───────────── 22:40 night ───────────── -->
+      <section class="night" id="night" data-time="20:10" data-theme="dark">
+        <div class="night__pin">
+          <div class="night__sky" aria-hidden="true">
+            <div class="night__wheel"><img data-i="ph-milkyway" sizes="160vmax" alt="" /></div>
+            <canvas class="night__stars"></canvas>
+            <div class="night__dusk"></div>
+          </div>
+          <div class="night__layer night__far" aria-hidden="true"><img data-i="hero-far-night" alt="" /></div>
+          <div class="night__tent" aria-hidden="true"><div class="stack"><img data-i="tent-day" sizes="30vw" alt="" /><img data-i="tent-night" sizes="30vw" alt="" /></div><span class="night__glow"></span></div>
+          <div class="night__layer night__near" aria-hidden="true"><img data-i="hero-near-night" alt="" /></div>
+          <div class="night__text wrap">
+            <p class="label mono"><span>22:40</span>Night</p>
+            <h2 class="h-xl" data-split>The nearest streetlight is two thousand metres <em>below you.</em></h2>
+            <p class="night__body" data-lines>When the kettle is empty there is nothing left to do but look up. No moon for half the month, no haze, hardly any air. The Milky Way is bright enough to see your hands by. People stop talking.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── dates / enquiry ───────────── -->
+      <section class="dates" id="dates" data-time="23:20" data-theme="dark">
+        <div class="wrap dates__grid">
+          <div class="dates__left">
+            <p class="label mono"><span>23:20</span>Dates</p>
+            <h2 class="h-xl" data-split>Ask for <em>a date.</em></h2>
+            <p class="dates__body" data-lines>The road opens when the snow lets it, usually in the third week of June, and closes when it says so, usually by mid-October. We run eleven departures in between.</p>
+
+            <div class="season" aria-label="Season calendar">
+              <div class="season__bar"><i class="season__open"></i><i class="season__peak"></i><b class="season__today"><span class="mono">today</span></b></div>
+              <ol class="season__months mono" aria-hidden="true"><li>J</li><li>F</li><li>M</li><li>A</li><li>M</li><li>J</li><li>J</li><li>A</li><li>S</li><li>O</li><li>N</li><li>D</li></ol>
+              <p class="season__note mono"><span><i class="k k--open"></i>Road open</span><span><i class="k k--peak"></i>Flowers</span><span class="season__status"></span></p>
+            </div>
+          </div>
+
+          <form class="form" novalidate>
+            <div class="form__body">
+              <fieldset class="form__set">
+                <legend class="mono">Which crossing</legend>
+                <div class="chips">
+                  <label class="chip"><input type="radio" name="trip" value="The Crossing" checked /><span>The Crossing</span></label>
+                  <label class="chip"><input type="radio" name="trip" value="Bear Country" /><span>Bear Country</span></label>
+                  <label class="chip"><input type="radio" name="trip" value="Dark Sky" /><span>Dark Sky</span></label>
+                </div>
+              </fieldset>
+              <div class="form__row">
+                <fieldset class="form__set">
+                  <legend class="mono">When, in 2027</legend>
+                  <div class="chips">
+                    <label class="chip"><input type="radio" name="month" value="July" checked /><span>July</span></label>
+                    <label class="chip"><input type="radio" name="month" value="August" /><span>August</span></label>
+                    <label class="chip"><input type="radio" name="month" value="September" /><span>September</span></label>
+                  </div>
+                </fieldset>
+                <fieldset class="form__set">
+                  <legend class="mono" id="ppl">How many of you</legend>
+                  <div class="stepper" role="group" aria-labelledby="ppl">
+                    <button type="button" data-step="-1" aria-label="One fewer">−</button>
+                    <output class="stepper__val" name="people" aria-live="polite">2</output>
+                    <button type="button" data-step="1" aria-label="One more">+</button>
+                  </div>
+                </fieldset>
+              </div>
+              <label class="field"><span class="mono">Your name</span><input type="text" name="name" autocomplete="name" required /><em class="field__err mono" aria-live="polite"></em></label>
+              <label class="field"><span class="mono">Email</span><input type="email" name="email" autocomplete="email" required /><em class="field__err mono" aria-live="polite"></em></label>
+              <label class="field"><span class="mono">Anything we should know <small>(optional)</small></span><textarea name="note" rows="2"></textarea></label>
+              <div class="form__end">
+                <button class="btn" type="submit"><span>Send to Skardu</span><i aria-hidden="true">→</i></button>
+                <p class="form__fine mono">Concept site. Nothing is sent or stored.</p>
+              </div>
+            </div>
+            <div class="form__done" role="status" aria-live="polite" hidden>
+              <p class="mono">Received · 2,228 m</p>
+              <h3 class="h-md">Thank you, <span class="form__who">friend</span>.</h3>
+              <p class="form__sum"></p>
+              <button class="form__again mono" type="button">Change something</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ───────────── footer ───────────── -->
+    <footer class="foot" data-time="23:59" data-theme="dark">
+      <div class="wrap foot__top">
+        <div>
+          <p class="mono foot__k">Write</p>
+          <p><a href="mailto:salaam@byarsa.example">salaam@byarsa.example</a></p>
+          <p>College Road, Skardu 16100<br />Gilgit-Baltistan, Pakistan</p>
+        </div>
+        <div>
+          <p class="mono foot__k">Day</p>
+          <ul class="foot__links">
+            <li><a href="#top">04:47 First light</a></li>
+            <li><a href="#flora">07:30 Flora</a></li>
+            <li><a href="#residents">10:20 Residents</a></li>
+            <li><a href="#water">13:10 Water</a></li>
+            <li><a href="#crossings">17:30 Crossings</a></li>
+          </ul>
+        </div>
+        <div class="foot__note">
+          <p class="mono foot__k">Honestly</p>
+          <p>Byarsa is an invented company, made as a design study. Deosai is real, and so are the bears. Figures are approximate and the prices are fiction.</p>
+          <p>Every photograph on this site was generated by OpenAI Codex. Designed and built by Claude.</p>
+        </div>
+      </div>
+      <div class="foot__mark" aria-hidden="true">
+        <div class="foot__marmot"><img data-i="an-marmot" sizes="20vw" alt="" /></div>
+        <p class="foot__word"><span>B</span><span>Y</span><span>A</span><span>R</span><span>S</span><span>A</span></p>
+      </div>
+      <div class="wrap foot__base mono">
+        <span>© 2026 Byarsa (fictional)</span>
+        <span lang="ur" dir="rtl" class="foot__urdu">دیوسائی</span>
+        <span>35.03° N · 75.42° E</span>
+        <a href="#top">Back to first light ↑</a>
+      </div>
+    </footer>
+  </body>
+</html>

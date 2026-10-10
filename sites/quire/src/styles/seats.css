@@ -1,0 +1,443 @@
+/* ───────── VI. seats: house lights down ───────── */
+.seats {
+  --pc: #e3ba5e; /* the chosen production's accent */
+  --pb: #0c1748; /* and its paper */
+  --po: #f4ebd2;
+  position: relative;
+  z-index: 2;
+  padding: clamp(90px, 11vw, 200px) 0 clamp(90px, 10vw, 180px);
+  background: #14110d var(--grain) 0 0 / 256px;
+  color: #ece5d6;
+}
+.seats__wrap {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 1.6vw, 30px);
+  row-gap: clamp(50px, 6vw, 110px);
+}
+.seats__head {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 1.6vw, 30px);
+  align-items: end;
+}
+.seats__head .label {
+  grid-column: 1 / -1;
+  margin-bottom: 20px;
+  color: #a79f8f;
+}
+.seats__head .display {
+  grid-column: 1 / span 8;
+}
+.seats__lede {
+  grid-column: 9 / span 4;
+  max-width: 25em;
+  padding-bottom: 1.2vw;
+  font-size: clamp(16px, 0.5vw + 11px, 20px);
+  line-height: 1.45;
+}
+.seats h3.label {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #ece5d6;
+  color: #ece5d6;
+}
+
+.seats__nights {
+  grid-column: 1 / span 5;
+}
+.night {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(104px, 7.4vw, 132px) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 14px;
+  width: 100%;
+  min-height: 62px;
+  padding: 9px 12px 8px 0;
+  border-bottom: 1px solid rgba(236, 229, 214, 0.16);
+  text-align: left;
+  isolation: isolate;
+  transition: padding 0.5s var(--ease-out);
+}
+.night::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 -1px;
+  z-index: -1;
+  background: var(--nb);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.55s var(--ease-out);
+}
+.night:hover::before {
+  transform: scaleX(0.012);
+}
+.night[aria-checked='true']::before {
+  transform: scaleX(1);
+}
+.night[aria-checked='true'] {
+  color: var(--no);
+  box-shadow: inset 5px 0 0 var(--na);
+}
+.night__date {
+  padding-left: 14px;
+  font: 400 clamp(22px, 1.8vw, 30px) / 1 var(--f-serif);
+  font-variant-numeric: lining-nums;
+  white-space: nowrap;
+}
+.night__date small {
+  display: block;
+  margin-top: 5px;
+  font: 600 10.5px/1 var(--f-sans);
+  font-stretch: 86%;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.night__what {
+  min-width: 0;
+}
+.night__opera {
+  display: block;
+  font-family: var(--f-stencil);
+  font-weight: 900;
+  font-size: clamp(19px, 1.5vw, 26px);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.night__tag {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  opacity: 0.72;
+}
+.night__left {
+  font-size: 11px;
+  font-weight: 600;
+  font-stretch: 86%;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-align: right;
+}
+.night__left b {
+  display: block;
+  font: 400 22px/1 var(--f-serif);
+  letter-spacing: 0;
+  font-variant-numeric: lining-nums;
+}
+
+.seats__plan {
+  grid-column: 7 / span 6;
+  display: grid;
+  gap: 0;
+  align-content: start;
+}
+.plan {
+  padding: 26px 0 6px;
+}
+.plan__stage {
+  position: relative;
+  width: 62%;
+  margin: 0 auto 30px;
+  padding: 9px 0 8px;
+  background: var(--pb);
+  color: var(--po);
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  font-stretch: 86%;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  box-shadow: 0 16px 40px -6px color-mix(in srgb, var(--pc) 45%, transparent);
+  transition: background-color 0.5s, color 0.5s, box-shadow 0.5s;
+}
+.plan__grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 16px);
+  max-width: 560px;
+  margin-inline: auto;
+}
+.sheet {
+  position: relative;
+  aspect-ratio: 3 / 3.6;
+  display: grid;
+  place-items: center;
+  background: #e3dac6 var(--grain) 0 0 / 256px;
+  color: #17140f;
+  font: 400 clamp(15px, 1.2vw, 20px) / 1 var(--f-serif);
+  font-variant-numeric: lining-nums;
+  transition: transform 0.5s var(--ease-out), background-color 0.25s, color 0.25s;
+}
+/* the dog-eared corner */
+.sheet::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 26%;
+  aspect-ratio: 1;
+  background: linear-gradient(225deg, #14110d 50%, #b9ae97 50%);
+}
+.plan__grid.is-dealing .sheet {
+  transition: none;
+}
+.sheet:hover:not(:disabled) {
+  transform: translateY(-4px) rotate(-1.5deg);
+}
+.sheet[aria-pressed='true'] {
+  background-color: var(--pc);
+  color: #14110d;
+  transform: translateY(-6px) rotate(-3deg);
+}
+.sheet[aria-pressed='true']:nth-child(even) {
+  transform: translateY(-6px) rotate(2.5deg);
+}
+.sheet:disabled {
+  background: transparent;
+  color: #4d473c;
+  box-shadow: inset 0 0 0 1px #2e2a23;
+  cursor: not-allowed;
+}
+.sheet:disabled::after {
+  display: none;
+}
+.plan__key {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 22px;
+  font-size: 12px;
+  color: #a79f8f;
+}
+.plan__key li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.k {
+  width: 11px;
+  height: 13px;
+  background: #e3dac6;
+}
+.k--sel {
+  background: var(--pc);
+}
+.k--gone {
+  background: none;
+  box-shadow: inset 0 0 0 1px #4a4438;
+}
+
+.book {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px clamp(12px, 1.6vw, 30px);
+  margin-top: 44px;
+}
+.book > h3,
+.book__sum,
+.book__fine {
+  grid-column: 1 / -1;
+}
+.book__sum {
+  min-height: 2.3em;
+  font: 400 clamp(20px, 1.7vw, 30px) / 1.15 var(--f-serif);
+  letter-spacing: -0.01em;
+}
+.book__sum b {
+  font-weight: 400;
+  color: var(--pc);
+}
+.field {
+  display: grid;
+  gap: 2px;
+}
+.field label {
+  font-size: 10.5px;
+  font-weight: 600;
+  font-stretch: 86%;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a79f8f;
+}
+.field input {
+  height: 46px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(236, 229, 214, 0.45);
+  border-radius: 0;
+  background: none;
+  font-size: 17px;
+  outline-offset: 3px;
+  transition: border-color 0.3s;
+}
+.field input:focus {
+  border-color: var(--pc);
+}
+.field input:-webkit-autofill {
+  -webkit-text-fill-color: #ece5d6;
+  box-shadow: 0 0 0 100px #14110d inset;
+}
+.field__err {
+  min-height: 1.5em;
+  font-size: 12.5px;
+  color: #ff9a7a;
+}
+.book .btn {
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-width: 260px;
+}
+.book__fine {
+  font-size: 12.5px;
+  color: #a79f8f;
+}
+
+/* the ticket slides out of a slot */
+.stub {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  padding-top: 10px;
+}
+.stub__slot {
+  width: min(100%, 780px);
+  height: 9px;
+  border-radius: 5px;
+  background: #050403;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.stub__clip {
+  width: min(100% - 28px, 740px);
+  overflow: hidden;
+  padding: 0 0 46px;
+  margin-top: -4px;
+}
+.ticket {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(120px, 26%, 190px);
+  background: var(--pb) var(--grain) 0 0 / 256px;
+  color: var(--po);
+  box-shadow: 0 34px 40px -26px rgba(0, 0, 0, 0.9);
+  will-change: transform;
+  outline-offset: 6px;
+}
+.ticket__main {
+  padding: clamp(18px, 2.4vw, 34px);
+}
+.ticket__side {
+  position: relative;
+  padding: clamp(18px, 2.4vw, 34px) clamp(14px, 1.8vw, 26px);
+  border-left: 2px dashed color-mix(in srgb, var(--po) 55%, transparent);
+}
+.ticket__side::before,
+.ticket__side::after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #14110d;
+}
+.ticket__side::before {
+  top: -9px;
+}
+.ticket__side::after {
+  bottom: -9px;
+}
+.ticket .label {
+  color: var(--pc);
+}
+.ticket__opera {
+  margin-top: 14px;
+  font-family: var(--f-stencil);
+  font-weight: 900;
+  font-variation-settings: 'opsz' 72;
+  font-size: clamp(38px, 6.2vw, 92px);
+  line-height: 0.84;
+  text-transform: uppercase;
+}
+.ticket__when {
+  margin-top: 16px;
+  font: italic 400 clamp(18px, 1.8vw, 28px) / 1.1 var(--f-serif);
+  color: var(--pc);
+}
+.ticket__name {
+  margin-top: 16px;
+  font-size: 14px;
+}
+.ticket__name b {
+  font-weight: 600;
+}
+.ticket__seats {
+  margin-top: 12px;
+  font: 400 clamp(26px, 3vw, 46px) / 1 var(--f-serif);
+  font-variant-numeric: lining-nums;
+  overflow-wrap: anywhere;
+}
+.ticket__door {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0.85;
+}
+.stub__note {
+  max-width: 34em;
+  text-align: center;
+  font: italic 400 clamp(17px, 1.4vw, 23px) / 1.3 var(--f-serif);
+  color: #cfc7b6;
+}
+.stub .link {
+  margin-top: 22px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-stretch: 86%;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  .seats__wrap,
+  .seats__head {
+    display: block;
+  }
+  .seats__lede {
+    margin-top: 22px;
+  }
+  .seats__nights,
+  .seats__plan {
+    margin-top: 56px;
+  }
+  .night {
+    grid-template-columns: 92px minmax(0, 1fr) auto;
+  }
+  .night__opera {
+    font-size: 17px;
+    column-gap: 10px;
+  }
+  .night__date {
+    padding-left: 10px;
+  }
+  .plan__stage {
+    width: 74%;
+  }
+  .book {
+    grid-template-columns: 1fr;
+  }
+  .book .btn {
+    justify-self: stretch;
+  }
+  .stub {
+    margin-top: 56px;
+  }
+  .ticket {
+    grid-template-columns: minmax(0, 1fr) 104px;
+  }
+}

@@ -1,0 +1,606 @@
+{
+ "hero-far-day": {
+  "w": 1672,
+  "h": 695,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-far-day-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-far-day-1672.webp"
+   }
+  ]
+ },
+ "hero-far-blue": {
+  "w": 1672,
+  "h": 695,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-far-blue-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-far-blue-1672.webp"
+   }
+  ]
+ },
+ "hero-far-glow": {
+  "w": 1672,
+  "h": 695,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-far-glow-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-far-glow-1672.webp"
+   }
+  ]
+ },
+ "hero-far-night": {
+  "w": 1672,
+  "h": 695,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-far-night-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-far-night-1672.webp"
+   }
+  ]
+ },
+ "hero-near-day": {
+  "w": 1672,
+  "h": 740,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-near-day-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-near-day-1672.webp"
+   }
+  ]
+ },
+ "hero-near-blue": {
+  "w": 1672,
+  "h": 740,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-near-blue-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-near-blue-1672.webp"
+   }
+  ]
+ },
+ "hero-near-glow": {
+  "w": 1672,
+  "h": 740,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-near-glow-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-near-glow-1672.webp"
+   }
+  ]
+ },
+ "hero-near-night": {
+  "w": 1672,
+  "h": 740,
+  "variants": [
+   {
+    "w": 1000,
+    "file": "hero-near-night-1000.webp"
+   },
+   {
+    "w": 1672,
+    "file": "hero-near-night-1672.webp"
+   }
+  ]
+ },
+ "tent-day": {
+  "w": 640,
+  "h": 344,
+  "variants": [
+   {
+    "w": 640,
+    "file": "tent-day-640.webp"
+   }
+  ]
+ },
+ "tent-night": {
+  "w": 640,
+  "h": 344,
+  "variants": [
+   {
+    "w": 640,
+    "file": "tent-night-640.webp"
+   }
+  ]
+ },
+ "fl-primula": {
+  "w": 840,
+  "h": 1423,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-primula-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-primula-840.webp"
+   }
+  ]
+ },
+ "fl-aconite": {
+  "w": 727,
+  "h": 1522,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-aconite-420.webp"
+   },
+   {
+    "w": 727,
+    "file": "fl-aconite-727.webp"
+   }
+  ]
+ },
+ "fl-potentilla": {
+  "w": 840,
+  "h": 1350,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-potentilla-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-potentilla-840.webp"
+   }
+  ]
+ },
+ "fl-gentian": {
+  "w": 840,
+  "h": 1326,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-gentian-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-gentian-840.webp"
+   }
+  ]
+ },
+ "fl-edelweiss": {
+  "w": 840,
+  "h": 1298,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-edelweiss-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-edelweiss-840.webp"
+   }
+  ]
+ },
+ "fl-poppy": {
+  "w": 813,
+  "h": 1516,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-poppy-420.webp"
+   },
+   {
+    "w": 813,
+    "file": "fl-poppy-813.webp"
+   }
+  ]
+ },
+ "fl-aster": {
+  "w": 840,
+  "h": 1298,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-aster-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-aster-840.webp"
+   }
+  ]
+ },
+ "fl-pedicularis": {
+  "w": 840,
+  "h": 1412,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-pedicularis-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-pedicularis-840.webp"
+   }
+  ]
+ },
+ "fl-bistort": {
+  "w": 840,
+  "h": 1466,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-bistort-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-bistort-840.webp"
+   }
+  ]
+ },
+ "fl-geranium": {
+  "w": 840,
+  "h": 1320,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-geranium-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-geranium-840.webp"
+   }
+  ]
+ },
+ "fl-rhodiola": {
+  "w": 840,
+  "h": 1269,
+  "variants": [
+   {
+    "w": 420,
+    "file": "fl-rhodiola-420.webp"
+   },
+   {
+    "w": 840,
+    "file": "fl-rhodiola-840.webp"
+   }
+  ]
+ },
+ "an-bear-stand": {
+  "w": 611,
+  "h": 1508,
+  "variants": [
+   {
+    "w": 420,
+    "file": "an-bear-stand-420.webp"
+   },
+   {
+    "w": 611,
+    "file": "an-bear-stand-611.webp"
+   }
+  ]
+ },
+ "an-bear-walk": {
+  "w": 1280,
+  "h": 768,
+  "variants": [
+   {
+    "w": 640,
+    "file": "an-bear-walk-640.webp"
+   },
+   {
+    "w": 1280,
+    "file": "an-bear-walk-1280.webp"
+   }
+  ]
+ },
+ "an-marmot": {
+  "w": 860,
+  "h": 1333,
+  "variants": [
+   {
+    "w": 440,
+    "file": "an-marmot-440.webp"
+   },
+   {
+    "w": 860,
+    "file": "an-marmot-860.webp"
+   }
+  ]
+ },
+ "an-fox": {
+  "w": 1400,
+  "h": 846,
+  "variants": [
+   {
+    "w": 700,
+    "file": "an-fox-700.webp"
+   },
+   {
+    "w": 1400,
+    "file": "an-fox-1400.webp"
+   }
+  ]
+ },
+ "an-ibex": {
+  "w": 920,
+  "h": 1296,
+  "variants": [
+   {
+    "w": 460,
+    "file": "an-ibex-460.webp"
+   },
+   {
+    "w": 920,
+    "file": "an-ibex-920.webp"
+   }
+  ]
+ },
+ "an-lammergeier": {
+  "w": 1640,
+  "h": 834,
+  "variants": [
+   {
+    "w": 820,
+    "file": "an-lammergeier-820.webp"
+   },
+   {
+    "w": 1640,
+    "file": "an-lammergeier-1640.webp"
+   }
+  ]
+ },
+ "cut-jeep": {
+  "w": 420,
+  "h": 261,
+  "variants": [
+   {
+    "w": 420,
+    "file": "cut-jeep-420.webp"
+   }
+  ]
+ },
+ "cut-cloud-a": {
+  "w": 1500,
+  "h": 628,
+  "variants": [
+   {
+    "w": 800,
+    "file": "cut-cloud-a-800.webp"
+   },
+   {
+    "w": 1500,
+    "file": "cut-cloud-a-1500.webp"
+   }
+  ]
+ },
+ "cut-cloud-b": {
+  "w": 1500,
+  "h": 378,
+  "variants": [
+   {
+    "w": 800,
+    "file": "cut-cloud-b-800.webp"
+   },
+   {
+    "w": 1500,
+    "file": "cut-cloud-b-1500.webp"
+   }
+  ]
+ },
+ "ph-sheosar": {
+  "w": 1536,
+  "h": 1024,
+  "variants": [
+   {
+    "w": 900,
+    "file": "ph-sheosar-900.webp"
+   },
+   {
+    "w": 1536,
+    "file": "ph-sheosar-1536.webp"
+   }
+  ]
+ },
+ "ph-barapani": {
+  "w": 1672,
+  "h": 941,
+  "variants": [
+   {
+    "w": 900,
+    "file": "ph-barapani-900.webp"
+   },
+   {
+    "w": 1672,
+    "file": "ph-barapani-1672.webp"
+   }
+  ]
+ },
+ "ph-storm": {
+  "w": 2172,
+  "h": 724,
+  "variants": [
+   {
+    "w": 1400,
+    "file": "ph-storm-1400.webp"
+   },
+   {
+    "w": 2172,
+    "file": "ph-storm-2172.webp"
+   }
+  ]
+ },
+ "ph-meadow": {
+  "w": 1024,
+  "h": 1536,
+  "variants": [
+   {
+    "w": 600,
+    "file": "ph-meadow-600.webp"
+   },
+   {
+    "w": 1024,
+    "file": "ph-meadow-1024.webp"
+   }
+  ]
+ },
+ "ph-sadpara": {
+  "w": 1024,
+  "h": 1536,
+  "variants": [
+   {
+    "w": 600,
+    "file": "ph-sadpara-600.webp"
+   },
+   {
+    "w": 1024,
+    "file": "ph-sadpara-1024.webp"
+   }
+  ]
+ },
+ "ph-track": {
+  "w": 1536,
+  "h": 1024,
+  "variants": [
+   {
+    "w": 800,
+    "file": "ph-track-800.webp"
+   },
+   {
+    "w": 1536,
+    "file": "ph-track-1536.webp"
+   }
+  ]
+ },
+ "ph-scope": {
+  "w": 1024,
+  "h": 1536,
+  "variants": [
+   {
+    "w": 600,
+    "file": "ph-scope-600.webp"
+   },
+   {
+    "w": 1024,
+    "file": "ph-scope-1024.webp"
+   }
+  ]
+ },
+ "ph-camp": {
+  "w": 1536,
+  "h": 1024,
+  "variants": [
+   {
+    "w": 800,
+    "file": "ph-camp-800.webp"
+   },
+   {
+    "w": 1536,
+    "file": "ph-camp-1536.webp"
+   }
+  ]
+ },
+ "ph-herders": {
+  "w": 1536,
+  "h": 1024,
+  "variants": [
+   {
+    "w": 800,
+    "file": "ph-herders-800.webp"
+   },
+   {
+    "w": 1536,
+    "file": "ph-herders-1536.webp"
+   }
+  ]
+ },
+ "ph-kettle": {
+  "w": 1024,
+  "h": 1536,
+  "variants": [
+   {
+    "w": 600,
+    "file": "ph-kettle-600.webp"
+   },
+   {
+    "w": 1024,
+    "file": "ph-kettle-1024.webp"
+   }
+  ]
+ },
+ "ph-bearland": {
+  "w": 1536,
+  "h": 1024,
+  "variants": [
+   {
+    "w": 800,
+    "file": "ph-bearland-800.webp"
+   },
+   {
+    "w": 1536,
+    "file": "ph-bearland-1536.webp"
+   }
+  ]
+ },
+ "ph-aerial": {
+  "w": 1024,
+  "h": 1536,
+  "variants": [
+   {
+    "w": 600,
+    "file": "ph-aerial-600.webp"
+   },
+   {
+    "w": 1024,
+    "file": "ph-aerial-1024.webp"
+   }
+  ]
+ },
+ "ph-dusk": {
+  "w": 1672,
+  "h": 941,
+  "variants": [
+   {
+    "w": 900,
+    "file": "ph-dusk-900.webp"
+   },
+   {
+    "w": 1672,
+    "file": "ph-dusk-1672.webp"
+   }
+  ]
+ },
+ "ph-milkyway": {
+  "w": 1254,
+  "h": 1254,
+  "variants": [
+   {
+    "w": 900,
+    "file": "ph-milkyway-900.webp"
+   },
+   {
+    "w": 1254,
+    "file": "ph-milkyway-1254.webp"
+   }
+  ]
+ }
+}

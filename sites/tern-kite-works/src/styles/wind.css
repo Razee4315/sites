@@ -1,0 +1,914 @@
+/* ── wind: late afternoon, and a dial ──────────────────────────────────── */
+.wind {
+  position: relative;
+  min-height: 100svh;
+  /* the long tail of empty sky below is where the day is allowed to end */
+  padding-block: clamp(8rem, 22vh, 14rem) 34svh;
+  color: var(--fg);
+  overflow: clip;
+}
+.wind__head .title {
+  max-width: 9.5ch;
+}
+.wind__sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.drift--w1 {
+  left: 52%;
+  top: 22%;
+  width: 34vw;
+  opacity: 0.9;
+}
+.drift--w2 {
+  left: 78%;
+  top: 8%;
+  width: 20vw;
+}
+.drift--w3 {
+  left: 34%;
+  top: 46%;
+  width: 46vw;
+  opacity: 0.8;
+}
+.wind__scraps {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+.scrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: clamp(1.4rem, 2.6vw, 3rem);
+  will-change: transform;
+}
+.kite--wind {
+  left: 63%;
+  top: clamp(11rem, 30svh, 20rem);
+  width: min(23vw, 38svh);
+}
+
+.wind__wrap {
+  display: grid;
+  gap: clamp(2rem, 6vh, 4rem);
+}
+.wind__head {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.dial {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.6rem, 4vh, 3rem) var(--gap);
+}
+.dial__read {
+  grid-column: 1 / span 7;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1rem, 3vw, 3rem);
+  margin-top: 1.6rem;
+}
+.dial__force {
+  position: relative;
+  flex: none;
+}
+.dial__label {
+  position: absolute;
+  left: 0.2em;
+  bottom: calc(100% + 0.9rem);
+  font: 500 0.62rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dial__num {
+  display: block;
+  overflow: clip;
+  padding-bottom: 0.03em;
+  font: 400 clamp(11rem, 27vw, 28rem) / 0.78 var(--display);
+  letter-spacing: -0.05em;
+  font-variant-numeric: lining-nums;
+}
+.dial__num b {
+  display: block;
+  min-width: 0.56em;
+  font-weight: 400;
+  will-change: transform;
+}
+.dial__words {
+  padding-bottom: clamp(0.6rem, 2vw, 2.2rem);
+  min-width: 0;
+}
+.dial__name {
+  font: italic 400 clamp(1.8rem, 1.1rem + 2.2vw, 3.6rem) / 1 var(--display);
+  letter-spacing: -0.03em;
+}
+.dial__knots {
+  margin-top: 0.7rem;
+  font: 500 0.62rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dial__say {
+  margin-top: 1rem;
+  max-width: 26ch;
+  min-height: 3.2em;
+  font-size: 1.04em;
+  line-height: 1.4;
+}
+
+.dial__control {
+  grid-column: 1 / -1;
+}
+.dial__caption {
+  display: block;
+  margin-bottom: 1.1rem;
+  font: 500 0.62rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dial__track {
+  --thumb: 3.4rem;
+  position: relative;
+  height: var(--thumb);
+  margin-inline: calc(var(--thumb) / 2);
+  touch-action: pan-y;
+}
+.dial__track::before {
+  /* the line */
+  content: '';
+  position: absolute;
+  left: calc(var(--thumb) / -2);
+  right: calc(var(--thumb) / -2);
+  top: 50%;
+  height: 1px;
+  background: var(--fg);
+}
+.dial__input {
+  position: absolute;
+  left: calc(var(--thumb) / -2);
+  right: calc(var(--thumb) / -2);
+  top: 0;
+  width: calc(100% + var(--thumb));
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: grab;
+  z-index: 2;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.dial__input:active {
+  cursor: grabbing;
+}
+.dial__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--thumb);
+  height: var(--thumb);
+}
+.dial__input::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border: 0;
+}
+.dial__ticks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.dial__ticks i {
+  position: relative;
+  width: 0;
+  font: 500 0.6rem/1 var(--mono);
+  font-style: normal;
+  letter-spacing: 0;
+  text-align: center;
+}
+.dial__ticks i::before {
+  content: '';
+  position: absolute;
+  left: -0.5px;
+  top: calc(50% - 5px);
+  width: 1px;
+  height: 11px;
+  background: currentColor;
+}
+.dial__ticks i {
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  white-space: nowrap;
+  padding-bottom: 0;
+  transform: translateY(1.1rem);
+}
+.dial__thumb {
+  position: absolute;
+  left: calc(var(--thumb) / -2);
+  top: 0;
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: 50%;
+  background: var(--ink);
+  will-change: transform;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+.dial__thumb::before {
+  content: '';
+  width: 0.85rem;
+  height: 1.25rem;
+  background: var(--red);
+  clip-path: polygon(50% 0, 100% 38%, 50% 100%, 0 38%);
+}
+.dial__thumb::after {
+  content: '';
+  position: absolute;
+  inset: -0.45rem;
+  border-radius: 50%;
+  border: 1px solid var(--ink);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 0.3s,
+    transform 0.5s var(--out);
+}
+.dial__input:focus-visible ~ .dial__thumb::after,
+.dial__track:hover .dial__thumb::after,
+.dial__track.is-held .dial__thumb::after {
+  opacity: 1;
+  transform: scale(1);
+}
+.dial__input:focus-visible {
+  outline: none;
+}
+.dial__hint {
+  margin-top: 2.2rem;
+  font: 500 0.56rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.dial__fly {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.4rem;
+  min-height: 2.6rem;
+}
+.dial__fly-label {
+  font: 500 0.62rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dial__kites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.dial__kites a {
+  display: inline-block;
+  padding: 0.5rem 0.95rem 0.6rem;
+  border-radius: 99px;
+  box-shadow: inset 0 0 0 1px var(--fg-3);
+  font: italic 400 1.15rem/1 var(--display);
+  letter-spacing: -0.01em;
+  opacity: 0.32;
+  transition:
+    opacity 0.4s,
+    background-color 0.4s,
+    color 0.4s,
+    transform 0.6s var(--out);
+}
+.dial__kites li.is-on a {
+  opacity: 1;
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: none;
+}
+@media (hover: hover) {
+  .dial__kites li.is-on a:hover {
+    background: var(--red);
+    transform: translateY(-3px) rotate(-3deg);
+  }
+}
+.dial__none {
+  display: none;
+  font: italic 400 1.25rem/1 var(--display);
+}
+.dial.is-none .dial__none {
+  display: block;
+}
+
+@media (max-width: 860px) {
+  .wind {
+    padding-top: 7rem;
+  }
+  .dial__read {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 0.6rem;
+    align-items: start;
+  }
+  .dial__num {
+    font-size: clamp(9rem, 50vw, 15rem);
+  }
+  .dial__words {
+    max-width: 62%;
+    padding-bottom: 0;
+  }
+  .dial__say {
+    min-height: 5.6em;
+  }
+  .kite--wind {
+    left: 55%;
+    top: 30%;
+    width: min(38vw, 28svh);
+  }
+  .drift--w1 {
+    width: 70vw;
+    left: 40%;
+    top: 9%;
+  }
+  .drift--w2 {
+    width: 46vw;
+    top: 70%;
+  }
+  .drift--w3 {
+    width: 96vw;
+    left: 0;
+    top: 40%;
+  }
+  .dial__track {
+    --thumb: 3rem;
+  }
+}
+
+/* ── commission: dusk ──────────────────────────────────────────────────── */
+.send {
+  position: relative;
+  padding-block: 78svh clamp(5rem, 14vh, 10rem);
+  color: var(--fg);
+  overflow: clip;
+}
+.send__sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.send__sun {
+  position: absolute;
+  left: 50%;
+  top: 6svh;
+  width: clamp(8rem, 15vw, 16rem);
+  margin-left: clamp(-8rem, -7.5vw, -4rem);
+  will-change: transform, opacity;
+}
+.send__sun img {
+  width: 100%;
+  filter: drop-shadow(0 0 4vw rgba(255, 170, 90, 0.8));
+}
+.drift--s1 {
+  left: 54%;
+  top: 30svh;
+  width: 42vw;
+}
+.drift--s2 {
+  left: 6%;
+  top: 14svh;
+  width: 24vw;
+}
+.send__wrap {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(2.5rem, 7vh, 5rem) var(--gap);
+  align-items: start;
+  scroll-margin-top: 12svh;
+}
+.send__head {
+  grid-column: 1 / span 4;
+  display: grid;
+  gap: 1.4rem;
+}
+.send__head .title {
+  font-size: clamp(4rem, 12.4vw, 14rem);
+  line-height: 0.86;
+}
+.send__intro {
+  max-width: 34ch;
+  color: var(--fg-2);
+}
+.send__terms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+  margin-top: 0.6rem;
+}
+.send__terms li {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--fg-3);
+}
+.send__terms b {
+  display: block;
+  font: 400 clamp(1.35rem, 1rem + 0.8vw, 1.8rem) / 1 var(--display);
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+}
+.send__terms span {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: var(--fg-2);
+}
+
+/* the kite hangs between the words and the form, so the dye changes where you are looking */
+.send__dye {
+  grid-column: 5 / span 3;
+  grid-row: 1;
+  position: sticky;
+  top: 14svh;
+  justify-self: center;
+  padding-top: clamp(1rem, 6vw, 6rem);
+}
+.dye {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1.6rem;
+  will-change: transform;
+}
+.dye__stack {
+  position: relative;
+  width: min(19vw, 40svh);
+  will-change: transform;
+}
+.dye__stack img {
+  width: 100%;
+  opacity: 0;
+  will-change: opacity, transform;
+  filter: drop-shadow(0 1.4rem 2rem rgba(0, 0, 0, 0.45));
+}
+.dye__stack img + img {
+  position: absolute;
+  inset: 0;
+}
+.dye__stack img.is-on {
+  opacity: 1;
+}
+.dye__name {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+}
+.dye__name span {
+  font: 500 0.6rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.dye__name b {
+  display: block;
+  overflow: clip;
+  padding-bottom: 0.14em;
+  font: italic 400 clamp(2rem, 1.2rem + 2.6vw, 4.2rem) / 1 var(--display);
+  letter-spacing: -0.03em;
+}
+.dye__name b i {
+  display: inline-block;
+  font-style: inherit;
+}
+
+.form {
+  position: relative;
+  grid-column: 8 / span 5;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.7rem 1.4rem;
+  padding-top: clamp(0rem, 3vw, 3rem);
+}
+.form > * {
+  grid-column: 1 / -1;
+}
+.form .field--half {
+  grid-column: span 1;
+}
+.form legend,
+.field label {
+  display: block;
+  margin-bottom: 0.2rem;
+  font: 500 0.6rem/1.2 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+}
+.form__dyes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.form__dyes legend {
+  width: 100%;
+  margin-bottom: 0.8rem;
+  float: left;
+}
+.swatch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.75rem;
+  padding: 0 1rem 0 0.6rem;
+  border-radius: 99px;
+  box-shadow: inset 0 0 0 1px var(--fg-3);
+  cursor: pointer;
+  transition:
+    box-shadow 0.3s,
+    background-color 0.3s,
+    color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.swatch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.swatch__chip {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(242, 236, 223, 0.35);
+  transition: transform 0.6s var(--out);
+}
+.swatch__name {
+  font: 500 0.62rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.swatch:has(input:checked) {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: none;
+}
+.swatch:has(input:checked) .swatch__chip {
+  transform: scale(1.12);
+}
+.swatch:has(input:focus-visible) {
+  outline: 2px solid var(--ochre);
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .swatch:hover {
+    box-shadow: inset 0 0 0 1px var(--paper);
+  }
+  .swatch:hover .swatch__chip {
+    transform: scale(1.12) rotate(20deg);
+  }
+}
+
+.field {
+  position: relative;
+}
+.field input,
+.field textarea,
+.field select {
+  display: block;
+  width: 100%;
+  padding: 0.55rem 0 0.75rem;
+  border-bottom: 1px solid var(--fg-3);
+  font: 400 clamp(1.25rem, 1rem + 0.8vw, 1.7rem) / 1.25 var(--display);
+  letter-spacing: -0.012em;
+  color: var(--paper);
+  outline: none;
+  resize: none;
+  transition: border-color 0.3s;
+}
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 1.6rem;
+}
+.field select option {
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--text);
+}
+.select {
+  position: relative;
+}
+.select::after {
+  content: '';
+  position: absolute;
+  right: 0.25rem;
+  top: 46%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+.field ::placeholder {
+  color: rgba(242, 236, 223, 0.42);
+  font-style: italic;
+}
+.field::after {
+  /* the underline inks in on focus */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--paper);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--out);
+}
+.field:focus-within::after {
+  transform: scaleX(1);
+}
+.field.is-bad::after {
+  transform: scaleX(1);
+  background: #ff8a70;
+}
+.field:has(.field__err:not([hidden]))::after {
+  bottom: auto;
+  top: calc(100% - 1.75rem);
+}
+.field__err {
+  height: 1.75rem;
+  padding-top: 0.6rem;
+  font: 500 0.6rem/1.2 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.06em;
+  color: #ffb19e;
+}
+
+.form__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.6rem;
+  margin-top: 0.6rem;
+}
+.form__note {
+  flex: 1 1 14rem;
+  max-width: 26ch;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--fg-2);
+}
+.form__done {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 1.4rem;
+}
+.form__done[hidden] {
+  display: none;
+}
+.form__done-big {
+  font: 400 clamp(2.6rem, 1.6rem + 4vw, 6rem) / 0.95 var(--display);
+  letter-spacing: -0.035em;
+}
+.form__done-text {
+  max-width: 34ch;
+  color: var(--fg-2);
+}
+.form.is-sent > :not(.form__done) {
+  visibility: hidden;
+}
+
+@media (max-width: 900px) {
+  .send__head,
+  .send__dye,
+  .form {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  .send__dye {
+    position: static;
+    padding-top: 0;
+  }
+  .form {
+    padding-top: 0;
+  }
+  .dye__stack {
+    width: min(52vw, 16rem);
+  }
+  .drift--s1 {
+    width: 84vw;
+    left: 30%;
+    top: 38svh;
+  }
+  .drift--s2 {
+    width: 46vw;
+    top: 20svh;
+    left: 4%;
+  }
+}
+@media (max-width: 520px) {
+  .form .field--half {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── footer: night ─────────────────────────────────────────────────────── */
+.foot {
+  position: relative;
+  min-height: 100svh;
+  padding-top: clamp(6rem, 20vh, 13rem);
+  padding-bottom: 27vw;
+  color: var(--fg);
+  overflow: clip;
+}
+.foot::before {
+  /* the last light on the horizon */
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 62%;
+  background: linear-gradient(180deg, transparent 0%, rgba(120, 62, 122, 0.55) 46%, rgba(226, 110, 96, 0.85) 80%, #f3a070 100%);
+  pointer-events: none;
+}
+.foot__stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.foot__moon {
+  position: absolute;
+  right: 9%;
+  top: 30%;
+  width: max(9vw, 5.5rem);
+  will-change: transform;
+}
+.foot__moon img {
+  filter: drop-shadow(0 0 2.6vw rgba(255, 244, 214, 0.5));
+}
+.kite--foot {
+  left: 70%;
+  top: 44%;
+  width: clamp(4.5rem, 7.5vw, 8rem);
+}
+.kite--foot img {
+  filter: brightness(0.66) drop-shadow(0 1vw 1.4vw rgba(0, 0, 0, 0.4));
+}
+/* the same three strips as the morning, a long way down the day; their hazy bases are cut off below the page */
+.foot__land {
+  position: absolute;
+  will-change: transform;
+}
+.foot__land img {
+  width: 100%;
+}
+.foot__land--far {
+  left: -4%;
+  width: 108%;
+  bottom: 3.5vw;
+}
+.foot__land--far img {
+  filter: brightness(0.4) saturate(3) hue-rotate(14deg);
+}
+.foot__land--mid {
+  left: -14%;
+  width: 128%;
+  bottom: -4.5vw;
+}
+.foot__land--mid img {
+  transform: scaleX(-1);
+  filter: brightness(0.42) saturate(1.3);
+}
+.foot__land--near {
+  left: -30%;
+  width: 150%;
+  bottom: -12.6vw;
+}
+.foot__land--near img {
+  filter: brightness(0.5);
+}
+
+.foot__wrap {
+  display: grid;
+  justify-items: start;
+  gap: clamp(1.6rem, 4vh, 2.6rem);
+}
+.foot__say {
+  max-width: 11ch;
+  font: 400 clamp(3rem, 9.4vw, 10.5rem) / 0.92 var(--display);
+  letter-spacing: -0.04em;
+}
+.foot__say em {
+  color: #ffb08f;
+}
+.foot__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: var(--gap);
+  width: min(100%, 62rem);
+  margin-top: clamp(2rem, 7vh, 5rem);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.foot__cols h4 {
+  margin-bottom: 0.9rem;
+  font: 500 0.58rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.foot__cols a {
+  position: relative;
+  display: inline-block;
+  padding-block: 0.12rem;
+}
+.foot__cols a::after {
+  bottom: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+@media (hover: hover) {
+  .foot__cols a:hover::after {
+    transform: scaleX(1);
+  }
+}
+.foot__colophon p + p {
+  margin-top: 0.7rem;
+  opacity: 0.75;
+}
+.foot__colophon p {
+  max-width: 46ch;
+}
+.foot__word {
+  position: absolute;
+  right: var(--pad);
+  bottom: 0.6vw;
+  font: 500 clamp(4rem, 13vw, 15rem) / 0.8 var(--display);
+  letter-spacing: -0.045em;
+  color: var(--paper);
+  opacity: 0.94;
+  pointer-events: none;
+}
+
+@media (max-width: 820px) {
+  .foot {
+    padding-bottom: 60vw;
+  }
+  .foot__cols {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 2rem;
+  }
+  .foot__colophon {
+    grid-column: 1 / -1;
+  }
+  .foot__land--far {
+    left: -60%;
+    width: 220%;
+    bottom: 12vw;
+  }
+  .foot__land--mid {
+    left: -90%;
+    width: 250%;
+    bottom: -4vw;
+  }
+  .foot__land--near {
+    left: -70%;
+    width: 280%;
+    bottom: -23vw;
+  }
+  .foot__moon {
+    right: 8%;
+    top: 5%;
+    width: 18vw;
+  }
+  .kite--foot {
+    left: 46%;
+    top: 3.5%;
+  }
+  .foot__word {
+    font-size: 24vw;
+    bottom: 2vw;
+  }
+}

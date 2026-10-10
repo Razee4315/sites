@@ -1,0 +1,75 @@
+/* the paper butterfly */
+.cursor { position: fixed; inset: 0; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+.cursor.is-on { opacity: 1; }
+.cursor.is-hidden .cursor__fly, .cursor.is-hidden .cursor__ring { opacity: 0; }
+.cursor > * { position: absolute; top: 0; left: 0; will-change: transform; }
+
+.cursor__dot::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 50%;
+  background: var(--cursor);
+  box-shadow: 0 0 0 1.5px var(--ink);
+  transition: transform 0.35s var(--ease-back);
+}
+.cursor.is-landed .cursor__dot::after { transform: scale(0.5); }
+.cursor.is-down .cursor__dot::after { transform: scale(1.8); }
+
+.cursor__fly { transition: opacity 0.25s; }
+.cursor__tilt { position: absolute; width: 56px; height: 52px; margin: -26px -28px; transition: scale 0.4s var(--ease-back); filter: drop-shadow(0 7px 3px rgba(20, 6, 40, 0.3)); }
+.cursor svg { overflow: visible; }
+.cursor .wing { transform-box: view-box; transform-origin: 28px 26px; animation: flap 0.52s ease-in-out infinite alternate; }
+.cursor .wing path { fill: var(--cursor); stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+.cursor .spots { fill: var(--ink); }
+.cursor .body { fill: var(--ink); stroke: var(--ink); stroke-width: 1.1; stroke-linecap: round; fill-rule: nonzero; }
+.cursor.is-fast .wing { animation-duration: 0.13s; }
+.cursor.is-landed .wing { animation-duration: 1.6s; animation-name: bask; }
+@keyframes flap { from { transform: scaleX(1); } to { transform: scaleX(0.16); } }
+@keyframes bask { from { transform: scaleX(1); } to { transform: scaleX(0.78); } }
+
+.cursor__ring { transition: opacity 0.25s; }
+.cursor__disc {
+  position: absolute;
+  width: 92px;
+  height: 92px;
+  margin: -46px;
+  border-radius: 50%;
+  background: var(--cursor);
+  box-shadow: 4px 5px 0 var(--ink);
+  transform: scale(0);
+  transition: transform 0.5s var(--ease-out);
+}
+.cursor__label {
+  position: absolute;
+  width: 92px;
+  margin: -0.65em -46px;
+  text-align: center;
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 0.66rem;
+  opacity: 0;
+  transform: translateY(6px) rotate(-6deg);
+  transition: opacity 0.25s, transform 0.5s var(--ease-out);
+}
+.cursor.has-label .cursor__disc { transform: scale(1); }
+.cursor.has-label .cursor__label { opacity: 1; transform: rotate(-6deg); }
+.cursor.has-label .cursor__dot { opacity: 0; }
+.cursor.is-down .cursor__disc { transform: scale(0.86); }
+
+/* skins: one wing colour per world, always chosen to stand off the ground it flies over */
+.cursor[data-world='plants'] { --cursor: var(--lime); }
+.cursor[data-world='flowers'] { --cursor: var(--saffron); }
+.cursor[data-world='animals'] { --cursor: var(--saffron); }
+.cursor[data-world='water'] { --cursor: var(--vermilion); }
+.cursor[data-world='fish'] { --cursor: var(--lime); }
+.cursor[data-world='mountains'] { --cursor: var(--cobalt); }
+.cursor[data-world='sky'] { --cursor: var(--pink); }
+.cursor[data-world='snow'] { --cursor: var(--vermilion); }
+.cursor[data-world='sheet'] { --cursor: var(--vermilion); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor .wing { animation: none; }
+}

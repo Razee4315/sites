@@ -1,0 +1,34 @@
+/* The display face is IM Fell French Canon, Igino Marini's revival of the type John Fell bought for
+   Oxford in the 1670s: cast metal, a little rough, about as old as the foundry claims to be.
+   Its figures are old-style and its 1 is a plain I, so "11 people" reads as a Roman two. The digits
+   are therefore taken from Libre Caslon Display, another English founder's face, by unicode-range. */
+@font-face {
+  font-family: 'VT Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/im-fell-french-canon/files/im-fell-french-canon-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'VT Display';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/im-fell-french-canon/files/im-fell-french-canon-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'VT Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/libre-caslon-display/files/libre-caslon-display-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0030-0039;
+}
+@font-face {
+  font-family: 'VT Display';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/libre-caslon-display/files/libre-caslon-display-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0030-0039;
+}

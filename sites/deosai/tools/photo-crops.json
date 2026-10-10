@@ -1,0 +1,6 @@
+{
+ "plains": {"ratio": 1.6, "w": 2000}, "sheosar": {"ratio": 1.6, "w": 2000}, "nanga": {"ratio": 1.6, "w": 2000}, "barapani": {"ratio": 1.6, "w": 2000},
+ "kalapani": {"ratio": 1.6, "w": 2000}, "night": {"ratio": 1.6, "w": 2000}, "bloom": {"ratio": 1.6, "w": 2000}, "winter": {"ratio": 1.6, "w": 2000}, "sheosar2": {"ratio": 1.6, "w": 2000},
+ "snowtrout": {"ratio": 1.9, "w": 1400}, "osman": {"ratio": 1.9, "w": 1400}, "loach": {"ratio": 1.9, "w": 1400},
+ "golden-eagle": {"zoom": 1.3}, "lammergeier": {"zoom": 1.2}, "ibex": {"zoom": 1.1}
+}

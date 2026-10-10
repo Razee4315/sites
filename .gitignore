@@ -1,0 +1,13 @@
+node_modules/
+dist/
+
+# raw generated images and working files; the processed images each site uses live in its public/
+assets-raw/
+screenshots/
+shots/
+**/tools/logs/
+**/tools/preview/
+
+.claude/
+.DS_Store
+Thumbs.db

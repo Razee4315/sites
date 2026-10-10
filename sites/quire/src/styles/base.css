@@ -1,0 +1,354 @@
+/* ───────── tokens ───────── */
+:root {
+  --paper: #efe8da;
+  --paper-2: #e6decd;
+  --paper-3: #d8ceb9;
+  --ink: #17140f;
+  --ink-2: #4b453a;
+  --ink-3: #7b7364;
+  --red: #c8371b;
+  --line: rgba(23, 20, 15, 0.16);
+
+  --f-stencil: 'Big Shoulders Stencil Variable', 'Arial Narrow', Impact, sans-serif;
+  --f-serif: 'Bodoni Moda Variable', 'Bodoni 72', Didot, 'Times New Roman', serif;
+  --f-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, 'Helvetica Neue', Arial, sans-serif;
+
+  --gut: clamp(16px, 4vw, 76px);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  --grain: url('/img/grain.png');
+}
+
+/* ───────── reset ───────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-color: var(--ink-3) var(--paper-2);
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-sans);
+  font-size: clamp(15px, 0.55vw + 9.5px, 18px);
+  line-height: 1.55;
+  font-stretch: 96%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+h1,
+h2,
+h3,
+p,
+ol,
+ul,
+dl,
+dd,
+figure {
+  margin: 0;
+  padding: 0;
+}
+ol,
+ul {
+  list-style: none;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+img {
+  height: auto;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+i,
+em {
+  font-style: italic;
+}
+::selection {
+  background: var(--red);
+  color: var(--paper);
+}
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 1px;
+}
+
+[hidden] {
+  display: none !important;
+}
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.skip {
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  z-index: 200;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--paper);
+  transform: translateY(-200%);
+}
+.skip:focus {
+  transform: none;
+}
+
+/* ───────── shared pieces ───────── */
+.wrap {
+  width: 100%;
+  padding-inline: var(--gut);
+  margin-inline: auto;
+  max-width: 1920px;
+}
+.paper {
+  background-color: var(--paper);
+  background-image: var(--grain);
+  background-size: 256px;
+}
+
+.label {
+  font-size: 11.5px;
+  line-height: 1.3;
+  font-weight: 600;
+  font-stretch: 86%;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.display {
+  font-family: var(--f-stencil);
+  font-weight: 900;
+  font-variation-settings: 'opsz' 72;
+  font-size: clamp(54px, 9.2vw, 190px);
+  line-height: 0.82;
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+}
+.display--xl {
+  font-size: clamp(66px, 13.5vw, 280px);
+}
+
+.link {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  padding-bottom: 2px;
+  transition: opacity 0.3s;
+}
+.link:hover {
+  opacity: 0.6;
+}
+
+/* a strip of paper pinned to the page: nav, labels */
+.tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  min-height: 40px;
+  padding: 0 16px;
+  background: var(--paper) var(--grain) 0 0 / 256px;
+  color: var(--ink);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 1px 1px rgba(10, 8, 4, 0.22),
+    0 8px 18px -8px rgba(10, 8, 4, 0.45);
+}
+.tag--red {
+  background-color: var(--red);
+  color: #fff6e6;
+}
+
+/* buttons: a sheet slides up behind the words */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6em;
+  min-height: 52px;
+  padding: 0 20px 0 22px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid currentColor;
+  font-size: 12px;
+  font-weight: 600;
+  font-stretch: 88%;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  --btn-fill: var(--ink);
+  --btn-on: var(--paper);
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: var(--btn-fill);
+  transform: translateY(102%);
+  transition: transform 0.6s var(--ease-out);
+}
+.btn .btn__t,
+.btn svg {
+  transition: color 0.2s 0.05s, transform 0.6s var(--ease-out);
+}
+.btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+.btn:hover::before,
+.btn:focus-visible::before {
+  transform: none;
+}
+.btn:hover .btn__t,
+.btn:hover svg,
+.btn:focus-visible .btn__t,
+.btn:focus-visible svg {
+  color: var(--btn-on);
+}
+.btn:hover svg,
+.btn:focus-visible svg {
+  transform: translateX(5px);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn--light {
+  --btn-fill: var(--paper);
+  --btn-on: var(--ink);
+}
+
+/* photographs: a window with the picture drifting behind it */
+.photo {
+  position: relative;
+  overflow: hidden;
+  background: #100e0b;
+}
+.photo img {
+  width: 100%;
+  height: 116%;
+  object-fit: cover;
+  will-change: transform;
+}
+.cap {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 12px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.cap span:last-child {
+  text-align: right;
+  color: var(--ink-3);
+}
+
+/* line masks made by SplitText: room for italic overhang and descenders, without moving the line */
+.sl-mask {
+  padding: 0.06em 0.14em 0.16em;
+  margin: -0.06em -0.14em -0.16em;
+}
+
+/* Bodoni at small sizes: ask for the sturdy optical size, so the hairlines survive on textured paper */
+.prog__num,
+.prog__facts dd,
+.tui__acts button,
+.sheets li i,
+.plane__tag,
+.specs dd b,
+.step__n,
+.step__f b,
+.making__count,
+.making__count b,
+.fig__note,
+.who__name,
+.night__date,
+.night__left b,
+.sheet,
+.book__sum,
+.ticket__when,
+.ticket__seats,
+.stub__note,
+.house__tree figcaption,
+.menu__links a i {
+  font-variation-settings: 'opsz' 9;
+}
+.house__say,
+.hero__line,
+.bench__quote,
+.prog__sub {
+  font-variation-settings: 'opsz' 30;
+}
+
+/* split-text helpers */
+.ln {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.ln > span {
+  display: block;
+  will-change: transform;
+}
+.ch {
+  display: inline-block;
+  will-change: transform;
+}
+.chm {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-top: 0.06em;
+  margin-top: -0.06em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+  }
+}

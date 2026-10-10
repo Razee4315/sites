@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Deosai — the blank page of the Himalaya</title>
+    <meta name="description" content="Deosai, the high plateau near Skardu in Gilgit-Baltistan: its plants, flowers, animals, water, fish, mountains and sky, told as a white page that is cut open for one summer at a time." />
+    <meta name="theme-color" content="#f6f2e8" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f04e23'/%3E%3Cpath fill='%23f6f2e8' d='M1 28 12.300 5.500 19 17.200l3.300-4.600L31 28z'/%3E%3C/svg%3E" />
+    <link rel="preload" href="/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <a class="skip mono" href="#about">Skip to the plateau</a>
+
+    <!-- the blank page -->
+    <div class="loader" aria-hidden="true">
+      <div class="loader__in">
+        <div class="loader__line"><div class="loader__cut"></div><div class="loader__sc"></div></div>
+        <div class="loader__row mono"><span>Breaking the snow</span><span class="loader__n">000</span></div>
+      </div>
+    </div>
+
+    <header class="bar" data-world="snow">
+      <a class="bar__mark" href="#top" aria-label="Deosai, back to the top"><span class="display">Deosai</span><span class="mono">35°N 75°E</span></a>
+      <p class="bar__where mono" aria-live="polite"><span class="bar__where-n"></span><span class="bar__where-t">The blank page</span></p>
+      <button class="btn btn--ink btn--small bar__index" type="button" aria-expanded="false" aria-controls="index" data-magnet>
+        <span class="btn__face"><span class="btn__label"><span>Index</span><span>Index</span></span><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-index" /></svg></span>
+      </button>
+    </header>
+    <nav class="rail" aria-label="Worlds"></nav>
+    <div class="index paper" id="index" data-world="snow" hidden>
+      <div class="index__in">
+        <p class="mono index__k">Seven worlds, one summer</p>
+        <ol class="index__list"></ol>
+        <p class="index__foot mono"><a href="#credits" data-go>Credits &amp; sources</a><span>Photographs are real. Paper is generated.</span></p>
+      </div>
+    </div>
+
+    <main>
+      <!-- ================= HERO ================= -->
+      <section class="hero" id="top" data-world="snow" aria-label="Deosai">
+        <div class="hero__pin">
+          <div class="hero__world" aria-hidden="true">
+            <div class="hero__sky"></div>
+            <div class="prop prop--sun" data-depth="0.1" data-rise="260"><div data-img="sun"></div></div>
+            <div class="prop prop--cloud prop--c1" data-depth="0.18" data-rise="330"><div data-img="cloud-1"></div></div>
+            <div class="prop prop--cloud prop--c2" data-depth="0.24" data-rise="300"><div data-img="cloud-2"></div></div>
+            <div class="prop prop--cloud prop--c3" data-depth="0.14" data-rise="420"><div data-img="cloud-3"></div></div>
+            <div class="layer layer--peaks" data-depth="0.22" data-rise="150"><div data-img="hero-peaks"></div></div>
+            <div class="layer layer--hills" data-depth="0.4" data-rise="160"><div data-img="hero-hills"></div></div>
+            <div class="layer layer--plain" data-depth="0.62" data-rise="190"><div data-img="hero-plain"></div></div>
+            <div class="prop prop--bear" data-depth="0.7" data-rise="330"><div data-img="sp-brown-bear" data-flip></div></div>
+            <div class="layer layer--meadow" data-depth="1" data-rise="110"><div data-img="hero-meadow"></div></div>
+          </div>
+
+          <div class="hero__sheet hero__sheet--bot" aria-hidden="true">
+            <svg>
+              <mask id="cut-b">
+                <rect width="100%" height="100%" fill="#fff" />
+                <text class="one" x="50%" y="50%" dy="0.345em">DEOSAI</text>
+                <text class="two" x="50%" y="50%" dy="-0.07em">DEO</text><text class="two" x="50%" y="50%" dy="0.76em">SAI</text>
+              </mask>
+              <g mask="url(#cut-b)">
+                <rect x="-5%" y="58%" width="110%" height="60%" fill="#f6f2e8" />
+                <image href="/img/torn-b.webp" x="-3%" y="45.5%" width="106%" height="16%" preserveAspectRatio="none" />
+              </g>
+            </svg>
+            <div class="hero__ui hero__ui--bot">
+              <div class="hero__tag"><p class="lede">For most of the year this plateau is a blank page.</p></div>
+              <a class="hero__cue mono" href="#about" data-go data-cursor="tear"><i><svg class="ico" viewBox="0 0 32 32"><use href="#i-down" /></svg></i><span>Scroll to break the snow</span></a>
+            </div>
+          </div>
+          <div class="hero__sheet hero__sheet--top" aria-hidden="true">
+            <svg>
+              <mask id="cut-t">
+                <rect width="100%" height="100%" fill="#fff" />
+                <text class="one" x="50%" y="50%" dy="0.345em">DEOSAI</text>
+                <text class="two" x="50%" y="50%" dy="-0.07em">DEO</text><text class="two" x="50%" y="50%" dy="0.76em">SAI</text>
+              </mask>
+              <g mask="url(#cut-t)">
+                <rect x="-5%" y="-20%" width="110%" height="62%" fill="#f6f2e8" />
+                <image href="/img/torn-a.webp" x="-3%" y="39%" width="106%" height="16%" preserveAspectRatio="none" />
+              </g>
+            </svg>
+            <div class="hero__ui">
+              <p class="hero__place mono"><span>Gilgit-Baltistan, Pakistan</span><span>A plateau about 4,000 m up</span></p>
+              <p class="hero__urdu urdu" lang="ur">دیوسائی</p>
+            </div>
+          </div>
+          <h1 class="sr">Deosai: the blank page of the Himalaya</h1>
+
+          <div class="hero__intro">
+            <div class="hero__intro-wrap">
+              <div class="hero__card">
+                <span class="tag tag--accent">Under the snow</span>
+                <p class="lede">Then, some time in June, the snow tears. This is what is underneath.</p>
+                <p class="body">Seven worlds follow: turf, bloom, animals, water, fish, rim and sky. Everything in them is real, and all of it happens in the few months before the page goes white again.</p>
+                <a class="btn" href="#about" data-go data-magnet><span class="btn__face"><span class="btn__label"><span>Walk in</span><span>Walk in</span></span><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-arrow" /></svg></span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ABOUT ================= -->
+      <section class="about paper" id="about" data-world="snow">
+        <div class="about__grid">
+          <div class="about__text">
+            <p class="tag">Ghbiarsa · the summer’s place</p>
+            <h2 class="about__h lede" data-reveal>Deosai is a treeless plateau about four thousand metres up, where the western Himalaya runs into the Karakoram. The Balti name for it, Ghbiarsa, means <em class="sci">the summer’s place</em>, because summer is the only time anyone can get there.</h2>
+            <p class="body" data-reveal>It is often described as the world’s second-highest plateau, after Tibet’s Changtang. Nobody lives on it. Herders bring their animals up for the warm months, bears walk in from the valleys in June, and by October the road is shut again.</p>
+          </div>
+          <figure class="window about__win" data-parallax="0.12">
+            <div class="window__photo" data-img="ph-plains" data-sizes="(min-width: 900px) 46vw, 92vw"></div>
+            <div class="window__sheet window__sheet--1"></div>
+            <div class="window__sheet window__sheet--2"></div>
+            <figcaption class="mono" data-credit="plains">The Deosai plains in summer</figcaption>
+          </figure>
+        </div>
+        <ul class="stats">
+          <li class="stat" data-tilt><b class="display"><span data-count="4000">4,000</span><i>m</i></b><span class="mono">Roughly how high the plains lie. One much-quoted average is 4,114 m.</span></li>
+          <li class="stat" data-tilt><b class="display"><span data-count="1993" data-plain>1993</span></b><span class="mono">The year it became a national park, to protect the last of its brown bears.</span></li>
+          <li class="stat" data-tilt><b class="display"><span data-count="8">8</span><i>months</i></b><span class="mono">Under snow, in the usual telling. Sources put the white season anywhere from October to May.</span></li>
+          <li class="stat" data-tilt><b class="display"><span data-count="0">0</span></b><span class="mono">Permanent human residents on the plains.</span></li>
+        </ul>
+        <div class="legend">
+          <div class="legend__cut" data-img="sp-red-fox" data-parallax="-0.08"></div>
+          <div class="legend__text">
+            <p class="tag tag--accent">How it got its name</p>
+            <p class="lede" data-reveal>One giant, not many.</p>
+            <p class="body" data-reveal>In Shina the name reads as <em>deo</em>, giant, and <em>sai</em>, shadow. The Gujjar herders tell it as <em>Dev Vasai</em>, the land the giant settled: a simple-minded giant took the flat grassland for a farm and began ploughing at the thaw. A fox warned him that summer here lasts barely eight weeks. The snow came before the harvest, and he fled.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= THE SEVEN WORLDS (built in worlds.js) ================= -->
+      <div id="worlds"></div>
+
+      <!-- ================= THE PAGE TURNS WHITE ================= -->
+      <section class="end" id="end" data-world="snow" aria-label="Winter">
+        <div class="end__pin">
+          <div class="end__photo" data-img="ph-winter" data-sizes="100vw"></div>
+          <div class="end__sheet end__sheet--top" aria-hidden="true"><div></div><img src="/img/torn-a.webp" alt="" loading="lazy" /></div>
+          <div class="end__sheet end__sheet--bot" aria-hidden="true"><img src="/img/torn-b.webp" alt="" loading="lazy" /><div></div></div>
+          <div class="end__text">
+            <p class="tag">October</p>
+            <h2 class="display end__h">Then it snows.</h2>
+            <p class="lede">The bears walk down to their dens in the valleys. The herders have already left. The road shuts, and the page is white again until June.</p>
+            <div class="end__btns">
+              <a class="btn" href="#top" data-go data-magnet><span class="btn__face"><span class="btn__label"><span>Read it again</span><span>From the top</span></span><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-snow" /></svg></span></a>
+              <a class="btn btn--ink" href="#credits" data-go><span class="btn__face"><span class="btn__label"><span>Credits &amp; sources</span><span>Who made what</span></span><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-arrow" /></svg></span></a>
+            </div>
+          </div>
+          <p class="end__cap mono" data-credit="winter">Deosai under snow</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================= CREDITS ================= -->
+    <footer class="credits paper" id="credits" data-world="snow">
+      <div class="credits__head">
+        <h2 class="display">What is real,<br />what is paper</h2>
+        <div>
+          <p class="lede">Every photograph on this site is a real photograph, used under an open licence and credited below. Everything that looks like cut paper was generated for this site.</p>
+          <p class="body">The paper animals, plants, landscapes and the four-light lake scene are illustrations made with an AI image model (OpenAI, through Codex) from written descriptions of each species, then checked against photographs. They are not photographs and are never labelled as one. Most species photographs were taken elsewhere in the animal’s or plant’s range, not in Deosai; the photographs of places are of Deosai itself. The three fish are shown as nineteenth-century scientific plates, because no openly licensed photograph of them exists.</p>
+        </div>
+      </div>
+      <div class="credits__cols">
+        <div><h3 class="mono">Photographs</h3><ul class="credits__list" id="credit-list"></ul></div>
+        <div>
+          <h3 class="mono">Where the facts come from</h3>
+          <ul class="credits__src">
+            <li>Pakistan’s submission of Deosai National Park to UNESCO’s Tentative List (2016)</li>
+            <li>Nawaz, Swenson &amp; Zakaria (2008), <em>Biological Conservation</em>; Nawaz et al. (2019), <em>PLOS ONE</em>: the brown bear counts and diet</li>
+            <li>Gilgit-Baltistan Forest, Wildlife &amp; Parks Department: brown bear survey (2022) and the park management plan</li>
+            <li>Shaheen et al. (2019), <em>Pakistan Journal of Botany</em>; Abbas et al. (2021); herbarium records on GBIF: the plants and their local names</li>
+            <li>Smith et al., <em>Holarctic Lepidoptera</em>: the butterflies. Kok et al. (2005): the ground invertebrates</li>
+            <li>Melis, Dessì &amp; Casu (2023), <em>Remote Sensing</em>: the lakes that come and go</li>
+            <li>van der Beek et al. (2009), <em>Nature Geoscience</em>: the age of the plateau surface</li>
+            <li>G. T. Vigne, <em>Travels in Kashmir, Ladak, Iskardo</em> (1842); Salman Rashid in <em>Dawn</em>: history and the legend</li>
+            <li>eBird and iNaturalist records via GBIF: the birds. Wikipedia, as a cross-check only</li>
+          </ul>
+          <p class="body credits__note">Where sources disagree (the area of the park, the height of Sheosar Lake, the length of winter) this site says so or uses the cautious figure. Type is Bricolage Grotesque, Instrument Serif, DM Mono and Noto Nastaliq Urdu, all self-hosted.</p>
+        </div>
+      </div>
+      <p class="credits__end mono"><span>Deosai · دیوسائی</span><span>Built by hand, with scissors that do not exist.</span></p>
+    </footer>
+  </body>
+</html>

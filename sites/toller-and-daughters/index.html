@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Toller &amp; Daughters — Bellfounders since 1687</title>
+    <meta name="description" content="Toller & Daughters cast tower bells, handbells and ship's bells in one pit on Pit Lane. Cast once. Heard for centuries. (An invented foundry.)" />
+    <meta name="theme-color" content="#0c0a08" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230c0a08'/%3E%3Cpath d='M14 6h4v3c4 1 5.500 5 6 10l2.500 5h-21L8 19c.5-5 2-9 6-10z' fill='%23d9a560'/%3E%3Ccircle cx='16' cy='26' r='2' fill='%23ff6a1c'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <!-- ─────────── gate: the furnace comes up to heat while the images load ─────────── -->
+    <div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Welcome">
+      <div class="gate__glow" aria-hidden="true"></div>
+      <p class="gate__brand label">Toller &amp; Daughters <span>Bellfounders</span></p>
+      <div class="gate__mid">
+        <p class="gate__temp" aria-hidden="true"><span id="gate-temp">0</span><i>°C</i></p>
+        <div class="gate__bar" aria-hidden="true"><i id="gate-bar"></i></div>
+        <p class="gate__status label" id="gate-status" aria-live="polite">Lighting the furnace</p>
+      </div>
+      <div class="gate__choose" id="gate-choose">
+        <button class="btn btn--hot" id="enter-sound" type="button"><span>Enter with sound</span></button>
+        <button class="btn btn--line" id="enter-quiet" type="button"><span>Enter quietly</span></button>
+      </div>
+      <p class="gate__note label">Better with sound. It is a bell foundry.</p>
+    </div>
+
+    <!-- ─────────── fixed furniture ─────────── -->
+    <header class="top" id="top-bar">
+      <a class="top__mark" href="#top" aria-label="Toller and Daughters, back to top">Toller <i>&amp;</i> Daughters</a>
+      <nav class="top__nav" aria-label="Sections">
+        <a href="#making"><span>The making</span></a>
+        <a href="#tuning"><span>Tuning</span></a>
+        <a href="#ring"><span>The ring</span></a>
+        <a href="#bells"><span>Bells</span></a>
+        <a href="#commission"><span>Commission</span></a>
+      </nav>
+      <button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Sound">
+        <span class="sound__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="sound__txt">Sound <b id="sound-state">off</b></span>
+      </button>
+      <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu"><i></i><i></i></button>
+    </header>
+
+    <div class="menu" id="menu" aria-hidden="true">
+      <nav aria-label="Sections (menu)">
+        <a href="#making"><small>I</small>The making</a>
+        <a href="#life"><small>II</small>Four hundred years</a>
+        <a href="#tuning"><small>III</small>Tuning</a>
+        <a href="#ring"><small>IV</small>The ring</a>
+        <a href="#bells"><small>V</small>Bells</a>
+        <a href="#commission"><small>VI</small>Commission</a>
+      </nav>
+      <p class="label">Pit Lane, Marrowby · Since 1687</p>
+    </div>
+
+    <!-- the bell rope: how far down the page you are -->
+    <div class="rope" aria-hidden="true">
+      <i class="rope__line"></i>
+      <div class="rope__sally" id="sally"><img img="sally" alt="" /></div>
+    </div>
+
+    <p class="chapter label" aria-hidden="true"><span id="chapter-n">00</span><b id="chapter-t">Pit Lane</b></p>
+
+    <div class="grain" aria-hidden="true"></div>
+    <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-t">Strike</span></div>
+
+    <main id="main">
+      <!-- ─────────── 00 hero ─────────── -->
+      <section class="hero" id="top" data-chapter="00|Pit Lane">
+        <div class="hero__fire" aria-hidden="true"></div>
+        <div class="hero__embers" aria-hidden="true"><img img="sparks-b" alt="" /><img img="sparks-b" alt="" /></div>
+        <div class="hero__smoke" aria-hidden="true"><img img="smoke" alt="" /></div>
+
+        <p class="hero__meta label"><span>Bellfounders</span><span>Pit Lane, Marrowby</span><span>Since 1687</span></p>
+
+        <h1 class="hero__title" aria-label="Cast once. Heard for centuries.">
+          <span class="ln"><span class="ln__i">Cast once.</span></span>
+          <span class="ln"><span class="ln__i">Heard for</span></span>
+          <span class="ln"><span class="ln__i"><em>centuries.</em></span></span>
+        </h1>
+
+        <div class="hero__bell">
+          <div class="hang hang--hero" data-bell data-freq="370" data-size="1" data-cursor="Strike" tabindex="0" role="button" aria-label="Strike the tenor bell">
+            <div class="hang__swing">
+              <div class="hang__clapper"><img img="clapper" alt="" /></div>
+              <img class="hang__bell" img="bell-1" alt="A newly tuned bronze tower bell" fetchpriority="high" />
+              <img class="hang__stock" img="headstock" alt="" />
+            </div>
+            <i class="hang__ring"></i><i class="hang__ring"></i>
+          </div>
+          <p class="hero__tag label"><b>No. 4,117</b><span>Tenor · 14&nbsp;cwt · F♯</span><span class="hero__tag-hint">Go on. Strike it.</span></p>
+        </div>
+
+        <div class="hero__foot">
+          <p class="hero__lede">Toller &amp; Daughters have been pouring bells into the same hole in the ground since 1687. Nine generations, one pit, 4,117&nbsp;bells. Every one is still ringing somewhere, or we would have heard.</p>
+          <a class="hero__scroll label" href="#manifesto"><i></i>Scroll down into the pit</a>
+        </div>
+      </section>
+
+      <!-- ─────────── 01 the short version ─────────── -->
+      <section class="creed" id="manifesto" data-chapter="01|The short version">
+        <p class="label creed__label">The short version</p>
+        <p class="creed__text" data-words>A bell is the only instrument that is cast, not built. There is one pour and it lasts four minutes. Whatever comes out of the ground will hang in a tower and be heard by people who are not born yet. We have done this 4,117 times. We still do not sleep the night before.</p>
+        <ul class="creed__stats">
+          <li><b data-count="4117">4,117</b><span class="label">bells cast</span></li>
+          <li><b data-count="338">338</b><span class="label">years</span></li>
+          <li><b data-count="9">9</b><span class="label">generations</span></li>
+          <li><b data-count="1">1</b><span class="label">pit, never moved</span></li>
+        </ul>
+      </section>
+
+      <!-- ─────────── 02 the making ─────────── -->
+      <section class="making" id="making" data-chapter="I|The making">
+        <header class="making__head">
+          <p class="label">Chapter I — The making</p>
+          <h2 class="h-xl" data-lines>It takes four months, of which four minutes matter.</h2>
+        </header>
+
+        <article class="step step--loam">
+          <div class="step__copy">
+            <p class="step__n"><i>i.</i> Loam</p>
+            <h3 class="h-l" data-lines>First we build the silence.</h3>
+            <p class="body" data-fade>A bell begins as the space where a bell will be. We shape it twice in loam, which is clay, sand, horse manure and goat hair: an inner core, an outer cope, and between them a gap the exact shape of the sound. The recipe has not changed since 1687. Neither has the smell.</p>
+          </div>
+          <figure class="step__fig" data-reveal>
+            <div class="pic"><img img="loam" alt="A founder's hands smoothing wet loam over a bell mould with a wooden strickle board" loading="lazy" data-parallax /></div>
+            <figcaption class="label">Strickling the cope. Three weeks of work, destroyed on purpose in week sixteen.</figcaption>
+          </figure>
+        </article>
+
+        <article class="step step--fire">
+          <figure class="step__fig" data-reveal>
+            <div class="pic"><img img="furnace" alt="The glowing mouth of the furnace with molten bronze inside" loading="lazy" data-parallax /></div>
+            <figcaption class="label">The furnace at 03:10. It is lit the evening before and watched all night.</figcaption>
+          </figure>
+          <div class="step__copy">
+            <p class="step__n"><i>ii.</i> Fire</p>
+            <div class="ratio" aria-label="77 parts copper to 23 parts tin">
+              <span class="ratio__n" data-count="77">77</span>
+              <span class="ratio__c">:</span>
+              <span class="ratio__n" data-count="23">23</span>
+              <img class="ratio__ingot ratio__ingot--cu" img="copper" alt="" loading="lazy" data-float="-40" />
+              <img class="ratio__ingot ratio__ingot--sn" img="tin" alt="" loading="lazy" data-float="60" />
+              <span class="label ratio__l ratio__l--cu">Copper</span>
+              <span class="label ratio__l ratio__l--sn">Tin</span>
+            </div>
+            <h3 class="h-l" data-lines>Bronze so hard it is nearly glass.</h3>
+            <p class="body" data-fade>More tin and it shatters. Less and it thuds. We melt four tonnes overnight at <b class="hot"><span data-count="1150">1,150</span>&nbsp;°C</b> and skim it with a willow pole, because willow is what Hester Toller used in 1790 and nobody has dared try anything else.</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- ─────────── the pour: three registered frames of the same pit ─────────── -->
+      <section class="pour" id="pour" data-chapter="I|The pour" aria-label="The pour">
+        <div class="pour__pin">
+          <div class="pour__frames" aria-hidden="true">
+            <img img="pit-1" alt="" loading="lazy" />
+            <img img="pit-2" alt="" loading="lazy" />
+            <img img="pit-3" alt="" loading="lazy" />
+          </div>
+          <div class="pour__sparks" aria-hidden="true"><img img="sparks-a" alt="" loading="lazy" /></div>
+          <div class="pour__shade" aria-hidden="true"></div>
+
+          <p class="pour__n step__n"><i>iii.</i> The pour</p>
+
+          <div class="pour__beat pour__beat--1">
+            <p class="label">06:40</p>
+            <p class="h-l">The pit is cold.<br />Nobody talks.</p>
+          </div>
+          <div class="pour__two">
+            <p class="pour__big" aria-hidden="true">Pour.</p>
+            <div class="pour__beat pour__beat--2">
+              <p class="h-m">Four tonnes. Four minutes.<br />There is no second attempt.</p>
+            </div>
+          </div>
+          <div class="pour__beat pour__beat--3">
+            <p class="label">06:51</p>
+            <p class="h-l">Then we fill in the hole<br />and go home.</p>
+          </div>
+
+          <div class="pour__clock label" aria-hidden="true">
+            <span>Pour time</span><b id="pour-time">0:00</b>
+            <span>Metal</span><b id="pour-temp">1,150 °C</b>
+            <i class="pour__meter"><i id="pour-meter"></i></i>
+          </div>
+        </div>
+      </section>
+
+      <section class="wait" data-chapter="I|Nine days">
+        <div class="wait__copy">
+          <p class="step__n"><i>iv.</i> Patience</p>
+          <h3 class="h-xl" data-lines>Nine days in the ground.</h3>
+          <p class="body" data-fade>Cool a bell too quickly and it cracks the first time it is struck. So it stays buried in the pit, in its own heat, for nine days. We have tried being impatient. The result is in the yard, in two pieces, where the apprentices can see it.</p>
+          <ol class="days" aria-label="Nine days of cooling">
+            <li><span>1</span></li><li><span>2</span></li><li><span>3</span></li><li><span>4</span></li><li><span>5</span></li><li><span>6</span></li><li><span>7</span></li><li><span>8</span></li><li><span>9</span></li>
+          </ol>
+        </div>
+        <figure class="wait__fig" data-reveal>
+          <div class="pic"><img img="breakout" alt="A newly cast bell, rough and grey, being knocked out of its broken mould" loading="lazy" data-parallax /></div>
+          <figcaption class="label">Day nine. No. 4,117 meets daylight a semitone sharp, as intended.</figcaption>
+        </figure>
+      </section>
+
+      <!-- ─────────── 03 four hundred years: four registered finishes of one bell ─────────── -->
+      <section class="life" id="life" data-chapter="II|Four hundred years" aria-label="The first four hundred years of a bell">
+        <div class="life__pin">
+          <div class="life__bg" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p class="label life__label">Chapter II — The first four hundred years</p>
+
+          <div class="life__when" aria-hidden="true">
+            <p><small>Day</small><b>9</b></p>
+            <p><small>Day</small><b>40</b></p>
+            <p><small>Year</small><b>80</b></p>
+            <p><small>Year</small><b>400</b></p>
+          </div>
+
+          <div class="life__bell">
+            <div class="life__halo" aria-hidden="true"></div>
+            <img img="bell-2" alt="The bell as cast: rough, dark and crusted with loam" loading="lazy" />
+            <img img="bell-1" alt="The bell tuned and polished to bright bronze" loading="lazy" />
+            <img img="bell-3" alt="The bell after eighty years: deep brown" loading="lazy" />
+            <img img="bell-4" alt="The bell after four hundred years: green with verdigris" loading="lazy" />
+          </div>
+
+          <ol class="life__notes">
+            <li><h3>As cast</h3><p>Rough, black and deliberately sharp. You can take metal off a bell. You cannot put it back.</p></li>
+            <li><h3>Tuned</h3><p>Thirty-one kilos lighter. In tune with itself, and with the five it will hang beside.</p></li>
+            <li><h3>Brown</h3><p>The founder who made it is gone. Nobody in the parish can picture the tower without it.</p></li>
+            <li><h3>Green</h3><p>Still within two cents of the note we left it on. We will not be available for comment.</p></li>
+          </ol>
+
+          <div class="life__scale label" aria-hidden="true"><i id="life-tick"></i><span>Day 9</span><span>Day 40</span><span>Year 80</span><span>Year 400</span></div>
+        </div>
+      </section>
+
+      <!-- ─────────── 04 tuning ─────────── -->
+      <section class="tuning" id="tuning" data-chapter="III|Tuning">
+        <img class="tuning__swarf tuning__swarf--a" img="swarf-a" alt="" loading="lazy" data-float="-140" />
+        <img class="tuning__swarf tuning__swarf--b" img="swarf-b" alt="" loading="lazy" data-float="110" />
+
+        <header class="tuning__head">
+          <p class="label">Chapter III — Tuning</p>
+          <h2 class="h-xxl" data-lines>One bell. Five notes.</h2>
+          <p class="body body--l" data-fade>Strike a bell and you hear a chord, not a note. Five separate tones sound at once, and in an untuned bell they disagree. The tuner's whole job is to make them agree. She does it on a vertical lathe built in 1921, taking shavings off the inside a fraction of a millimetre at a time, and listening.</p>
+        </header>
+
+        <div class="partials">
+          <div class="partials__bell" aria-hidden="true">
+            <svg viewBox="0 0 440 440" fill="none">
+              <defs>
+                <clipPath id="wall">
+                  <path d="M190 24h60v34c34 6 58 22 66 52l22 172c6 40 30 62 82 84l8 22-16 18h-44c-20-38-40-70-48-112L298 130c-6-26-24-40-48-44h-60c-24 4-42 18-48 44l-22 164c-8 42-28 74-48 112H28l-16-18 8-22c52-22 76-44 82-84l22-172c8-30 32-46 66-52z" />
+                </clipPath>
+              </defs>
+              <path class="pb__wall" d="M190 24h60v34c34 6 58 22 66 52l22 172c6 40 30 62 82 84l8 22-16 18h-44c-20-38-40-70-48-112L298 130c-6-26-24-40-48-44h-60c-24 4-42 18-48 44l-22 164c-8 42-28 74-48 112H28l-16-18 8-22c52-22 76-44 82-84l22-172c8-30 32-46 66-52z" />
+              <g clip-path="url(#wall)">
+                <rect class="pb__zone" data-zone="0" x="0" y="96" width="440" height="62" />
+                <rect class="pb__zone" data-zone="1" x="0" y="158" width="440" height="62" />
+                <rect class="pb__zone" data-zone="2" x="0" y="220" width="440" height="56" />
+                <rect class="pb__zone" data-zone="3" x="0" y="276" width="440" height="56" />
+                <rect class="pb__zone" data-zone="4" x="0" y="332" width="440" height="76" />
+              </g>
+              <path class="pb__line" d="M190 24h60v34c34 6 58 22 66 52l22 172c6 40 30 62 82 84l8 22-16 18h-44c-20-38-40-70-48-112L298 130c-6-26-24-40-48-44h-60c-24 4-42 18-48 44l-22 164c-8 42-28 74-48 112H28l-16-18 8-22c52-22 76-44 82-84l22-172c8-30 32-46 66-52z" />
+              <path class="pb__axis" d="M220 0v440" />
+            </svg>
+            <p class="label partials__cap">Section through No. 4,117.<br />Each note lives in a different band of the wall.</p>
+          </div>
+
+          <ol class="partials__list">
+            <li><button type="button" class="partial" data-partial="0" data-ratio="0.5" data-cursor="Listen">
+              <span class="partial__i label">1</span><span class="partial__name">Hum</span>
+              <span class="partial__wave" aria-hidden="true"><i style="--n:2"></i></span>
+              <span class="partial__hz label">185.0 Hz · F♯3</span>
+              <span class="partial__say">An octave below. The one still sounding a minute later.</span>
+            </button></li>
+            <li><button type="button" class="partial" data-partial="1" data-ratio="1" data-cursor="Listen">
+              <span class="partial__i label">2</span><span class="partial__name">Prime</span>
+              <span class="partial__wave" aria-hidden="true"><i style="--n:4"></i></span>
+              <span class="partial__hz label">370.0 Hz · F♯4</span>
+              <span class="partial__say">The note we put on the invoice.</span>
+            </button></li>
+            <li><button type="button" class="partial" data-partial="2" data-ratio="1.1892" data-cursor="Listen">
+              <span class="partial__i label">3</span><span class="partial__name">Tierce</span>
+              <span class="partial__wave" aria-hidden="true"><i style="--n:5"></i></span>
+              <span class="partial__hz label">440.0 Hz · A4</span>
+              <span class="partial__say">A minor third. The reason bells sound sad.</span>
+            </button></li>
+            <li><button type="button" class="partial" data-partial="3" data-ratio="1.4983" data-cursor="Listen">
+              <span class="partial__i label">4</span><span class="partial__name">Quint</span>
+              <span class="partial__wave" aria-hidden="true"><i style="--n:6"></i></span>
+              <span class="partial__hz label">554.4 Hz · C♯5</span>
+              <span class="partial__say">A fifth. Quiet, but you would miss it.</span>
+            </button></li>
+            <li><button type="button" class="partial" data-partial="4" data-ratio="2" data-cursor="Listen">
+              <span class="partial__i label">5</span><span class="partial__name">Nominal</span>
+              <span class="partial__wave" aria-hidden="true"><i style="--n:8"></i></span>
+              <span class="partial__hz label">740.0 Hz · F♯5</span>
+              <span class="partial__say">An octave above. The one you hear first.</span>
+            </button></li>
+          </ol>
+          <div class="partials__all">
+            <button type="button" class="btn btn--ink" id="strike-all" data-cursor="Strike"><span>Strike all five</span></button>
+            <p class="label" id="partials-hint">Tap a note to hear it alone.</p>
+          </div>
+        </div>
+
+        <div class="tuning__pics">
+          <figure class="tuning__lathe" data-reveal>
+            <div class="pic"><img img="lathe" alt="A bronze bell clamped mouth-up on a large vertical lathe, ribbons of swarf piled inside" loading="lazy" data-parallax /></div>
+            <figcaption class="label">The 1921 lathe. It has outlasted four tuners.</figcaption>
+          </figure>
+          <figure class="tuning__fork" data-reveal>
+            <div class="pic"><img img="fork" alt="A hand holding a tuning fork against the lip of a bell" loading="lazy" data-parallax /></div>
+            <figcaption class="label">Checked by fork, then by ear. The ear has the final say.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ─────────── 05 the ring ─────────── -->
+      <section class="ring" id="ring" data-chapter="IV|The ring">
+        <div class="ring__open">
+          <div class="pic ring__belfry"><img img="belfry" alt="A ring of bronze bells hung on wooden wheels in an oak frame inside a stone belfry" loading="lazy" data-parallax /></div>
+          <div class="ring__open-copy">
+            <p class="label">Chapter IV — The ring</p>
+            <h2 class="h-xxl" data-lines>Ring the changes.</h2>
+          </div>
+        </div>
+
+        <div class="ring__intro">
+          <p class="body body--l" data-fade>Hang six bells in a tower and the English will not play a tune on them. They will ring them in every possible order instead, by rule, from memory, never repeating a row. It is called change ringing. It is four centuries old, closer to mathematics than to music, and a full peal takes three hours without stopping.</p>
+          <figure class="ring__ropes" data-reveal>
+            <div class="pic"><img img="ropes" alt="Six bell ropes with striped woollen sallies hanging in a ringing chamber" loading="lazy" data-parallax /></div>
+            <figcaption class="label">The ringing chamber at St Osyth's, Marrowby. Our six, hung 1911.</figcaption>
+          </figure>
+        </div>
+
+        <div class="tower" id="tower">
+          <div class="tower__beam" aria-hidden="true"></div>
+          <div class="tower__bells" id="tower-bells"><!-- six bells, built in ring.js --></div>
+
+          <div class="tower__panel">
+            <div class="tower__ctl">
+              <p class="label tower__how">Press <kbd>1</kbd>–<kbd>6</kbd>, tap a bell, or let us ring for you.</p>
+              <div class="methods" role="radiogroup" aria-label="Method" id="methods">
+                <button type="button" role="radio" aria-checked="true" data-method="hunt">Plain Hunt</button>
+                <button type="button" role="radio" aria-checked="false" data-method="bob">Plain Bob Minor</button>
+                <button type="button" role="radio" aria-checked="false" data-method="grandsire">Grandsire Doubles</button>
+                <button type="button" role="radio" aria-checked="false" data-method="rounds">Rounds</button>
+              </div>
+              <p class="tower__about" id="method-about"></p>
+              <div class="tower__go">
+                <button type="button" class="btn btn--hot" id="ring-play" data-cursor=""><span>Ring it</span></button>
+                <p class="label" id="ring-count" aria-live="polite">Row 0 of 0</p>
+              </div>
+            </div>
+            <div class="blue" id="blue" aria-hidden="true">
+              <div class="blue__scroll" id="blue-scroll"></div>
+              <i class="blue__now"></i>
+            </div>
+            <p class="label tower__key"><span><i class="k k--treble"></i>The treble, lightest of the six</span><span><i class="k k--blue"></i>The blue line, which ringers learn by heart</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────── 06 what we cast ─────────── -->
+      <section class="bells" id="bells" data-chapter="V|What we cast">
+        <div class="bells__pin">
+          <div class="bells__rail" aria-hidden="true"></div>
+          <div class="bells__track" id="bells-track">
+            <div class="bells__intro">
+              <p class="label">Chapter V — What we cast</p>
+              <h2 class="h-xxl" data-lines>Five kinds of bell. One kind of metal.</h2>
+              <p class="body">And one exception, for the sea. Each is cast to order, tuned on the same lathe and numbered in the same ledger. Strike any of them.</p>
+              <p class="label bells__drag"><i></i>Keep scrolling</p>
+            </div>
+
+            <article class="card">
+              <div class="card__hang">
+                <div class="hang" data-bell data-freq="370" data-size="1" data-cursor="Strike" tabindex="0" role="button" aria-label="Strike the tower bell">
+                  <div class="hang__swing"><div class="hang__clapper"><img img="clapper" alt="" loading="lazy" /></div><img class="hang__bell" img="bell-3" alt="A brown bronze tower bell" loading="lazy" /><img class="hang__stock" img="headstock" alt="" loading="lazy" /></div>
+                  <i class="hang__ring"></i><i class="hang__ring"></i>
+                </div>
+              </div>
+              <div class="card__copy">
+                <p class="card__n label">01</p>
+                <h3 class="h-l">The tower bell</h3>
+                <p class="body">For churches, town halls and anyone with a tower and patient neighbours. Hung for full-circle ringing or fixed for a clock.</p>
+                <dl class="spec"><div><dt>Weight</dt><dd>2 to 40 cwt</dd></div><div><dt>Shown</dt><dd>14 cwt · ⌀ 1,092 mm · F♯</dd></div><div><dt>Lead time</dt><dd>26 weeks</dd></div><div><dt>From</dt><dd>£9,400</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card__hang">
+                <div class="hang hang--wide" data-bell data-freq="196" data-size="1.5" data-cursor="Strike" tabindex="0" role="button" aria-label="Strike the bourdon">
+                  <div class="hang__swing"><div class="hang__clapper"><img img="clapper" alt="" loading="lazy" /></div><img class="hang__bell" img="bourdon" alt="An enormous dark bronze bourdon bell" loading="lazy" /><img class="hang__stock" img="headstock" alt="" loading="lazy" /></div>
+                  <i class="hang__ring"></i><i class="hang__ring"></i>
+                </div>
+              </div>
+              <div class="card__copy">
+                <p class="card__n label">02</p>
+                <h3 class="h-l">The bourdon</h3>
+                <p class="body">The lowest voice in a cathedral. We cast one every decade or so, and the town comes to watch. Bring a strong floor.</p>
+                <dl class="spec"><div><dt>Weight</dt><dd>3 to 9 tonnes</dd></div><div><dt>Shown</dt><dd>6,400 kg · ⌀ 2,140 mm · G</dd></div><div><dt>Lead time</dt><dd>14 months</dd></div><div><dt>From</dt><dd>On application</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card__hang">
+                <div class="hang hang--hand" data-bell data-freq="784" data-size="0.45" data-cursor="Strike" tabindex="0" role="button" aria-label="Ring the handbell">
+                  <div class="hang__swing"><img class="hang__bell" img="handbell" alt="A polished handbell with a leather strap handle" loading="lazy" /></div>
+                  <i class="hang__ring"></i><i class="hang__ring"></i>
+                </div>
+              </div>
+              <div class="card__copy">
+                <p class="card__n label">03</p>
+                <h3 class="h-l">The handbell</h3>
+                <p class="body">How ringers practise without waking the village. Sold singly, by the octave, or in a long set of sixty-one.</p>
+                <dl class="spec"><div><dt>Weight</dt><dd>200 g to 7 kg</dd></div><div><dt>Shown</dt><dd>No. 15 · ⌀ 140 mm · G</dd></div><div><dt>Lead time</dt><dd>8 weeks</dd></div><div><dt>From</dt><dd>£410</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card__hang">
+                <div class="hang hang--small" data-bell data-freq="622" data-size="0.55" data-cursor="Strike" tabindex="0" role="button" aria-label="Strike the ship's bell">
+                  <div class="hang__swing"><div class="hang__clapper"><img img="clapper" alt="" loading="lazy" /></div><img class="hang__bell" img="shipbell" alt="A polished brass ship's bell" loading="lazy" /></div>
+                  <i class="hang__ring"></i><i class="hang__ring"></i>
+                </div>
+              </div>
+              <div class="card__copy">
+                <p class="card__n label">04</p>
+                <h3 class="h-l">The ship's bell</h3>
+                <p class="body">Brass, strictly speaking, not bell metal. Salt air eats tin. It is the only exception we make, and we make it for the sea.</p>
+                <dl class="spec"><div><dt>Weight</dt><dd>2 to 30 kg</dd></div><div><dt>Shown</dt><dd>4.2 kg · ⌀ 203 mm · D♯</dd></div><div><dt>Lead time</dt><dd>6 weeks</dd></div><div><dt>From</dt><dd>£690</dd></div></dl>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card__hang">
+                <div class="hang hang--small hang--clock" data-bell data-freq="523" data-size="0.7" data-cursor="Strike" tabindex="0" role="button" aria-label="Strike the clock bell">
+                  <div class="hang__swing"><img class="hang__bell" img="clockbell" alt="A hemispherical bronze clock bell" loading="lazy" /></div>
+                  <i class="hang__ring"></i><i class="hang__ring"></i>
+                </div>
+              </div>
+              <div class="card__copy">
+                <p class="card__n label">05</p>
+                <h3 class="h-l">The clock bell</h3>
+                <p class="body">A hemisphere, struck from outside by a hammer, on the hour, every hour, for as long as anyone winds the clock.</p>
+                <dl class="spec"><div><dt>Weight</dt><dd>10 to 400 kg</dd></div><div><dt>Shown</dt><dd>62 kg · ⌀ 510 mm · C</dd></div><div><dt>Lead time</dt><dd>12 weeks</dd></div><div><dt>From</dt><dd>£4,900</dd></div></dl>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────── 07 commission ─────────── -->
+      <section class="order" id="commission" data-chapter="VI|Commission">
+        <header class="order__head">
+          <p class="label">Chapter VI — Commission</p>
+          <h2 class="h-xxl" data-lines>What should yours say?</h2>
+          <p class="body body--l" data-fade>Every bell we cast carries an inscription, set by hand in reversed letters and pressed into the mould. Most are a name, a date and a reason. Type yours and see how it sits.</p>
+        </header>
+
+        <div class="band" id="band">
+          <img img="band" alt="" loading="lazy" />
+          <div class="band__text" aria-hidden="true"><span id="band-text">RING OUT THE OLD</span></div>
+        </div>
+
+        <form class="form" id="form" novalidate>
+          <div class="field field--wide">
+            <label for="f-words">The inscription</label>
+            <input id="f-words" name="words" type="text" maxlength="46" autocomplete="off" placeholder="Ring out the old" />
+            <p class="field__hint label"><span id="f-count">0</span> / 46 letters · cast in raised capitals</p>
+          </div>
+          <div class="field">
+            <label for="f-name">Your name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required />
+            <p class="field__err label" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="f-mail">Where we can write to you</label>
+            <input id="f-mail" name="email" type="email" autocomplete="email" required placeholder="name@example.com" />
+            <p class="field__err label" role="alert"></p>
+          </div>
+          <fieldset class="field field--wide chips">
+            <legend>Where it will hang</legend>
+            <label><input type="radio" name="place" value="A tower" checked /><span>A tower</span></label>
+            <label><input type="radio" name="place" value="A ship" /><span>A ship</span></label>
+            <label><input type="radio" name="place" value="A school" /><span>A school</span></label>
+            <label><input type="radio" name="place" value="A garden" /><span>A garden</span></label>
+            <label><input type="radio" name="place" value="Not sure yet" /><span>Not sure yet</span></label>
+          </fieldset>
+          <div class="field field--wide form__send">
+            <button class="btn btn--hot btn--big" type="submit" data-cursor=""><span>Send to the foundry</span></button>
+            <p class="label">We answer every enquiry by letter, within the fortnight.<br />This is a demonstration: nothing is sent anywhere.</p>
+          </div>
+          <div class="form__done" id="form-done" role="status" aria-live="polite" hidden>
+            <p class="h-l">Received<span id="done-name"></span>.</p>
+            <p class="body">Your words are pinned above the bench. We light the furnace on Thursdays and write back on Fridays.</p>
+            <button class="btn btn--line" type="button" id="form-again"><span>Change the inscription</span></button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- ─────────── footer: out of the pit, up the tower ─────────── -->
+    <footer class="foot" data-chapter="∞|Still ringing">
+      <div class="foot__sky pic"><img img="sky" alt="Dawn over the slate roofs of a small town, seen through a belfry arch" loading="lazy" data-parallax /></div>
+      <div class="foot__in">
+        <p class="foot__big" aria-hidden="true"><span>Still</span> <span><em>ringing.</em></span></p>
+        <div class="foot__cols">
+          <div>
+            <p class="label">The foundry</p>
+            <p>Toller &amp; Daughters<br />Pit Lane, Marrowby</p>
+            <p>Open to visitors on pouring days.<br />Stand where you are told.</p>
+          </div>
+          <div>
+            <p class="label">The page</p>
+            <p><a href="#making">The making</a><br /><a href="#tuning">Tuning</a><br /><a href="#ring">The ring</a><br /><a href="#bells">Bells</a><br /><a href="#commission">Commission</a></p>
+          </div>
+          <div>
+            <p class="label">The small print</p>
+            <p class="foot__fine">Toller &amp; Daughters is an invented foundry and Marrowby an invented town; no bells were cast and no enquiries are received. Every photograph on this page was generated with OpenAI Codex. The design, the words, the code and the synthesised bell tones are by Claude.</p>
+          </div>
+        </div>
+        <p class="foot__end label"><span>© 1687–2026, more or less</span><a href="#top">Back up to the pit ↑</a></p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,280 @@
+/* ---------- fonts (self-hosted) ---------- */
+@font-face {
+  font-family: 'Bricolage';
+  src: url('/fonts/bricolage-latin.woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Bricolage';
+  src: url('/fonts/bricolage-latin-ext.woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-display: swap;
+  unicode-range: U+0100-02AF, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Instrument';
+  src: url('/fonts/instrument-italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2212;
+}
+@font-face {
+  font-family: 'Instrument';
+  src: url('/fonts/instrument-italic-ext.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02AF, U+1E00-1EFF;
+}
+@font-face {
+  font-family: 'Instrument';
+  src: url('/fonts/instrument.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('/fonts/dmmono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Mono';
+  src: url('/fonts/dmmono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Nastaliq';
+  src: url('/fonts/nastaliq-subset.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* ---------- tokens ---------- */
+:root {
+  --snow: #f6f2e8;
+  --snow-2: #e9e2d2;
+  --ink: #1b0f2e;
+  --vermilion: #f04e23;
+  --aubergine: #2a1145;
+  --cobalt: #2740e6;
+  --mint: #bdefe0;
+  --petrol: #06303b;
+  --alpen: #ff9d97;
+  --oxblood: #4a0d1e;
+  --indigo: #0c0a2e;
+  --saffron: #ffc629;
+  --lime: #d9f24a;
+  --pink: #ff6fb0;
+  --coral: #ff7a59;
+
+  --bg: var(--snow);
+  --fg: var(--ink);
+  --accent: var(--vermilion);
+  --accent-2: var(--cobalt);
+  --on-accent: var(--snow);
+  --cursor: var(--vermilion);
+
+  --display: 'Bricolage', 'Arial Narrow', system-ui, sans-serif;
+  --text: 'Bricolage', system-ui, sans-serif;
+  --serif: 'Instrument', 'Times New Roman', serif;
+  --mono: 'DM Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --urdu: 'Nastaliq', 'Noto Nastaliq Urdu', serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-io: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --pad: clamp(1.1rem, 4vw, 4.5rem);
+  --lift: 0 1px 0 rgba(20, 6, 40, 0.22), 0 10px 22px -6px rgba(20, 6, 40, 0.38);
+  --lift-lg: 0 2px 0 rgba(20, 6, 40, 0.2), 0 30px 50px -18px rgba(20, 6, 40, 0.55);
+  --grain: url('/img/grain.webp');
+}
+
+/* each world re-skins the same components */
+[data-world='plants'] { --bg: var(--vermilion); --fg: var(--ink); --accent: var(--lime); --accent-2: var(--snow); --on-accent: var(--ink); --cursor: var(--lime); }
+[data-world='flowers'] { --bg: var(--aubergine); --fg: var(--snow); --accent: var(--pink); --accent-2: var(--saffron); --on-accent: var(--ink); --cursor: var(--saffron); }
+[data-world='animals'] { --bg: var(--cobalt); --fg: var(--snow); --accent: var(--saffron); --accent-2: var(--coral); --on-accent: var(--ink); --cursor: var(--saffron); }
+[data-world='water'] { --bg: var(--mint); --fg: var(--petrol); --accent: var(--vermilion); --accent-2: var(--cobalt); --on-accent: var(--snow); --cursor: var(--vermilion); }
+[data-world='fish'] { --bg: var(--petrol); --fg: var(--mint); --accent: var(--coral); --accent-2: var(--lime); --on-accent: var(--ink); --cursor: var(--lime); }
+[data-world='mountains'] { --bg: var(--alpen); --fg: var(--oxblood); --accent: var(--aubergine); --accent-2: var(--snow); --on-accent: var(--snow); --cursor: var(--cobalt); }
+[data-world='sky'] { --bg: var(--indigo); --fg: var(--snow); --accent: var(--saffron); --accent-2: var(--pink); --on-accent: var(--ink); --cursor: var(--pink); }
+[data-world='snow'] { --bg: var(--snow); --fg: var(--ink); --accent: var(--vermilion); --accent-2: var(--cobalt); --on-accent: var(--snow); --cursor: var(--vermilion); }
+
+/* ---------- reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scrollbar-width: thin; scrollbar-color: var(--ink) var(--snow-2); }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+body {
+  margin: 0;
+  background: var(--snow);
+  color: var(--ink);
+  font-family: var(--text);
+  font-variation-settings: 'opsz' 14, 'wdth' 100;
+  font-size: clamp(1rem, 0.94rem + 0.3vw, 1.2rem);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+img, svg { display: block; max-width: 100%; }
+img { height: auto; user-select: none; -webkit-user-drag: none; }
+h1, h2, h3, h4, p, figure, ul, ol, dl, dd { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; }
+::selection { background: var(--saffron); color: var(--ink); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--saffron); outline-offset: 4px; border-radius: 3px; box-shadow: 0 0 0 7px var(--ink); }
+
+/* mouse users get the paper butterfly instead of the arrow */
+@media (hover: hover) and (pointer: fine) {
+  html.has-cursor, html.has-cursor * { cursor: none !important; }
+}
+
+/* ---------- type ---------- */
+.display {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 96, 'wdth' 75;
+  font-weight: 800;
+  line-height: 0.84;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+.mono {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  line-height: 1.35;
+}
+.sci { font-family: var(--serif); font-style: italic; letter-spacing: 0.005em; }
+.urdu { font-family: var(--urdu); direction: rtl; line-height: 2.1; }
+.lede {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 40, 'wdth' 88;
+  font-weight: 500;
+  font-size: clamp(1.35rem, 1rem + 1.6vw, 2.35rem);
+  line-height: 1.16;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+.body { max-width: 34em; text-wrap: pretty; }
+.body + .body { margin-top: 0.9em; }
+
+.ico { width: 1em; height: 1em; fill: currentColor; flex: none; }
+
+/* ---------- paper ---------- */
+.paper { background-color: var(--bg); background-image: var(--grain); background-size: 256px; color: var(--fg); }
+
+/* a tag: small label that looks like a strip of cut paper */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.5em 0.8em 0.45em;
+  background: var(--fg);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  clip-path: polygon(0 6%, 100% 0, 98.5% 100%, 1.5% 94%);
+}
+.tag--accent { background: var(--accent); color: var(--on-accent); }
+
+/* ---------- button: a paper tab that lifts off its own shadow ---------- */
+.btn {
+  --b-bg: var(--accent);
+  --b-fg: var(--on-accent);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  isolation: isolate;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--b-fg);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn::before {
+  /* the shadow sheet underneath */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: var(--ink);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  transform: translate(5px, 5px);
+  transition: transform 0.5s var(--ease-out);
+}
+.btn__face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9em;
+  padding: 1.05em 1.35em 1em 1.3em;
+  background: var(--b-bg);
+  background-image: var(--grain);
+  background-size: 256px;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  transition: transform 0.5s var(--ease-out);
+  overflow: hidden;
+}
+.btn__face::after {
+  /* the folded corner */
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  background: linear-gradient(225deg, transparent 49%, rgba(20, 6, 40, 0.42) 50%);
+  transform-origin: 100% 0;
+  transform: scale(1);
+  transition: transform 0.5s var(--ease-out);
+}
+.btn__label { display: grid; overflow: hidden; height: 1.2em; line-height: 1.2; }
+.btn__label span { grid-area: 1 / 1; transition: transform 0.55s var(--ease-out); white-space: nowrap; }
+.btn__label span + span { transform: translateY(110%); }
+.btn .ico { font-size: 1.05em; transition: transform 0.55s var(--ease-back); }
+@media (hover: hover) {
+  .btn:hover::before { transform: translate(9px, 9px); }
+  .btn:hover .btn__face { transform: translate(-3px, -3px); }
+  .btn:hover .btn__face::after { transform: scale(1.9); }
+  .btn:hover .btn__label span { transform: translateY(-110%); }
+  .btn:hover .btn__label span + span { transform: translateY(0); }
+  .btn:hover .ico { transform: translateX(4px) rotate(-8deg); }
+}
+.btn:active::before { transform: translate(1px, 1px); }
+.btn:active .btn__face { transform: translate(3px, 3px); }
+.btn--ink { --b-bg: var(--ink); --b-fg: var(--snow); }
+.btn--ink::before { background: var(--accent); }
+.btn--small { font-size: 0.68rem; }
+.btn--small .btn__face { padding: 0.8em 1em 0.75em; }
+
+/* ---------- reveal helpers (set by JS; visible by default so nothing depends on scripting) ---------- */
+.split-line { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.split-line > span { display: block; will-change: transform; }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}

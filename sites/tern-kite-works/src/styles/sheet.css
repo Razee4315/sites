@@ -1,0 +1,576 @@
+/* ── the paper sections: one long sheet laid over the sky ──────────────── */
+.sheet {
+  position: relative;
+  z-index: 2;
+  background: var(--paper) url('/img/tex-paper.webp') 0 0 / 700px 700px;
+  color: var(--fg);
+}
+.sheet__edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  line-height: 0;
+}
+.sheet__edge img {
+  width: 100%;
+  min-width: 1100px;
+  max-width: none;
+}
+.sheet__edge--top {
+  /* the strip's faded tail overlaps the sheet, so the tear melts into it */
+  bottom: calc(100% - var(--tail, 3rem));
+  filter: drop-shadow(0 -0.5rem 0.9rem rgba(15, 26, 61, 0.16));
+}
+.sheet__edge--bottom {
+  top: calc(100% - var(--tail, 3rem));
+  transform: scaleY(-1);
+}
+.sheet__edge--bottom img {
+  transform: scaleX(-1);
+  filter: drop-shadow(0 -0.6rem 1rem rgba(15, 26, 61, 0.22));
+}
+
+/* tools lying about on the sheet */
+.tool {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
+}
+.tool img {
+  width: 100%;
+  filter: drop-shadow(0.5rem 0.9rem 0.7rem rgba(40, 30, 10, 0.28));
+}
+
+/* ── anatomy ───────────────────────────────────────────────────────────── */
+.anatomy {
+  padding-block: clamp(5rem, 14vh, 10rem) clamp(4rem, 10vh, 8rem);
+}
+.anatomy__bench {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+.tool--bamboo {
+  right: -5vw;
+  top: 6%;
+  width: clamp(14rem, 30vw, 34rem);
+  rotate: -17deg;
+}
+.tool--brush {
+  left: -1.5vw;
+  bottom: 5%;
+  width: clamp(5rem, 9vw, 10rem);
+  rotate: 24deg;
+}
+.tool--snips {
+  right: 4vw;
+  bottom: 9%;
+  width: clamp(2.6rem, 4.2vw, 5rem);
+  rotate: -38deg;
+}
+.tool--thread {
+  left: 42%;
+  top: 4.5%;
+  width: clamp(4rem, 6.4vw, 7.5rem);
+  rotate: 12deg;
+}
+
+.anatomy__head {
+  position: relative;
+  display: grid;
+  gap: 1.4rem;
+  max-width: 60rem;
+}
+.anatomy__intro {
+  max-width: 30ch;
+  margin-top: 0.4rem;
+  font: 400 clamp(1.25rem, 1rem + 0.9vw, 1.8rem) / 1.25 var(--display);
+  letter-spacing: -0.012em;
+}
+
+.anatomy__print {
+  position: absolute;
+  z-index: 1;
+  right: max(var(--pad), 13vw);
+  top: clamp(9rem, 12vw, 14rem);
+  width: clamp(9rem, 15vw, 17rem);
+  padding: 0.6rem 0.6rem 0;
+  background: #fbf8f1;
+  box-shadow:
+    0 1px 0 rgba(15, 26, 61, 0.06),
+    0.4rem 1rem 1.8rem rgba(40, 30, 10, 0.2);
+  rotate: 4deg;
+}
+.anatomy__print .mask {
+  aspect-ratio: 1;
+}
+.anatomy__print figcaption {
+  padding: 0.7rem 0.1rem 0.8rem;
+  font: 500 0.56rem/1.3 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.anatomy__plate {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) min(34vw, 62svh, 30rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 6rem);
+  align-items: stretch;
+  margin-top: clamp(3rem, 9vh, 7rem);
+}
+.parts {
+  display: grid;
+  align-content: space-around;
+  gap: 2.5rem;
+}
+.parts--left {
+  justify-items: end;
+  text-align: right;
+}
+.part {
+  position: relative;
+  max-width: 19rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--fg-3);
+  transition: border-color 0.4s;
+}
+.part::before {
+  /* the rule inks in when its part of the kite is being looked at */
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 1px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--out);
+}
+.parts--left .part::before {
+  transform-origin: right;
+}
+.part.is-hot::before {
+  transform: scaleX(1);
+}
+.part__no {
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font: 600 0.62rem/1 var(--mono);
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    border-color 0.3s;
+}
+.part.is-hot .part__no {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--paper);
+}
+.part h3 {
+  margin-top: 0.8rem;
+  font: italic 400 clamp(1.9rem, 1.2rem + 1.8vw, 3rem) / 1 var(--display);
+  letter-spacing: -0.03em;
+}
+.part p {
+  margin-top: 0.6rem;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  color: var(--fg-2);
+}
+
+.specimen {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1.4rem;
+}
+.specimen__kite {
+  position: relative;
+  width: 100%;
+  touch-action: pan-y;
+  cursor: none;
+}
+.specimen__front {
+  width: 100%;
+  filter: drop-shadow(0.6rem 1.6rem 1.4rem rgba(40, 30, 10, 0.3));
+}
+.specimen__lens {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--lens, 15rem);
+  height: var(--lens, 15rem);
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+.specimen__back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  will-change: transform;
+}
+.specimen__ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--lens, 15rem);
+  height: var(--lens, 15rem);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(15, 26, 61, 0.5),
+    0 0 3.5rem 0.6rem rgba(255, 190, 110, 0.55);
+  opacity: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+.specimen.is-lit .specimen__lens,
+.specimen.is-lit .specimen__ring {
+  opacity: 1;
+}
+.specimen__lens,
+.specimen__ring {
+  transition: opacity 0.45s var(--soft);
+}
+.specimen__marks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.specimen__marks circle {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 0.35;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.5s var(--out);
+}
+.specimen__marks circle.is-hot {
+  fill: var(--red);
+  transform: scale(2.4);
+}
+
+.specimen__toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  height: 2.9rem;
+  padding: 0 1.2rem 0 1rem;
+  border-radius: 99px;
+  box-shadow: inset 0 0 0 1px var(--ink);
+  font: 500 0.62rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.4s,
+    color 0.4s;
+}
+.specimen__toggle-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--ochre);
+  box-shadow: 0 0 0.8rem 0.2rem rgba(224, 162, 46, 0.7);
+}
+.specimen__toggle-off {
+  display: none;
+}
+.specimen__toggle[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.specimen__toggle[aria-pressed='true'] .specimen__toggle-on {
+  display: none;
+}
+.specimen__toggle[aria-pressed='true'] .specimen__toggle-off {
+  display: inline;
+}
+.specimen__hint {
+  font: 500 0.56rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+@media (hover: none) {
+  .specimen__hint {
+    display: none;
+  }
+}
+
+/* ── workshop ──────────────────────────────────────────────────────────── */
+.works {
+  padding-block: clamp(4rem, 12vh, 9rem) clamp(5rem, 13vh, 10rem);
+}
+.works__head {
+  display: grid;
+  gap: 1.4rem;
+}
+.works__head .title {
+  max-width: 13ch;
+}
+.works__body {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(2rem, 7vw, 8rem);
+  margin-top: clamp(3rem, 9vh, 7rem);
+}
+.works__frame {
+  position: sticky;
+  top: clamp(4.6rem, 11svh, 7rem);
+  height: min(78svh, 52rem);
+  align-self: start;
+}
+.works__shots {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #d9d1c0;
+}
+.works__shot {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+  will-change: transform;
+}
+.works__shot.is-on,
+.works__shot.is-under {
+  visibility: visible;
+}
+.works__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+}
+.works__shot[data-shot='2'] img {
+  object-position: 72% 50%;
+}
+.works__count {
+  position: absolute;
+  left: 0;
+  bottom: -2rem;
+  display: flex;
+  gap: 0.5em;
+  font: 500 0.62rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+}
+.works__count span {
+  opacity: 0.55;
+}
+.tool--knife {
+  right: -4.5vw;
+  bottom: 7%;
+  width: clamp(9rem, 15vw, 17rem);
+  rotate: -62deg;
+  z-index: 2;
+}
+
+.works__steps {
+  display: grid;
+}
+.step {
+  display: grid;
+  align-content: center;
+  min-height: 86svh;
+  padding-block: 3rem;
+}
+.step__shot {
+  display: none;
+}
+.step__day {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font: 500 0.66rem/1 var(--mono);
+  font-stretch: 87%;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.step__day::before {
+  content: '';
+  width: 2.4rem;
+  height: 1px;
+  background: currentColor;
+}
+.step__name {
+  margin: 0.6rem 0 0 -0.04em;
+  font: italic 400 clamp(4.6rem, 12vw, 13rem) / 0.9 var(--display);
+  letter-spacing: -0.045em;
+}
+.step__text {
+  max-width: 38ch;
+  margin-top: clamp(1rem, 2.4vh, 1.8rem);
+  font-size: 1.04em;
+  color: var(--fg-2);
+}
+.step > * {
+  opacity: 0.22;
+  transition: opacity 0.7s var(--soft);
+}
+.step.is-on > * {
+  opacity: 1;
+}
+
+.friday {
+  position: relative;
+  margin-top: clamp(2rem, 8vh, 6rem);
+}
+.friday__img {
+  aspect-ratio: 16 / 8.4;
+}
+.friday__img img {
+  will-change: transform;
+}
+.friday__cap {
+  position: absolute;
+  left: clamp(1.2rem, 3.4vw, 3.4rem);
+  top: clamp(1.2rem, 3.4vw, 3.4rem);
+  color: var(--ink);
+}
+.friday__name {
+  margin: 0.4rem 0 0 -0.04em;
+  font: italic 400 clamp(5rem, 16vw, 18rem) / 0.86 var(--display);
+  letter-spacing: -0.045em;
+}
+.friday__text {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: min(30ch, 60vw);
+  margin-top: clamp(1.6rem, 3.2vw, 3.6rem);
+  font: 400 clamp(1.15rem, 0.9rem + 0.8vw, 1.6rem) / 1.25 var(--display);
+  letter-spacing: -0.012em;
+}
+.tool--reel {
+  right: 5%;
+  bottom: -9%;
+  width: clamp(9rem, 19vw, 22rem);
+  rotate: 14deg;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .anatomy__plate {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.4rem 1.2rem;
+  }
+  .specimen {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: min(78vw, 24rem);
+    margin-inline: auto;
+  }
+  .parts {
+    display: contents;
+  }
+  .parts--left .part,
+  .part {
+    justify-self: stretch;
+    text-align: left;
+    max-width: none;
+  }
+  .parts--left .part::before {
+    transform-origin: left;
+  }
+  .tool--bamboo {
+    top: 2.5%;
+    right: -18vw;
+    width: 52vw;
+  }
+  .tool--thread {
+    display: none;
+  }
+  .anatomy__print {
+    position: relative;
+    right: auto;
+    top: auto;
+    justify-self: end;
+    width: 46vw;
+    margin: 0.6rem 4vw 0 0;
+  }
+  .tool--brush {
+    bottom: 1%;
+    left: auto;
+    right: 18vw;
+    width: 16vw;
+    rotate: 64deg;
+  }
+  .tool--snips {
+    bottom: 1.5%;
+    right: 3vw;
+    width: 8vw;
+  }
+  .anatomy {
+    padding-bottom: clamp(7rem, 22vw, 10rem);
+  }
+
+  .works__body {
+    grid-template-columns: 1fr;
+  }
+  .works__frame {
+    display: none;
+  }
+  .works__steps {
+    gap: 4.5rem;
+  }
+  .step {
+    min-height: 0;
+    padding-block: 0;
+  }
+  .step > * {
+    opacity: 1;
+  }
+  .step__shot {
+    display: block;
+    aspect-ratio: 4 / 4.6;
+    margin-bottom: 1.6rem;
+    overflow: hidden;
+    background: #d9d1c0;
+  }
+  .step__shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .step[data-step='2'] .step__shot img {
+    object-position: 74% 50%;
+  }
+  .step__name {
+    font-size: clamp(4.4rem, 24vw, 8rem);
+  }
+  .friday {
+    margin-top: 4.5rem;
+  }
+  .friday__img {
+    aspect-ratio: 4 / 4.4;
+  }
+  .friday__img img {
+    object-position: 22% 50%;
+  }
+  .tool--reel {
+    width: 34vw;
+    right: 2%;
+    bottom: -7%;
+  }
+}
