@@ -2,7 +2,7 @@
 
 A collection of websites in one repository, with a gallery page that links to each of them. Personal projects by [Saqlain](https://github.com/Razee4315) · saqlainrazee@gmail.com
 
-**Live:** https://razee4315.github.io/site-studies/
+**Live:** https://razee4315.github.io/sites/
 
 | | Site | What it is |
 |---|---|---|
