@@ -1,6 +1,8 @@
-# Eight Sites
+# Site Studies
 
-Eight websites in one repository, with a gallery page that links to each of them.
+A collection of websites in one repository, with a gallery page that links to each of them. Personal projects by [Saqlain](https://github.com/Razee4315) · saqlainrazee@gmail.com
+
+**Live:** https://razee4315.github.io/site-studies/
 
 | | Site | What it is |
 |---|---|---|
@@ -19,6 +21,7 @@ Every business here is invented; Deosai is a real place. Each site is a separate
 
 ```
 gallery/    the landing page: index.html, thumbnails, fonts
+shared/     the designer credit strip added to the end of every site at build time
 sites/      one folder per site, each with its own package.json
 scripts/    build, preview and thumbnail scripts
 ```
@@ -46,7 +49,7 @@ npm run dev
 
 1. Put the Vite project in `sites/<name>/`. The folder name becomes its URL.
 2. Load runtime images through `import.meta.env.BASE_URL` rather than a leading `/`, so they resolve when the site is served from a subfolder.
-3. Add a card for it in `gallery/index.html`.
+3. Add a card for it in `gallery/index.html`. The designer credit is added for you at build time.
 4. With `npm run preview` running, `npm run thumbs -- <name>` takes its thumbnail.
 
 ## Deploy

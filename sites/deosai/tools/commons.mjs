@@ -12,7 +12,7 @@ const CAND = join(root, 'assets-raw', 'real', 'candidates')
 const REAL = join(root, 'assets-raw', 'real')
 // Commons' own API host does not resolve on this network; en.wikipedia.org answers for Commons files too (shared repository).
 const API = 'https://en.wikipedia.org/w/api.php'
-const UA = { 'User-Agent': 'DeosaiSiteBuilder/1.0 (personal educational project; contact anisnur19315@gmail.com)' }
+const UA = { 'User-Agent': 'DeosaiSiteBuilder/1.0 (personal educational project; contact saqlainrazee@gmail.com)' }
 const OPEN = /^(cc0|public domain|pd|cc by(-sa)? [0-9.]+|cc-by(-sa)?-[0-9.]+|cc by(-sa)?$)/i
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const strip = (s = '') => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/\s+/g, ' ').trim()

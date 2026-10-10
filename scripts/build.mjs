@@ -1,14 +1,15 @@
-// Builds every site in sites/ into dist/<name>/ and puts the gallery at dist/.
+// Builds every site in sites/ into dist/<name>/, adds the designer credit to each, and puts the gallery at dist/.
 // BASE_PATH is the URL prefix the whole thing is served from ("/" locally, "/<repo>/" on GitHub Pages).
 // Pass site names as arguments to build only those: node scripts/build.mjs pronk quire
 import { execSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')
 const base = `/${process.env.BASE_PATH ?? ''}/`.replace(/\/+/g, '/')
+const credit = readFileSync(join(root, 'shared', 'credit.html'), 'utf8')
 
 const all = readdirSync(join(root, 'sites'), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name)
 const only = process.argv.slice(2)
@@ -24,6 +25,11 @@ for (const name of only.length ? only : all) {
   console.log(`\n── ${name}`)
   if (!existsSync(join(cwd, 'node_modules'))) run('npm ci')
   run(`npx vite build --base=${base}${name}/ --outDir="${join(dist, name)}" --emptyOutDir`)
+
+  const page = join(dist, name, 'index.html')
+  const html = readFileSync(page, 'utf8')
+  if (!html.includes('</body>')) throw new Error(`${name}/index.html has no </body> to put the credit before`)
+  writeFileSync(page, html.replace('</body>', () => `${credit}</body>`))
 }
 
 cpSync(join(root, 'gallery'), dist, { recursive: true })
