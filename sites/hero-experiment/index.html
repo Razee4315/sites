@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero Experiment</title>
+<meta name="description" content="Twenty-one hero sections for invented brands, every image shot with Codex.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0E0C; --fg:#ECE9E2; --muted:rgba(236,233,226,.55); --line:rgba(236,233,226,.14);
+    --edge:clamp(18px,4vw,64px); --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--bg)}
+  body{background:var(--bg);color:var(--fg);font-family:"Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  :focus-visible{outline:1px solid var(--fg);outline-offset:6px}
+  .label{font-family:"Geist Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .wrap{padding:0 var(--edge)}
+
+  header{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:end;padding:clamp(56px,10vh,120px) 0 clamp(40px,7vh,80px);border-bottom:1px solid var(--line)}
+  h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(64px,11vw,200px);line-height:.86;letter-spacing:-.035em}
+  h1 em{font-style:italic}
+  .intro{max-width:44ch;justify-self:end;display:flex;flex-direction:column;gap:18px}
+  .intro p{font-size:17px;line-height:1.55;color:var(--muted)}
+  .intro p b{color:var(--fg);font-weight:500}
+  .back{position:fixed;top:18px;left:var(--edge);z-index:5;mix-blend-mode:difference}
+
+  section{padding:clamp(48px,8vh,96px) 0 0}
+  .head{display:grid;grid-template-columns:120px 1fr auto;gap:24px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:28px}
+  .head h2{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(32px,3.4vw,52px);letter-spacing:-.02em;line-height:1}
+  .head h2 em{font-style:italic}
+  .grid{display:grid;gap:clamp(28px,3vw,44px) clamp(16px,2vw,28px);grid-template-columns:repeat(3,1fr)}
+  .grid.two{grid-template-columns:repeat(2,1fr)}
+  .card{display:flex;flex-direction:column;gap:14px}
+  .shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:#1a1a18}
+  .shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.1s var(--ease)}
+  .card:hover .shot img{transform:scale(1.035)}
+  .meta{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline}
+  .meta h3{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(24px,2vw,32px);letter-spacing:-.01em;line-height:1}
+  .meta p{grid-column:2/4;color:var(--muted);font-size:14px;line-height:1.5;margin-top:-6px}
+  .visit{transition:transform .5s var(--ease)}
+  .card:hover .visit{transform:translate(3px,-3px)}
+
+  footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:clamp(72px,12vh,140px);padding:22px 0 30px;border-top:1px solid var(--line)}
+
+  @media (max-width:900px){
+    header{grid-template-columns:1fr}
+    .intro{justify-self:start}
+    .grid,.grid.two{grid-template-columns:1fr}
+    .head{grid-template-columns:1fr auto}
+    .head .label:first-child{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<a class="back label" href="../">← All sites</a>
+<div class="wrap">
+  <header>
+    <h1>Hero<br><em>experiment.</em></h1>
+    <div class="intro">
+      <p><b>Twenty-one hero sections for invented brands.</b> Every photograph was shot with Codex, every page is a single file. Some are quiet, some are loud, a few you can play with.</p>
+      <span class="label">Personal work · 2026</span>
+    </div>
+  </header>
+
+  <main id="sets"></main>
+
+  <footer class="label">
+    <span>Hero Experiment · by Saqlain</span>
+    <a href="https://github.com/Razee4315/sites/tree/main/sites/hero-experiment" target="_blank" rel="noopener">Source ↗</a>
+  </footer>
+</div>
+
+<script>
+  const sets = [
+    {title:'Studio <em>grade</em>', note:'The favourites', wide:true, items:[
+      ['noctis','Noctis','A car that only appears as you scroll the light across it'],
+      ['halden','Halden','An autumn fashion issue with a shutter between looks'],
+      ['morrow','Morrow','A design studio whose work follows your cursor'],
+      ['isola','Isola','Four remote hotels and a booking bar that works'],
+    ]},
+    {title:'Signature', note:'Light, depth, matter', items:[
+      ['drift','Drift','A mountain photo you can look around'],
+      ['penumbra','Penumbra','A marble bust in the dark, your cursor is the lamp'],
+      ['nord','Nord','Paint a house out of its blueprint'],
+      ['matter','Matter','Sixteen thousand points of light changing shape'],
+    ]},
+    {title:'Play<em>ground</em>', note:'Touch everything', items:[
+      ['shizuka','Shizuka','A koi pond tea house, feed the fish'],
+      ['flux','Flux','A wet oil painting you can smear'],
+      ['elsewhere','Elsewhere','Break Monday’s window to find the weekend'],
+      ['wishwell','Wishwell','Blow the dandelion, your wish goes with it'],
+    ]},
+    {title:'Bold', note:'Loud colour, big type', items:[
+      ['volta','Volta','A sneaker drop in five colourways'],
+      ['odyssey','Odyssey','Seats to the Moon, Mars and Europa'],
+      ['aurelia','Aurelia','A perfume house in rose and gold'],
+      ['untamed','Untamed','A tiger, a torch and a forest worth saving'],
+    ]},
+    {title:'<em>Quiet</em>', note:'One typeface, one gesture', items:[
+      ['hush','Hush','Headphones that silence the page'],
+      ['meridian','Meridian','A watch whose headline is the time'],
+      ['form','Form','A chair, and letters that swell as you reach them'],
+      ['still','Still','A vase in a room, move the sun'],
+      ['esse','Esse','A coat worth looking at closely'],
+    ]},
+  ];
+  let n = 0;
+  document.getElementById('sets').innerHTML = sets.map((s, k) => `
+    <section>
+      <div class="head"><span class="label">0${k+1}</span><h2>${s.title}</h2><span class="label">${s.note}</span></div>
+      <div class="grid ${s.wide ? 'two' : ''}">
+        ${s.items.map(([slug, name, line]) => { n++; return `
+        <a class="card" href="${slug}.html">
+          <span class="shot"><img src="thumbs/${slug}.webp" width="1440" height="900" alt="${name} hero" ${n > 4 ? 'loading="lazy"' : ''}></span>
+          <span class="meta"><span class="label">${String(n).padStart(2,'0')}</span><h3>${name}</h3><span class="visit label">↗</span><p>${line}</p></span>
+        </a>`; }).join('')}
+      </div>
+    </section>`).join('');
+</script>
+</body>
+</html>

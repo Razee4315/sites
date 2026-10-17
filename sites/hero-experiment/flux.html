@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FLUX — The museum you're allowed to touch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap" rel="stylesheet">
+<style>
+  :root{--text:#fff;--muted:rgba(255,255,255,.72);--line:rgba(255,255,255,.3);--ease:cubic-bezier(.22,1,.36,1)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#111;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+  #c:active{cursor:grabbing}
+  #fallback{position:fixed;inset:0;background:center/cover no-repeat;display:none}
+
+  .glass{background:rgba(12,12,14,.32);backdrop-filter:blur(16px) saturate(1.3);border:1px solid var(--line)}
+  .nav{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:20px clamp(16px,4vw,48px);font-size:13px;pointer-events:none}
+  .nav > *{pointer-events:auto}
+  .pillnav{display:flex;gap:4px;padding:5px;border-radius:99px}
+  .pillnav a{padding:8px 14px;border-radius:99px}
+  .pillnav a:first-child{background:#fff;color:#111;font-weight:700}
+
+  .copy{position:fixed;left:clamp(16px,4vw,48px);bottom:clamp(20px,5vh,48px);z-index:5;width:min(330px,calc(100vw - 32px));padding:20px;border-radius:22px}
+  .copy h2{font-weight:500;font-size:20px;letter-spacing:-.02em;line-height:1.25}
+  .copy p{font-size:13px;color:var(--muted);line-height:1.6;margin:8px 0 16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{height:40px;padding:0 16px;border-radius:99px;font-size:13px;border:1px solid var(--line);transition:all .3s var(--ease)}
+  .btn:hover{background:rgba(255,255,255,.12)}
+  .btn.solid{background:#fff;color:#111;border-color:#fff;font-weight:600}
+  .btn[aria-pressed="false"]{opacity:.6}
+
+  .works{position:fixed;right:clamp(16px,4vw,48px);bottom:clamp(20px,5vh,48px);z-index:5;padding:10px;border-radius:22px;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .works small{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:2px 6px 0}
+  .thumbs{display:flex;gap:8px}
+  .thumb{width:84px;height:56px;border-radius:12px;background:center/cover;outline:2px solid transparent;outline-offset:2px;transition:outline-color .3s,transform .3s var(--ease)}
+  .thumb:hover{transform:translateY(-3px)}
+  .thumb[aria-pressed="true"]{outline-color:#fff}
+  .label{font-size:12px;color:var(--muted);padding:0 6px 2px}
+  .label b{color:#fff;font-weight:500}
+
+  .hint{position:fixed;left:50%;top:50%;translate:-50% -50%;z-index:4;font-size:12px;letter-spacing:.24em;text-transform:uppercase;padding:12px 18px;border-radius:99px;pointer-events:none;opacity:0;animation:hint 5s 1.2s forwards}
+  @keyframes hint{15%,75%{opacity:1}100%{opacity:0}}
+
+  @media (max-width:760px){
+    .works{top:76px;bottom:auto;right:16px;left:16px;align-items:stretch}
+    .thumb{flex:1}
+    .works small,.label{display:none}
+    .copy p{display:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="fallback"></div>
+
+<nav class="nav">
+  <div class="pillnav glass"><a href="#">FLUX</a><a href="#">Exhibitions</a><a href="#">Visit</a></div>
+  <a class="glass" style="padding:10px 16px;border-radius:99px" href="#">Tickets</a>
+</nav>
+
+<div class="hint glass">Drag through the paint</div>
+
+<div class="copy glass">
+  <h2>The museum you're<br>allowed to touch.</h2>
+  <p>Every painting here is still wet. Drag through it, stir it, ruin it. Give it a minute and it remembers what it was.</p>
+  <div class="row">
+    <button class="btn solid" id="stir">Stir it up</button>
+    <button class="btn" id="heal" aria-pressed="true">Healing on</button>
+    <button class="btn" id="save">Save yours</button>
+  </div>
+</div>
+
+<div class="works glass">
+  <small>Now hanging</small>
+  <div class="thumbs" id="thumbs">
+    <button class="thumb" aria-pressed="true" data-i="0" style="background-image:url(images/flux/painting-1.webp)" aria-label="The Wave"></button>
+    <button class="thumb" aria-pressed="false" data-i="1" style="background-image:url(images/flux/painting-2.webp)" aria-label="Poppy Night"></button>
+    <button class="thumb" aria-pressed="false" data-i="2" style="background-image:url(images/flux/painting-3.webp)" aria-label="Garden"></button>
+  </div>
+  <div class="label" id="label"><b>The Wave</b> · oil on canvas, still wet</div>
+</div>
+
+<script>
+(() => {
+  const SRC = ['images/flux/painting-1.webp','images/flux/painting-2.webp','images/flux/painting-3.webp'];
+  const NAMES = ['The Wave','Poppy Night','Garden'];
+  const cv = document.getElementById('c');
+  const gl = cv.getContext('webgl2', {alpha:false, antialias:false, preserveDrawingBuffer:true});
+  const okExt = gl && (gl.getExtension('EXT_color_buffer_float') || gl.getExtension('EXT_color_buffer_half_float'));
+  if (!gl || !okExt){
+    const fb=document.getElementById('fallback'); fb.style.display='block'; fb.style.backgroundImage=`url(${SRC[0]})`; return;
+  }
+  gl.getExtension('OES_texture_float_linear');
+
+  const SIM = 160, DYE = 1024;
+  const P = {curl:24, pressureIters:22, velDiss:.25, dyeDiss:0, splatRadius:.0022, force:5200, heal:.0045};
+
+  /* ---------- shaders ---------- */
+  const VS = `#version 300 es
+  in vec2 aP; out vec2 vUv, vL, vR, vT, vB; uniform vec2 texel;
+  void main(){ vUv=aP*.5+.5; vL=vUv-vec2(texel.x,0.); vR=vUv+vec2(texel.x,0.); vT=vUv+vec2(0.,texel.y); vB=vUv-vec2(0.,texel.y); gl_Position=vec4(aP,0.,1.); }`;
+  const H = `#version 300 es
+  precision highp float; precision highp sampler2D;
+  in vec2 vUv, vL, vR, vT, vB; out vec4 o;`;
+  const FS = {
+    copy: H+`uniform sampler2D u; void main(){ o=texture(u,vUv); }`,
+    splat: H+`uniform sampler2D u; uniform float aspect, radius; uniform vec3 color; uniform vec2 point;
+      void main(){ vec2 p=vUv-point; p.x*=aspect; vec3 s=exp(-dot(p,p)/radius)*color; o=vec4(texture(u,vUv).xyz+s,1.); }`,
+    advect: H+`uniform sampler2D uVel, uSrc; uniform vec2 velTexel; uniform float dt, diss;
+      void main(){ vec2 c=vUv-dt*texture(uVel,vUv).xy*velTexel; o=texture(uSrc,c)/(1.+diss*dt); }`,
+    div: H+`uniform sampler2D u;
+      void main(){ float L=texture(u,vL).x, R=texture(u,vR).x, T=texture(u,vT).y, B=texture(u,vB).y; vec2 C=texture(u,vUv).xy;
+        if(vL.x<0.)L=-C.x; if(vR.x>1.)R=-C.x; if(vT.y>1.)T=-C.y; if(vB.y<0.)B=-C.y; o=vec4(.5*(R-L+T-B),0.,0.,1.); }`,
+    curl: H+`uniform sampler2D u;
+      void main(){ float L=texture(u,vL).y, R=texture(u,vR).y, T=texture(u,vT).x, B=texture(u,vB).x; o=vec4(.5*(R-L-T+B),0.,0.,1.); }`,
+    vort: H+`uniform sampler2D uVel, uCurl; uniform float curl, dt;
+      void main(){ float L=texture(uCurl,vL).x, R=texture(uCurl,vR).x, T=texture(uCurl,vT).x, B=texture(uCurl,vB).x, C=texture(uCurl,vUv).x;
+        vec2 f=.5*vec2(abs(T)-abs(B), abs(R)-abs(L)); f/=length(f)+1e-4; f*=curl*C; f.y*=-1.;
+        vec2 v=texture(uVel,vUv).xy+f*dt; o=vec4(clamp(v,-1000.,1000.),0.,1.); }`,
+    press: H+`uniform sampler2D uP, uDiv;
+      void main(){ float L=texture(uP,vL).x, R=texture(uP,vR).x, T=texture(uP,vT).x, B=texture(uP,vB).x; float d=texture(uDiv,vUv).x; o=vec4((L+R+B+T-d)*.25,0.,0.,1.); }`,
+    grad: H+`uniform sampler2D uP, uVel;
+      void main(){ float L=texture(uP,vL).x, R=texture(uP,vR).x, T=texture(uP,vT).x, B=texture(uP,vB).x; vec2 v=texture(uVel,vUv).xy-vec2(R-L,T-B); o=vec4(v,0.,1.); }`,
+    scale: H+`uniform sampler2D u; uniform float k; void main(){ o=k*texture(u,vUv); }`,
+    heal: H+`uniform sampler2D uDye, uOrig; uniform float rate; void main(){ o=mix(texture(uDye,vUv), texture(uOrig,vUv), rate); }`,
+    display: H+`uniform sampler2D u; uniform vec2 dyeTexel; uniform vec2 light;
+      float lum(vec2 p){ return dot(texture(u,p).rgb, vec3(.3,.59,.11)); }
+      void main(){
+        vec3 c=texture(u,vUv).rgb;
+        // impasto: treat brightness as paint thickness and light it
+        vec2 e=dyeTexel*1.5;
+        float dx=lum(vUv+vec2(e.x,0.))-lum(vUv-vec2(e.x,0.)), dy=lum(vUv+vec2(0.,e.y))-lum(vUv-vec2(0.,e.y));
+        vec3 n=normalize(vec3(-dx*5.,-dy*5.,1.));
+        vec3 L=normalize(vec3(light-vUv, .45));
+        float diff=.82+.28*dot(n,L);
+        float spec=pow(max(dot(n, normalize(L+vec3(0.,0.,1.))),0.),40.)*.35;
+        c=c*diff+spec;
+        c*= .92+.08*smoothstep(1.1,.3,length(vUv-.5));
+        o=vec4(c,1.);
+      }`,
+  };
+  function compile(type,src){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; }
+  const vs = compile(gl.VERTEX_SHADER, VS);
+  const prog = {};
+  for (const k in FS){
+    const p=gl.createProgram(); gl.attachShader(p,vs); gl.attachShader(p,compile(gl.FRAGMENT_SHADER,FS[k])); gl.bindAttribLocation(p,0,'aP'); gl.linkProgram(p);
+    const u={}; const n=gl.getProgramParameter(p,gl.ACTIVE_UNIFORMS); for(let i=0;i<n;i++){ const nm=gl.getActiveUniform(p,i).name; u[nm]=gl.getUniformLocation(p,nm); }
+    prog[k]={p,u};
+  }
+  const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,-1,1,1,1,1,-1]),gl.STATIC_DRAW);
+  const ib=gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array([0,1,2,0,2,3]),gl.STATIC_DRAW);
+  gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0); gl.enableVertexAttribArray(0);
+
+  /* ---------- framebuffers ---------- */
+  function fbo(w,h){
+    gl.activeTexture(gl.TEXTURE0);
+    const t=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,t);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA16F,w,h,0,gl.RGBA,gl.HALF_FLOAT,null);
+    const f=gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER,f); gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);
+    gl.viewport(0,0,w,h); gl.clear(gl.COLOR_BUFFER_BIT);
+    return {t,f,w,h,tx:[1/w,1/h]};
+  }
+  const dbl = (w,h) => { let a=fbo(w,h), b=fbo(w,h); return {get r(){return a;}, get w(){return b;}, swap(){[a,b]=[b,a];}, tx:a.tx, width:w, height:h}; };
+  function res(r){ const ar=innerWidth/innerHeight; const m=Math.round(r), M=Math.round(r*Math.max(ar,1/ar)); return ar>1?[M,m]:[m,M]; }
+  let vel, dye, div, curl, pres;
+  function initFBOs(){
+    const [sw,sh]=res(SIM), [dw,dh]=res(DYE);
+    vel=dbl(sw,sh); pres=dbl(sw,sh); div=fbo(sw,sh); curl=fbo(sw,sh); dye=dbl(dw,dh);
+  }
+
+  function bindTex(unit,t){ gl.activeTexture(gl.TEXTURE0+unit); gl.bindTexture(gl.TEXTURE_2D,t); return unit; }
+  function blit(target){
+    if (target){ gl.viewport(0,0,target.w,target.h); gl.bindFramebuffer(gl.FRAMEBUFFER,target.f); }
+    else { gl.viewport(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight); gl.bindFramebuffer(gl.FRAMEBUFFER,null); }
+    gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0);
+  }
+  function use(name, texel){ const pr=prog[name]; gl.useProgram(pr.p); if (pr.u.texel) gl.uniform2fv(pr.u.texel, texel); return pr.u; }
+
+  /* ---------- the painting (with the headline painted in) ---------- */
+  const imgs=[];
+  const origTex = gl.createTexture();
+  const pc = document.createElement('canvas'), px = pc.getContext('2d');
+  function paintOriginal(i){
+    const im=imgs[i]; if (!im) return;
+    pc.width=dye.width; pc.height=dye.height;
+    const s=Math.max(pc.width/im.width, pc.height/im.height), w=im.width*s, h=im.height*s;
+    px.drawImage(im,(pc.width-w)/2,(pc.height-h)/2,w,h);
+    const size=Math.min(pc.width*.3, pc.height*.42);
+    px.font=`900 ${size}px Inter, sans-serif`; px.textAlign='center'; px.textBaseline='middle';
+    if ('letterSpacing' in px) px.letterSpacing=`${-size*.04}px`;
+    px.shadowColor='rgba(0,0,0,.35)'; px.shadowBlur=size*.08; px.shadowOffsetY=size*.03;
+    px.fillStyle='rgba(255,250,240,.95)'; px.fillText('FLUX', pc.width/2, pc.height*.42);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,origTex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,pc);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  }
+  function resetDye(){ const u=use('copy',dye.tx); gl.uniform1i(u.u,bindTex(0,origTex)); blit(dye.w); dye.swap(); }
+
+  /* ---------- simulation step ---------- */
+  let healOn=true, healBoost=0;
+  function step(dt){
+    let u;
+    u=use('curl',vel.tx); gl.uniform1i(u.u,bindTex(0,vel.r.t)); blit(curl);
+    u=use('vort',vel.tx); gl.uniform1i(u.uVel,bindTex(0,vel.r.t)); gl.uniform1i(u.uCurl,bindTex(1,curl.t)); gl.uniform1f(u.curl,P.curl); gl.uniform1f(u.dt,dt); blit(vel.w); vel.swap();
+    u=use('div',vel.tx); gl.uniform1i(u.u,bindTex(0,vel.r.t)); blit(div);
+    u=use('scale',vel.tx); gl.uniform1i(u.u,bindTex(0,pres.r.t)); gl.uniform1f(u.k,.8); blit(pres.w); pres.swap();
+    u=use('press',vel.tx); gl.uniform1i(u.uDiv,bindTex(0,div.t));
+    for (let i=0;i<P.pressureIters;i++){ gl.uniform1i(u.uP,bindTex(1,pres.r.t)); blit(pres.w); pres.swap(); }
+    u=use('grad',vel.tx); gl.uniform1i(u.uP,bindTex(0,pres.r.t)); gl.uniform1i(u.uVel,bindTex(1,vel.r.t)); blit(vel.w); vel.swap();
+    u=use('advect',vel.tx); gl.uniform2fv(u.velTexel,vel.tx); gl.uniform1i(u.uVel,bindTex(0,vel.r.t)); gl.uniform1i(u.uSrc,bindTex(0,vel.r.t)); gl.uniform1f(u.dt,dt); gl.uniform1f(u.diss,P.velDiss); blit(vel.w); vel.swap();
+    u=use('advect',dye.tx); gl.uniform2fv(u.velTexel,vel.tx); gl.uniform1i(u.uVel,bindTex(0,vel.r.t)); gl.uniform1i(u.uSrc,bindTex(1,dye.r.t)); gl.uniform1f(u.dt,dt); gl.uniform1f(u.diss,P.dyeDiss); blit(dye.w); dye.swap();
+    const rate = (healOn ? P.heal : 0) + healBoost;
+    if (rate>0){ u=use('heal',dye.tx); gl.uniform1i(u.uDye,bindTex(0,dye.r.t)); gl.uniform1i(u.uOrig,bindTex(1,origTex)); gl.uniform1f(u.rate,Math.min(1,rate)); blit(dye.w); dye.swap(); }
+    healBoost*=.97;
+  }
+  function splat(x,y,dx,dy,radius){
+    const u=use('splat',vel.tx);
+    gl.uniform1i(u.u,bindTex(0,vel.r.t)); gl.uniform1f(u.aspect,innerWidth/innerHeight);
+    gl.uniform2f(u.point,x,y); gl.uniform3f(u.color,dx,dy,0); gl.uniform1f(u.radius,(radius||P.splatRadius)*(innerWidth>innerHeight?innerWidth/innerHeight:1));
+    blit(vel.w); vel.swap();
+  }
+
+  /* ---------- input ---------- */
+  const ptr={x:0,y:0,px:0,py:0,down:false,moved:false};
+  function setP(e){ ptr.px=ptr.x; ptr.py=ptr.y; ptr.x=e.clientX/innerWidth; ptr.y=1-e.clientY/innerHeight; ptr.moved=true; }
+  cv.addEventListener('pointerdown', e => { ptr.down=true; setP(e); ptr.px=ptr.x; ptr.py=ptr.y; });
+  cv.addEventListener('pointermove', e => { setP(e); if (e.pointerType==='mouse' && !ptr.down){ ptr.moved=true; ptr.hover=true; } });
+  addEventListener('pointerup', () => ptr.down=false);
+
+  function stir(n=14){
+    for (let i=0;i<n;i++){
+      const a=Math.random()*6.283, r=.15+Math.random()*.3;
+      const x=.5+Math.cos(a)*r*.6, y=.5+Math.sin(a)*r;
+      splat(x,y,-Math.sin(a)*P.force*.9*(Math.random()+.5), Math.cos(a)*P.force*.9*(Math.random()+.5), P.splatRadius*3);
+    }
+  }
+  document.getElementById('stir').addEventListener('click', () => stir(18));
+  const healBtn=document.getElementById('heal');
+  healBtn.addEventListener('click', () => { healOn=!healOn; healBtn.setAttribute('aria-pressed',healOn); healBtn.textContent = healOn ? 'Healing on' : 'Healing off'; });
+  document.getElementById('save').addEventListener('click', () => {
+    const a=document.createElement('a'); a.download=`flux-${NAMES[cur].toLowerCase().replace(' ','-')}-by-you.png`; a.href=cv.toDataURL('image/png'); a.click();
+  });
+  let cur=0;
+  document.getElementById('thumbs').addEventListener('click', e => {
+    const b=e.target.closest('.thumb'); if (!b) return;
+    cur=+b.dataset.i;
+    document.querySelectorAll('.thumb').forEach(o=>o.setAttribute('aria-pressed',o===b));
+    document.getElementById('label').innerHTML=`<b>${NAMES[cur]}</b> · oil on canvas, still wet`;
+    paintOriginal(cur); stir(16); healBoost=.02;
+  });
+
+  /* ---------- loop ---------- */
+  function resize(){
+    const dpr=Math.min(2,devicePixelRatio);
+    cv.width=Math.round(innerWidth*dpr); cv.height=Math.round(innerHeight*dpr);
+    initFBOs(); paintOriginal(cur); resetDye();
+  }
+  let last=performance.now(), t0=last, intro=[.25,.55,.85];
+  function frame(now){
+    if (cv.width !== Math.round(innerWidth*Math.min(2,devicePixelRatio))) resize();
+    const dt=Math.min(.016667, (now-last)/1000); last=now;
+    const t=(now-t0)/1000;
+    // invitation: three gentle swirls right after load
+    if (intro.length && t > 2.4 + (3-intro.length)*.6){ const x=intro.shift(); splat(x,.3,(Math.random()-.5)*P.force*.25,P.force*.3*(Math.random()>.5?1:-1),P.splatRadius*1.6); }
+    if (ptr.moved){
+      const dx=(ptr.x-ptr.px)*P.force*(ptr.down?1.4:1), dy=(ptr.y-ptr.py)*P.force*(ptr.down?1.4:1);
+      if (Math.abs(dx)+Math.abs(dy)>0) splat(ptr.x,ptr.y,dx,dy, ptr.down?P.splatRadius*1.6:P.splatRadius);
+      ptr.moved=false; ptr.px=ptr.x; ptr.py=ptr.y;
+    }
+    step(dt);
+    const u=use('display',[1/cv.width,1/cv.height]);
+    gl.uniform1i(u.u,bindTex(0,dye.r.t)); gl.uniform2fv(u.dyeTexel,dye.tx); gl.uniform2f(u.light,.2+Math.sin(t*.2)*.1,1.1);
+    blit(null);
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- boot ---------- */
+  const load=s=>new Promise(r=>{const i=new Image(); i.onload=()=>r(i); i.onerror=()=>r(null); i.src=s;});
+  Promise.all(SRC.map(load)).then(list => {
+    list.forEach((im,i)=>imgs[i]=im);
+    document.fonts.load('900 100px Inter').finally(() => { resize(); requestAnimationFrame(frame); });
+  });
+})();
+</script>
+</body>
+</html>

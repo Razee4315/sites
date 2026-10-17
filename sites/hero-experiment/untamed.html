@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNTAMED — Keep Them Wild</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --jungle:#06110c;
+    --leaf:#0f2a1d;
+    --ember:#ff8a1f;
+    --gold:#ffc76b;
+    --text:#f1ead9;
+    --muted:rgba(241,234,217,.6);
+    --line:rgba(241,234,217,.15);
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--jungle);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button,input{font:inherit;color:inherit;background:none;border:0}
+  button{cursor:pointer}
+  .mono{font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:22px clamp(16px,4vw,56px)}
+  .logo{font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:28px;letter-spacing:.08em;display:flex;align-items:center;gap:10px}
+  .logo svg{width:28px;height:28px;color:var(--ember)}
+  .nav ul{display:flex;gap:36px;list-style:none;font-size:14px}
+  .nav ul a{color:var(--muted);transition:color .3s}
+  .nav ul a:hover{color:var(--text)}
+  .nav .donate-mini{padding:11px 20px;border-radius:99px;border:1px solid var(--ember);color:var(--ember);font-size:13px;font-weight:500;transition:all .3s}
+  .nav .donate-mini:hover{background:var(--ember);color:var(--jungle)}
+
+  .hero{position:relative;height:100vh;min-height:720px;overflow:hidden;isolation:isolate;cursor:crosshair}
+  .layer{position:absolute;inset:0;will-change:transform}
+  .bg{inset:-5%;background:url(images/untamed/bg.webp) center/cover no-repeat;animation:breath 18s ease-in-out infinite alternate}
+  @keyframes breath{to{scale:1.06}}
+  /* torchlight: darkness everywhere except around the cursor */
+  .dark{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(circle 280px at var(--lx,50%) var(--ly,40%),rgba(6,17,12,0) 0%,rgba(6,17,12,.3) 45%,rgba(6,17,12,.78) 100%);transition:background .1s}
+
+  .title{z-index:2;display:grid;place-items:center;pointer-events:none}
+  .title h1{font-family:"Big Shoulders Display",sans-serif;font-weight:900;font-size:clamp(200px,44vw,820px);line-height:.78;letter-spacing:.02em;margin-top:-22vh;white-space:nowrap;
+    background:linear-gradient(180deg,var(--gold) 0%,var(--ember) 55%,#9b3a0a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 20px 60px rgba(255,138,31,.25))}
+  .title h1 span{display:inline-block;clip-path:inset(100% 0 0 0);animation:reveal 1.3s var(--ease) forwards}
+  @keyframes reveal{to{clip-path:inset(0 0 0 0)}}
+  .echo{z-index:4}
+  .echo h1{background:none;filter:none;color:transparent;-webkit-text-stroke:1.5px rgba(255,199,107,.35)}
+
+  .tiger-wrap{z-index:3;display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
+  .tiger{position:relative;height:min(80vh,880px);aspect-ratio:1;opacity:0;transform:translateY(16vh);animation:emerge 2.2s .5s var(--ease) forwards;
+    -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 99%);mask-image:linear-gradient(180deg,#000 72%,transparent 99%)}
+  .tiger img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 60px rgba(0,0,0,.6))}
+  @keyframes emerge{to{opacity:1;transform:none}}
+  .eye{position:absolute;width:5%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,226,140,.95),rgba(255,160,40,.35) 40%,transparent 70%);mix-blend-mode:screen;opacity:0;animation:glint 7s ease-in-out infinite 3.5s}
+  .eye.l{left:40.5%;top:33.5%}.eye.r{left:63%;top:33.5%}
+  @keyframes glint{0%,80%,100%{opacity:0;transform:scale(.6)}88%{opacity:1;transform:scale(1.25)}}
+  .hero.roar .eye{animation:none;opacity:1;transform:scale(1.6);transition:all .3s}
+
+  #flies{position:absolute;inset:0;z-index:5;pointer-events:none;width:100%;height:100%;mix-blend-mode:screen}
+
+  .ui{z-index:6;pointer-events:none}
+  .ui > *{pointer-events:auto}
+
+  .left{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,72px);max-width:360px;opacity:0;animation:fade 1s 1.8s forwards}
+  .count{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:clamp(64px,7vw,104px);line-height:.9;color:var(--text)}
+  .count small{font-size:.35em;color:var(--ember);margin-left:6px}
+  .left .mono{color:var(--ember);margin-bottom:10px;display:flex;gap:8px;align-items:center}
+  .left .mono::before{content:"";width:18px;height:1px;background:var(--ember)}
+  .left p{color:var(--muted);line-height:1.6;margin-top:14px;font-size:15px}
+  .left p b{color:var(--text);font-weight:500}
+  .roar-btn{margin-top:22px;display:inline-flex;align-items:center;gap:12px;font-size:14px;color:var(--text)}
+  .roar-btn i{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:all .4s var(--ease)}
+  .roar-btn:hover i{border-color:var(--ember);background:rgba(255,138,31,.12);transform:scale(1.08)}
+
+  .give{position:absolute;right:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,72px);width:340px;padding:24px;border-radius:24px;border:1px solid var(--line);background:rgba(6,17,12,.55);backdrop-filter:blur(18px) saturate(1.2);opacity:0;animation:fade 1s 2s forwards}
+  .give h3{font-family:"Big Shoulders Display",sans-serif;font-weight:800;font-size:30px;letter-spacing:.02em;line-height:1;margin-bottom:6px}
+  .give .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .amt{padding:12px 0;border-radius:12px;border:1px solid var(--line);font-weight:500;transition:all .25s}
+  .amt:hover{border-color:var(--muted)}
+  .amt[aria-pressed="true"]{background:var(--ember);color:var(--jungle);border-color:var(--ember)}
+  .custom{margin-top:8px;display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;padding:0 14px;transition:border-color .25s}
+  .custom:focus-within{border-color:var(--ember)}
+  .custom input{width:100%;padding:12px 8px;outline:none}
+  .impact{margin:16px 0;font-size:14px;color:var(--muted);min-height:20px}
+  .impact b{color:var(--gold);font-weight:500}
+  .go{width:100%;height:54px;border-radius:14px;background:linear-gradient(90deg,var(--ember),var(--gold));color:var(--jungle);font-weight:700;letter-spacing:.06em;position:relative;overflow:hidden;transition:transform .2s}
+  .go:active{transform:scale(.98)}
+  .goal{margin-top:16px}
+  .goal-row{display:flex;justify-content:space-between;color:var(--muted)}
+  .goal-row b{color:var(--text);font-weight:500}
+  .track{height:6px;border-radius:6px;background:var(--line);margin-top:8px;overflow:hidden}
+  .track i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--ember),var(--gold));transition:width 1.4s var(--ease)}
+
+  .hint{position:absolute;left:50%;bottom:22px;translate:-50% 0;padding:9px 16px;border-radius:99px;background:rgba(6,17,12,.6);backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--muted);white-space:nowrap;display:flex;gap:10px;align-items:center;opacity:0;animation:fade 1s 2.6s forwards}
+  .hint::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  @keyframes fade{to{opacity:1}}
+
+  .toast{position:fixed;left:50%;top:92px;z-index:60;translate:-50% -20px;opacity:0;background:var(--text);color:var(--jungle);padding:13px 20px;border-radius:99px;font-weight:500;font-size:14px;transition:all .5s var(--ease);pointer-events:none}
+  .toast.show{translate:-50% 0;opacity:1}
+
+  @media (max-width:980px){
+    .nav ul,.hint{display:none}
+    .hero{cursor:auto}
+    .left{top:92px;bottom:auto}
+    .left p,.roar-btn{display:none}
+    .count{font-size:56px}
+    .give{left:16px;right:16px;width:auto;bottom:16px;padding:16px}
+    .give .sub,.custom,.goal{display:none}
+    .tiger{height:auto;width:118vw;margin-bottom:24vh}
+    .title h1{margin-top:-38vh;font-size:42vw}
+    .left .count{font-size:44px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="logo" href="#">
+    <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 3c-3 4-9 5-11 10 3 0 5-1 6-2-1 4 1 9 5 15 4-6 6-11 5-15 1 1 3 2 6 2-2-5-8-6-11-10z"/></svg>
+    UNTAMED
+  </a>
+  <ul>
+    <li><a href="#">Our work</a></li>
+    <li><a href="#">Reserves</a></li>
+    <li><a href="#">Field notes</a></li>
+    <li><a href="#">Adopt</a></li>
+  </ul>
+  <a class="donate-mini" href="#">Donate</a>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="layer bg" data-depth="10"></div>
+  <div class="dark" id="dark"></div>
+
+  <div class="layer title" data-depth="20">
+    <h1 aria-label="WILD"><span style="animation-delay:.1s">W</span><span style="animation-delay:.22s">I</span><span style="animation-delay:.34s">L</span><span style="animation-delay:.46s">D</span></h1>
+  </div>
+
+  <div class="layer tiger-wrap" data-depth="40">
+    <div class="tiger" id="tiger">
+      <img src="images/untamed/subject.webp" alt="Bengal tiger staring forward">
+      <span class="eye l"></span><span class="eye r"></span>
+    </div>
+  </div>
+
+  <div class="layer title echo" data-depth="20" aria-hidden="true">
+    <h1><span style="animation-delay:.1s">W</span><span style="animation-delay:.22s">I</span><span style="animation-delay:.34s">L</span><span style="animation-delay:.46s">D</span></h1>
+  </div>
+
+  <canvas id="flies"></canvas>
+
+  <div class="layer ui">
+    <div class="hint mono">Move your light through the forest</div>
+
+    <div class="left">
+      <div class="mono">Wild tigers left on Earth</div>
+      <div class="count"><span id="count">0</span><small>~</small></div>
+      <p>A century ago there were <b>100,000</b>. Today every one of them counts. We protect the forests they need to stay this way: <b>wild</b>.</p>
+      <button class="roar-btn" id="roar"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></i> Hear the forest</button>
+    </div>
+
+    <div class="give">
+      <h3>Protect an acre</h3>
+      <div class="sub">Every $5 guards one acre of tiger habitat for a year.</div>
+      <div class="amounts" id="amounts">
+        <button class="amt" aria-pressed="false" data-v="10">$10</button>
+        <button class="amt" aria-pressed="true" data-v="25">$25</button>
+        <button class="amt" aria-pressed="false" data-v="50">$50</button>
+        <button class="amt" aria-pressed="false" data-v="100">$100</button>
+      </div>
+      <label class="custom"><span style="color:var(--muted)">$</span><input id="custom" type="number" min="1" placeholder="Other amount"></label>
+      <div class="impact" id="impact"></div>
+      <button class="go" id="go">Give $25</button>
+      <div class="goal">
+        <div class="goal-row mono"><span>Sundarbans fund</span><b id="raised">$0</b></div>
+        <div class="track"><i id="bar"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.getElementById('hero');
+
+  /* Torchlight + parallax */
+  const dark = document.getElementById('dark');
+  const layers = [...document.querySelectorAll('[data-depth]')];
+  let tx=0, ty=0, cx=0, cy=0, lx=innerWidth/2, ly=innerHeight*.4, clx=lx, cly=ly;
+  addEventListener('pointermove', e => { tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5; lx=e.clientX; ly=e.clientY; });
+  (function loop(){
+    cx += (tx-cx)*.05; cy += (ty-cy)*.05; clx += (lx-clx)*.18; cly += (ly-cly)*.18;
+    dark.style.setProperty('--lx', clx+'px'); dark.style.setProperty('--ly', cly+'px');
+    if (!reduce) layers.forEach(l => { const d=+l.dataset.depth; l.style.transform=`translate3d(${-cx*d*2}px,${-cy*d}px,0)`; });
+    requestAnimationFrame(loop);
+  })();
+
+  /* Counter */
+  const countEl = document.getElementById('count'), TARGET = 5574;
+  setTimeout(() => {
+    const t0 = performance.now();
+    (function f(t){ const p=Math.min(1,(t-t0)/2400), e=1-Math.pow(1-p,4); countEl.textContent = Math.round(TARGET*e).toLocaleString(); if(p<1) requestAnimationFrame(f); })(t0);
+  }, 1800);
+
+  /* Donation widget */
+  let amount = 25, raised = 0; const GOAL = 250000, BASE = 171430;
+  const go = document.getElementById('go'), impact = document.getElementById('impact'), custom = document.getElementById('custom');
+  const amts = [...document.querySelectorAll('.amt')];
+  function setAmount(v){
+    amount = Math.max(0, Math.floor(v) || 0);
+    go.textContent = amount ? `Give $${amount.toLocaleString()}` : 'Choose an amount';
+    const acres = amount/5;
+    impact.innerHTML = amount ? `Protects <b>${acres % 1 ? acres.toFixed(1) : acres} acre${acres===1?'':'s'}</b> of forest for a year` : '&nbsp;';
+  }
+  amts.forEach(b => b.addEventListener('click', () => { amts.forEach(a => a.setAttribute('aria-pressed', a===b)); custom.value=''; setAmount(+b.dataset.v); }));
+  custom.addEventListener('input', () => { amts.forEach(a => a.setAttribute('aria-pressed', false)); setAmount(+custom.value); });
+  function renderGoal(){
+    const total = BASE + raised;
+    document.getElementById('raised').textContent = `$${total.toLocaleString()} / $${(GOAL/1000)}k`;
+    document.getElementById('bar').style.width = Math.min(100, total/GOAL*100) + '%';
+  }
+  const toast = document.getElementById('toast'); let tid;
+  function say(m){ toast.textContent = m; toast.classList.add('show'); clearTimeout(tid); tid = setTimeout(() => toast.classList.remove('show'), 2800); }
+  go.addEventListener('click', () => {
+    if (!amount){ custom.focus(); return; }
+    raised += amount; renderGoal();
+    say(`Thank you. ${amount/5 % 1 ? (amount/5).toFixed(1) : amount/5} acres just got safer.`);
+    swarm();
+  });
+  setAmount(25); setTimeout(renderGoal, 2200);
+
+  /* Fireflies */
+  const c = document.getElementById('flies'), x = c.getContext('2d');
+  const dpr = Math.min(2, devicePixelRatio); let W,H; const flies=[];
+  function size(){ W=c.width=innerWidth*dpr; H=c.height=innerHeight*dpr; } size(); addEventListener('resize', size);
+  const mk = () => ({x:Math.random()*W, y:Math.random()*H, a:Math.random()*6.28, s:(Math.random()*.6+.2)*dpr, r:(Math.random()*1.8+.8)*dpr, ph:Math.random()*6.28, boost:0});
+  for (let i=0;i<70;i++) flies.push(mk());
+  function swarm(){ for (const f of flies){ f.boost = 1; } }
+  function draw(t){
+    x.clearRect(0,0,W,H);
+    for (const f of flies){
+      f.a += (Math.random()-.5)*.3;
+      const sp = f.s*(1+f.boost*6); f.boost *= .97;
+      f.x += Math.cos(f.a)*sp; f.y += Math.sin(f.a)*sp - f.boost*1.5*dpr;
+      if (f.x<0) f.x=W; if (f.x>W) f.x=0; if (f.y<0) f.y=H; if (f.y>H) f.y=0;
+      const glow = (Math.sin(t*.002 + f.ph)+1)/2 * (1+f.boost);
+      const g = x.createRadialGradient(f.x,f.y,0,f.x,f.y,f.r*8);
+      g.addColorStop(0,`rgba(255,220,120,${.9*glow})`); g.addColorStop(.25,`rgba(255,170,60,${.35*glow})`); g.addColorStop(1,'rgba(255,170,60,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(f.x,f.y,f.r*8,0,6.28); x.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  if (!reduce) requestAnimationFrame(draw);
+
+  /* "Hear the forest": eyes ignite, light sweeps, fireflies scatter, tiny synthesized growl */
+  document.getElementById('roar').addEventListener('click', () => {
+    hero.classList.add('roar'); swarm();
+    document.getElementById('tiger').animate([{scale:1},{scale:1.035},{scale:1}],{duration:900,easing:'ease-out'});
+    try {
+      const ac = new (window.AudioContext||window.webkitAudioContext)(), o = ac.createOscillator(), n = ac.createGain(), f = ac.createBiquadFilter();
+      o.type='sawtooth'; o.frequency.setValueAtTime(70,ac.currentTime); o.frequency.exponentialRampToValueAtTime(42,ac.currentTime+1.2);
+      f.type='lowpass'; f.frequency.value=380; n.gain.setValueAtTime(.0001,ac.currentTime); n.gain.exponentialRampToValueAtTime(.25,ac.currentTime+.15); n.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+1.3);
+      o.connect(f).connect(n).connect(ac.destination); o.start(); o.stop(ac.currentTime+1.4);
+    } catch(e){}
+    setTimeout(() => hero.classList.remove('roar'), 1400);
+  });
+})();
+</script>
+</body>
+</html>

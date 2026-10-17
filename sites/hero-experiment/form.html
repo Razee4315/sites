@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form — Lounge Chair 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#e6dccf;
+    --ink:#2a201a;
+    --muted:rgba(42,32,26,.55);
+    --line:rgba(42,32,26,.16);
+    --accent:#b0553a;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:26px clamp(16px,4vw,56px);font-size:13px}
+  .logo{font-weight:700;letter-spacing:-.02em;font-size:17px}
+  .nav ul{display:flex;gap:32px;list-style:none;color:var(--muted)}
+  .nav ul a:hover{color:var(--ink)}
+
+  .hero{position:relative;height:100vh;min-height:680px;overflow:hidden;isolation:isolate}
+  .layer{position:absolute;inset:0;will-change:transform}
+  .bg{inset:-3%;background:url(images/form/bg.webp) center/cover}
+
+  .title{z-index:2;display:grid;place-items:center}
+  .title h1{display:flex;font-size:clamp(150px,29vw,520px);line-height:.8;letter-spacing:-.04em;color:var(--ink);margin-top:-10vh;user-select:none}
+  .title h1 span{display:inline-block;font-weight:200;font-variation-settings:"wght" 200;opacity:0;animation:fade 1.2s var(--ease) forwards}
+
+  .obj{z-index:3;display:grid;place-items:center;pointer-events:none}
+  .chair{position:relative;width:min(48vw,660px);aspect-ratio:1;margin-top:14vh;opacity:0;transform:translateY(40px);animation:up 1.6s .4s var(--ease) forwards}
+  .chair img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:filter .9s var(--ease),opacity .9s var(--ease)}
+  @keyframes up{to{opacity:1;transform:none}}
+  @keyframes fade{to{opacity:1}}
+
+  /* architectural dimension lines */
+  .dims{position:absolute;inset:12% 8% 10% 8%;opacity:0;transition:opacity .6s var(--ease)}
+  .hero.measure .dims{opacity:1}
+  .dim{position:absolute;font-size:11px;letter-spacing:.06em;color:var(--ink);display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+  .dim.w{left:0;right:0;bottom:-34px;height:12px;border-left:1px solid var(--ink);border-right:1px solid var(--ink)}
+  .dim.w::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--ink);transform:scaleX(0);transition:transform .9s .1s var(--ease)}
+  .dim.h{top:0;bottom:0;right:-38px;width:12px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+  .dim.h::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--ink);transform:scaleY(0);transition:transform .9s .1s var(--ease)}
+  .hero.measure .dim.w::before{transform:scaleX(1)}
+  .hero.measure .dim.h::before{transform:scaleY(1)}
+  .dim em{position:relative;font-style:normal;background:var(--bg);padding:2px 8px}
+  .dim.h em{writing-mode:vertical-rl;padding:8px 2px}
+
+  .ui{z-index:5;pointer-events:none}
+  .ui > *{pointer-events:auto}
+  .copy{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,64px);max-width:280px;opacity:0;animation:fade 1s 1.2s forwards}
+  .num{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .copy h2{font-weight:500;font-size:22px;letter-spacing:-.02em;margin:10px 0}
+  .copy p{color:var(--muted);font-size:14px;line-height:1.6}
+  .toggle{margin-top:18px;display:inline-flex;align-items:center;gap:10px;font-size:13px}
+  .toggle i{width:16px;height:16px;border:1px solid var(--ink);border-radius:4px;display:grid;place-items:center;font-style:normal;font-size:11px}
+  .hero.measure .toggle i{background:var(--ink);color:var(--bg)}
+  .units{margin-left:14px;font-size:12px;color:var(--muted)}
+  .units button{padding:2px 4px}
+  .units button[aria-pressed="true"]{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+
+  .buy{position:absolute;right:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,64px);width:260px;opacity:0;animation:fade 1s 1.4s forwards}
+  .fab-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:12px}
+  .fab-label b{color:var(--ink);font-weight:500}
+  .fabrics{display:flex;gap:10px;margin-bottom:20px}
+  .fabrics button{width:28px;height:28px;border-radius:50%;outline:1px solid transparent;outline-offset:3px;transition:outline-color .3s,transform .3s var(--ease)}
+  .fabrics button:hover{transform:scale(1.08)}
+  .fabrics button[aria-pressed="true"]{outline-color:var(--ink)}
+  .cta{width:100%;height:50px;border-radius:99px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:500;display:flex;justify-content:space-between;align-items:center;padding:0 22px;transition:transform .3s var(--ease)}
+  .cta:hover{transform:translateY(-2px)}
+
+  .toast{position:fixed;top:84px;left:50%;translate:-50% -12px;opacity:0;z-index:60;padding:11px 18px;border-radius:99px;background:var(--ink);color:var(--bg);font-size:13px;transition:all .5s var(--ease);pointer-events:none}
+  .toast.show{opacity:1;translate:-50% 0}
+
+  @media (max-width:860px){
+    .nav ul{display:none}
+    .title h1{font-size:36vw;margin-top:-30vh}
+    .chair{width:92vw;margin-top:-6vh}
+    .copy{bottom:160px}
+    .copy p,.dim.h{display:none}
+    .buy{left:16px;right:16px;width:auto;bottom:24px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="logo" href="#">Form</a>
+  <ul><li><a href="#">Seating</a></li><li><a href="#">Tables</a></li><li><a href="#">Studio</a></li></ul>
+  <a href="#">Cart (<span id="cart">0</span>)</a>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="layer bg" data-d="6"></div>
+  <div class="layer title" data-d="14"><h1 id="word" aria-label="FORM"><span style="animation-delay:.05s">F</span><span style="animation-delay:.12s">O</span><span style="animation-delay:.19s">R</span><span style="animation-delay:.26s">M</span></h1></div>
+  <div class="layer obj" data-d="28">
+    <div class="chair" id="chair">
+      <img id="chairImg" src="images/form/subject.webp" alt="Form lounge chair in terracotta bouclé">
+      <div class="dims">
+        <div class="dim w"><em id="dw">W 82 cm</em></div>
+        <div class="dim h"><em id="dh">H 74 cm</em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layer ui">
+    <div class="copy">
+      <div class="num">01 / Lounge chair</div>
+      <h2>Softness, drawn in one line.</h2>
+      <p>Hand-upholstered bouclé on a solid oak plinth. Built to be sat in for the next forty years.</p>
+      <button class="toggle" id="measure"><i>✓</i>Show dimensions</button>
+      <span class="units" id="units"><button aria-pressed="true" data-u="cm">cm</button>/<button aria-pressed="false" data-u="in">in</button></span>
+    </div>
+    <div class="buy">
+      <div class="fab-label"><span>Fabric</span><b id="fname">Terracotta bouclé</b></div>
+      <div class="fabrics" id="fabrics">
+        <button aria-pressed="true" aria-label="Terracotta" data-name="Terracotta bouclé" data-f="none" style="background:#b0553a"></button>
+        <button aria-pressed="false" aria-label="Oat" data-name="Oat bouclé" data-f="saturate(.18) sepia(.25) brightness(1.32)" style="background:#d8cbb6"></button>
+        <button aria-pressed="false" aria-label="Moss" data-name="Moss wool" data-f="hue-rotate(58deg) saturate(.55) brightness(.82)" style="background:#6f7454"></button>
+        <button aria-pressed="false" aria-label="Ink" data-name="Ink velvet" data-f="hue-rotate(195deg) saturate(.45) brightness(.55)" style="background:#2e3644"></button>
+      </div>
+      <button class="cta" id="add"><span>Add to cart</span><span>$3,280</span></button>
+    </div>
+  </div>
+</section>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero = document.getElementById('hero');
+
+  /* letters swell from hairline to black as the cursor approaches */
+  const letters = [...document.querySelectorAll('#word span')];
+  let px = -9999, py = -9999;
+  const weights = letters.map(() => 200);
+  addEventListener('pointermove', e => { px = e.clientX; py = e.clientY; });
+  addEventListener('pointerleave', () => { px = py = -9999; });
+
+  const layers = [...document.querySelectorAll('[data-d]')];
+  let tx=0,ty=0,cx=0,cy=0;
+  addEventListener('pointermove', e => { tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5; });
+  (function loop(){
+    cx+=(tx-cx)*.05; cy+=(ty-cy)*.05;
+    if (!reduce) layers.forEach(l => { const d=+l.dataset.d; l.style.transform=`translate3d(${-cx*d*2}px,${-cy*d}px,0)`; });
+    letters.forEach((s,i) => {
+      const r = s.getBoundingClientRect();
+      const d = Math.hypot(px-(r.left+r.width/2), py-(r.top+r.height/2));
+      const target = 200 + 700*Math.max(0, 1 - d/(innerWidth*.28));
+      weights[i] += (target-weights[i])*.12;
+      s.style.fontVariationSettings = `"wght" ${weights[i].toFixed(0)}`;
+      s.style.fontWeight = weights[i].toFixed(0);
+    });
+    requestAnimationFrame(loop);
+  })();
+
+  /* fabrics: crossfade to the new upholstery */
+  const img = document.getElementById('chairImg');
+  const fabs = [...document.querySelectorAll('#fabrics button')];
+  fabs.forEach(b => b.addEventListener('click', () => {
+    fabs.forEach(o => o.setAttribute('aria-pressed', o===b));
+    document.getElementById('fname').textContent = b.dataset.name;
+    img.animate([{opacity:1},{opacity:.35},{opacity:1}],{duration:900,easing:'ease-in-out'});
+    setTimeout(() => img.style.filter = b.dataset.f, 260);
+  }));
+
+  /* dimensions + units */
+  document.getElementById('measure').addEventListener('click', () => hero.classList.toggle('measure'));
+  const dims = {cm:['W 82 cm','H 74 cm'], in:['W 32¼ in','H 29 in']};
+  document.getElementById('units').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    document.querySelectorAll('#units button').forEach(o => o.setAttribute('aria-pressed', o===b));
+    [dw.textContent, dh.textContent] = dims[b.dataset.u];
+    hero.classList.add('measure');
+  });
+
+  let n=0, tid; const toast = document.getElementById('toast');
+  document.getElementById('add').addEventListener('click', () => {
+    document.getElementById('cart').textContent = ++n;
+    toast.textContent = `Lounge Chair 01 · ${document.getElementById('fname').textContent} — added`;
+    toast.classList.add('show'); clearTimeout(tid); tid = setTimeout(() => toast.classList.remove('show'), 2200);
+  });
+})();
+</script>
+</body>
+</html>

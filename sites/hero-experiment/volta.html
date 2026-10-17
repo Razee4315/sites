@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VOLTA — Pulse 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;600&family=Inter+Tight:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b0705;
+    --cream:#f4ebdf;
+    --accent:#ff5a1f;
+    --accent-2:#ffb36b;
+    --muted:rgba(244,235,223,.55);
+    --line:rgba(244,235,223,.14);
+    --hue:0deg;
+    --ease:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--ink);color:var(--cream);font-family:"Inter Tight",system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  /* ---------- NAV (dummy) ---------- */
+  .nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(16px,4vw,56px);mix-blend-mode:normal}
+  .logo{font-family:Anton,sans-serif;font-size:26px;letter-spacing:.06em;display:flex;align-items:center;gap:8px}
+  .logo i{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent);transition:background .6s,box-shadow .6s}
+  .nav ul{display:flex;gap:34px;list-style:none;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+  .nav ul a{opacity:.7;transition:opacity .3s}
+  .nav ul a:hover{opacity:1}
+  .nav-right{display:flex;gap:14px;align-items:center}
+  .bag{display:flex;align-items:center;gap:10px;border:1px solid var(--line);padding:9px 16px;border-radius:99px;font-size:13px;letter-spacing:.08em;backdrop-filter:blur(8px);background:rgba(11,7,5,.25)}
+  .bag b{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:99px;background:var(--accent);color:var(--ink);font-size:12px;transition:transform .4s var(--ease),background .6s}
+  .bag b.bump{transform:scale(1.45)}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;height:100vh;min-height:680px;overflow:hidden;isolation:isolate}
+  .layer{position:absolute;inset:0;will-change:transform}
+  .bg{inset:-4%;background:url(images/volta/bg.webp) center/cover no-repeat;filter:hue-rotate(var(--hue)) saturate(1.1);transition:filter 1s var(--ease)}
+  .bg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,transparent 30%,rgba(11,7,5,.85) 100%)}
+  .glow{position:absolute;left:50%;top:52%;width:60vmin;height:60vmin;translate:-50% -50%;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,transparent 65%);opacity:.38;filter:blur(30px);transition:background .8s;z-index:1}
+
+  .title{z-index:2;display:grid;place-items:center;pointer-events:none}
+  .title h1{font-family:Anton,sans-serif;font-weight:400;font-size:clamp(150px,31vw,560px);line-height:.8;letter-spacing:-.01em;display:flex;margin-top:-4vh;
+    background:linear-gradient(180deg,var(--cream) 30%,color-mix(in srgb,var(--accent) 55%,var(--cream)) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .title h1 span{display:inline-block;transform:translateY(110%);opacity:0;animation:rise 1.2s var(--ease) forwards}
+  .echo h1{background:none;color:transparent;-webkit-text-stroke:1.5px rgba(244,235,223,.32)}
+  .echo{z-index:4}
+  @keyframes rise{to{transform:none;opacity:1}}
+
+  .shoe-wrap{z-index:3;display:grid;place-items:center;pointer-events:none}
+  .shoe{position:relative;width:min(50vw,720px);aspect-ratio:1;margin-top:12vh;margin-right:4vw;opacity:0;transform:translateY(80px) rotate(-8deg) scale(.9);animation:shoeIn 1.6s .5s var(--ease) forwards}
+  .shoe img{width:100%;height:100%;object-fit:contain;filter:hue-rotate(var(--hue)) drop-shadow(0 50px 60px rgba(0,0,0,.6));transition:filter 1s var(--ease);animation:float 6s ease-in-out infinite 2.1s}
+  .shoe.phantom img{filter:grayscale(1) brightness(.95) contrast(1.15) drop-shadow(0 50px 60px rgba(0,0,0,.6))}
+  @keyframes shoeIn{to{opacity:1;transform:none}}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-22px) rotate(-2.5deg)}}
+  .shadow{position:absolute;left:50%;bottom:6%;width:46%;height:6%;translate:-50% 0;background:radial-gradient(ellipse,rgba(0,0,0,.7),transparent 70%);filter:blur(8px);animation:shadow 6s ease-in-out infinite 2.1s}
+  @keyframes shadow{50%{transform:scale(.8);opacity:.6}}
+
+  /* spec callouts */
+  .spec{position:absolute;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:10px;white-space:nowrap;opacity:0;animation:fade .8s var(--ease) forwards}
+  .spec .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 25%,transparent);transition:background .6s;flex:none}
+  .spec .ln{width:64px;height:1px;background:rgba(244,235,223,.4)}
+  .spec > span:not(.ln){padding:7px 12px;border-radius:99px;background:rgba(11,7,5,.62);backdrop-filter:blur(8px);border:1px solid var(--line)}
+  .spec b{color:var(--accent-2);font-weight:600}
+  .s1{right:84%;top:66%;animation-delay:2.1s}
+  .s2{left:74%;top:16%;animation-delay:2.3s}
+  @keyframes fade{to{opacity:1}}
+
+  /* UI */
+  .ui{z-index:6;pointer-events:none}
+  .ui > *{pointer-events:auto}
+  .intro{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(28px,6vh,64px);max-width:340px;opacity:0;animation:fade 1s 1.4s forwards}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;transition:color .6s}
+  .intro h2{font-family:Anton,sans-serif;font-weight:400;font-size:44px;letter-spacing:.01em;line-height:1;margin:10px 0 12px}
+  .intro p{color:var(--muted);font-size:15px;line-height:1.55}
+  .price{display:flex;align-items:baseline;gap:12px;margin-top:18px;font-family:"JetBrains Mono",monospace}
+  .price strong{font-size:22px}
+  .price s{color:var(--muted);font-size:13px}
+
+  .panel{position:absolute;right:clamp(16px,4vw,56px);bottom:clamp(28px,6vh,64px);width:330px;padding:22px;border:1px solid var(--line);border-radius:22px;background:rgba(18,11,8,.42);backdrop-filter:blur(18px) saturate(1.3);opacity:0;animation:fade 1s 1.6s forwards}
+  .row-label{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .row-label span:last-child{color:var(--cream)}
+  .swatches{display:flex;gap:10px;margin-bottom:22px}
+  .sw{width:38px;height:38px;border-radius:50%;position:relative;transition:transform .3s var(--ease)}
+  .sw::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1.5px solid transparent;transition:border-color .3s}
+  .sw:hover{transform:scale(1.1)}
+  .sw[aria-pressed="true"]::after{border-color:var(--cream)}
+  .sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:20px}
+  .sz{padding:10px 0;border:1px solid var(--line);border-radius:10px;font-family:"JetBrains Mono",monospace;font-size:12px;transition:all .25s}
+  .sz:hover{border-color:var(--muted)}
+  .sz[aria-pressed="true"]{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+  .sz:disabled{opacity:.3;text-decoration:line-through;cursor:not-allowed}
+  .sizes.shake{animation:shake .45s}
+  @keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+  .cta{position:relative;width:100%;height:54px;border-radius:99px;background:var(--accent);color:var(--ink);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:13px;overflow:hidden;transition:background .6s,transform .2s}
+  .cta:active{transform:scale(.98)}
+  .cta::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-100%);transition:transform .8s}
+  .cta:hover::before{transform:translateX(100%)}
+  .drop{display:flex;justify-content:space-between;margin-top:14px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);letter-spacing:.1em}
+  .drop b{color:var(--cream);font-weight:600}
+
+  .ticker{position:absolute;left:0;right:0;bottom:0;z-index:5;height:0;overflow:visible}
+  .side{position:absolute;right:clamp(16px,4vw,56px);top:50%;z-index:6;writing-mode:vertical-rl;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;color:var(--muted);translate:0 -50%}
+  .side::after{content:"";display:inline-block;width:1px;height:60px;background:var(--line);margin-top:14px}
+
+  .toast{position:fixed;left:50%;top:90px;z-index:60;translate:-50% -20px;opacity:0;padding:12px 18px 12px 12px;border-radius:99px;background:var(--cream);color:var(--ink);font-size:14px;display:flex;gap:12px;align-items:center;transition:all .5s var(--ease);pointer-events:none}
+  .toast.show{translate:-50% 0;opacity:1}
+  .toast img{width:40px;height:40px;object-fit:contain;filter:hue-rotate(var(--hue))}
+
+  .grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  @media (max-width:980px){
+    .nav ul,.side,.spec{display:none}
+    .intro{bottom:auto;top:96px}
+    .intro p{display:none}
+    .shoe{width:92vw;margin-top:-6vh}
+    .panel{left:16px;right:16px;width:auto;bottom:18px;padding:16px}
+    .title h1{margin-top:-20vh}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav class="nav">
+  <a class="logo" href="#"><i></i>VOLTA</a>
+  <ul>
+    <li><a href="#">Drops</a></li>
+    <li><a href="#">Running</a></li>
+    <li><a href="#">Lab</a></li>
+    <li><a href="#">Journal</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="bag" href="#">Bag <b id="bagCount">0</b></a>
+  </div>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="layer bg" data-depth="10"></div>
+  <div class="glow" id="glow"></div>
+
+  <div class="layer title" data-depth="22">
+    <h1 aria-label="VOLTA"><span style="animation-delay:.05s">V</span><span style="animation-delay:.12s">O</span><span style="animation-delay:.19s">L</span><span style="animation-delay:.26s">T</span><span style="animation-delay:.33s">A</span></h1>
+  </div>
+
+  <div class="layer shoe-wrap" data-depth="48">
+    <div class="shoe" id="shoe">
+      <div class="shadow"></div>
+      <img src="images/volta/subject.webp" alt="VOLTA Pulse 01 sneaker floating">
+      <div class="spec s1"><span><b>+38%</b> energy return</span><span class="ln"></span><i class="dot"></i></div>
+      <div class="spec s2"><i class="dot"></i><span class="ln"></span><span><b>112g</b> knit upper</span></div>
+    </div>
+  </div>
+
+  <div class="layer title echo" data-depth="22" aria-hidden="true">
+    <h1><span style="animation-delay:.05s">V</span><span style="animation-delay:.12s">O</span><span style="animation-delay:.19s">L</span><span style="animation-delay:.26s">T</span><span style="animation-delay:.33s">A</span></h1>
+  </div>
+
+  <div class="side">PULSE 01 — GRAVITY OPTIONAL</div>
+
+  <div class="layer ui">
+    <div class="intro">
+      <div class="eyebrow" id="cwName">Colorway / Molten</div>
+      <h2>PULSE 01</h2>
+      <p>A carbon-plated runner with a dual-chamber air sole that gives back more than you put in. Built for the last mile, not the first.</p>
+      <div class="price"><strong>$240</strong><s>$280</s></div>
+    </div>
+
+    <div class="panel">
+      <div class="row-label"><span>Colorway</span><span id="cwLabel">Molten</span></div>
+      <div class="swatches" id="swatches">
+        <button class="sw" aria-pressed="true" data-name="Molten" data-hue="0" data-accent="#ff5a1f" data-accent2="#ffb36b" style="background:radial-gradient(circle at 30% 30%,#ffb36b,#ff5a1f 55%,#3a1305)"></button>
+        <button class="sw" aria-pressed="false" data-name="Glacier" data-hue="180" data-accent="#1fc4ff" data-accent2="#9be6ff" style="background:radial-gradient(circle at 30% 30%,#9be6ff,#1fc4ff 55%,#052a3a)"></button>
+        <button class="sw" aria-pressed="false" data-name="Venom" data-hue="85" data-accent="#a6ff2e" data-accent2="#e2ff9b" style="background:radial-gradient(circle at 30% 30%,#e2ff9b,#a6ff2e 55%,#1b3a05)"></button>
+        <button class="sw" aria-pressed="false" data-name="Ultra" data-hue="270" data-accent="#b56bff" data-accent2="#e2c4ff" style="background:radial-gradient(circle at 30% 30%,#e2c4ff,#b56bff 55%,#22053a)"></button>
+        <button class="sw" aria-pressed="false" data-name="Phantom" data-hue="0" data-phantom="1" data-accent="#e8e2da" data-accent2="#ffffff" style="background:radial-gradient(circle at 30% 30%,#fff,#9a948c 55%,#111)"></button>
+      </div>
+      <div class="row-label"><span>Size (US)</span><span id="szLabel">Select</span></div>
+      <div class="sizes" id="sizes">
+        <button class="sz" aria-pressed="false">7</button>
+        <button class="sz" aria-pressed="false">8</button>
+        <button class="sz" aria-pressed="false" disabled>9</button>
+        <button class="sz" aria-pressed="false">10</button>
+        <button class="sz" aria-pressed="false">11</button>
+        <button class="sz" aria-pressed="false">12</button>
+      </div>
+      <button class="cta" id="addBtn">Add to bag — $240</button>
+      <div class="drop"><span>Next drop in</span><b id="countdown">--:--:--:--</b></div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"><img src="images/volta/subject.webp" alt=""><span id="toastText">Added</span></div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Mouse parallax with easing */
+  const layers = [...document.querySelectorAll('[data-depth]')];
+  const shoe = document.getElementById('shoe');
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+  addEventListener('pointermove', e => {
+    tx = (e.clientX / innerWidth - .5) * 2;
+    ty = (e.clientY / innerHeight - .5) * 2;
+  });
+  (function loop(){
+    cx += (tx - cx) * .06; cy += (ty - cy) * .06;
+    if (!reduce) {
+      layers.forEach(l => {
+        const d = +l.dataset.depth;
+        l.style.transform = `translate3d(${-cx * d}px, ${-cy * d * .6}px, 0)`;
+      });
+      shoe.style.rotate = `${cx * 6}deg`;
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  /* Colorways */
+  const swatches = [...document.querySelectorAll('.sw')];
+  swatches.forEach(sw => sw.addEventListener('click', () => {
+    swatches.forEach(s => s.setAttribute('aria-pressed', s === sw));
+    root.style.setProperty('--hue', sw.dataset.hue + 'deg');
+    root.style.setProperty('--accent', sw.dataset.accent);
+    root.style.setProperty('--accent-2', sw.dataset.accent2);
+    shoe.classList.toggle('phantom', !!sw.dataset.phantom);
+    document.getElementById('cwLabel').textContent = sw.dataset.name;
+    document.getElementById('cwName').textContent = 'Colorway / ' + sw.dataset.name;
+    shoe.animate([{scale:1},{scale:1.06},{scale:1}], {duration:600, easing:'cubic-bezier(.2,.8,.2,1)'});
+  }));
+
+  /* Sizes */
+  let size = null;
+  const sizes = document.getElementById('sizes');
+  sizes.addEventListener('click', e => {
+    const b = e.target.closest('.sz'); if (!b || b.disabled) return;
+    sizes.querySelectorAll('.sz').forEach(s => s.setAttribute('aria-pressed', s === b));
+    size = b.textContent;
+    document.getElementById('szLabel').textContent = 'US ' + size;
+  });
+
+  /* Add to bag */
+  let count = 0;
+  const bag = document.getElementById('bagCount');
+  const toast = document.getElementById('toast');
+  let tId;
+  document.getElementById('addBtn').addEventListener('click', () => {
+    if (!size) {
+      sizes.classList.remove('shake'); void sizes.offsetWidth; sizes.classList.add('shake');
+      document.getElementById('szLabel').textContent = 'Pick a size';
+      return;
+    }
+    count++;
+    bag.textContent = count;
+    bag.classList.add('bump'); setTimeout(() => bag.classList.remove('bump'), 300);
+    document.getElementById('toastText').innerHTML = `<b>Pulse 01</b> · ${document.getElementById('cwLabel').textContent} · US ${size} added`;
+    toast.classList.add('show'); clearTimeout(tId); tId = setTimeout(() => toast.classList.remove('show'), 2400);
+    shoe.animate([{transform:'translateY(0)'},{transform:'translateY(-60px) rotate(-6deg)'},{transform:'translateY(0)'}], {duration:700, easing:'cubic-bezier(.2,.8,.2,1)'});
+  });
+
+  /* Drop countdown: next Friday 18:00 local */
+  const target = new Date(); target.setHours(18,0,0,0);
+  target.setDate(target.getDate() + ((5 - target.getDay() + 7) % 7 || (new Date() > target ? 7 : 0)));
+  const cd = document.getElementById('countdown');
+  const pad = n => String(n).padStart(2, '0');
+  (function tick(){
+    let s = Math.max(0, Math.floor((target - Date.now()) / 1000));
+    const d = Math.floor(s / 86400); s %= 86400;
+    const h = Math.floor(s / 3600); s %= 3600;
+    cd.textContent = `${pad(d)}d ${pad(h)}:${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+    setTimeout(tick, 1000);
+  })();
+})();
+</script>
+</body>
+</html>

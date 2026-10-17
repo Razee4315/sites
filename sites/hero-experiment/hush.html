@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hush — Over-ear, under the noise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#c7ccc2;
+    --ink:#1f231d;
+    --title:#a9b0a2;
+    --muted:rgba(31,35,29,.55);
+    --line:rgba(31,35,29,.14);
+    --filter:none;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background 1s var(--ease),color 1s}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:26px clamp(16px,4vw,56px);font-size:13px}
+  .logo{font-weight:600;font-size:17px;letter-spacing:-.02em}
+  .nav ul{display:flex;gap:32px;list-style:none;color:var(--muted)}
+  .nav ul a:hover{color:var(--ink)}
+
+  .hero{position:relative;height:100vh;min-height:680px;overflow:hidden;isolation:isolate}
+  .layer{position:absolute;inset:0;will-change:transform}
+  .bg{inset:-3%;background:url(images/hush/bg.webp) center/cover;filter:var(--filter);transition:filter 1.2s var(--ease)}
+  .hero.quiet .bg{filter:var(--filter) blur(6px) saturate(.7)}
+  #wave{position:absolute;inset:0;z-index:1;width:100%;height:100%}
+
+  .title{z-index:2;display:grid;place-items:center;pointer-events:none}
+  .title h1{font-weight:600;font-size:clamp(150px,30vw,520px);letter-spacing:-.07em;line-height:.8;color:var(--title);display:flex;margin-top:-6vh;transition:color 1s,letter-spacing 1.4s var(--ease)}
+  .title h1 span{display:inline-block;opacity:0;animation:in 1.4s var(--ease) forwards}
+  .hero.quiet .title h1{letter-spacing:-.09em}
+  @keyframes in{from{opacity:0;transform:translateY(60px)}to{opacity:1}}
+
+  .obj{z-index:3;display:grid;place-items:center;pointer-events:none}
+  .obj img{width:min(46vw,640px);aspect-ratio:1;object-fit:contain;margin-top:2vh;filter:var(--filter) drop-shadow(0 40px 40px rgba(31,35,29,.22));opacity:0;animation:pop 1.6s .4s var(--ease) forwards;transition:filter 1.2s var(--ease),scale 1.4s var(--ease)}
+  .hero.quiet .obj img{scale:1.04}
+  @keyframes pop{from{opacity:0;transform:translateY(40px) scale(.96)}to{opacity:1;transform:none}}
+
+  .ui{z-index:5;pointer-events:none}
+  .ui > *{pointer-events:auto}
+  .copy{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,64px);max-width:300px;opacity:0;animation:fade 1s 1.2s forwards}
+  .copy h2{font-weight:500;font-size:22px;letter-spacing:-.02em;line-height:1.25}
+  .copy p{color:var(--muted);font-size:14px;line-height:1.6;margin-top:10px}
+
+  .anc{position:absolute;left:50%;bottom:clamp(28px,7vh,64px);translate:-50% 0;display:flex;align-items:center;gap:14px;padding:8px 8px 8px 20px;border-radius:99px;background:rgba(255,255,255,.28);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.35);font-size:13px;opacity:0;animation:fade 1s 1.4s forwards}
+  .anc .db{font-variant-numeric:tabular-nums;color:var(--muted);min-width:56px}
+  .switch{width:56px;height:32px;border-radius:99px;background:var(--line);position:relative;transition:background .5s}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:transform .5s var(--ease)}
+  .switch[aria-checked="true"]{background:var(--ink)}
+  .switch[aria-checked="true"]::after{transform:translateX(24px)}
+
+  .buy{position:absolute;right:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,64px);text-align:right;opacity:0;animation:fade 1s 1.6s forwards}
+  .sw{display:flex;gap:10px;justify-content:flex-end;margin-bottom:14px}
+  .sw button{width:22px;height:22px;border-radius:50%;outline:1px solid transparent;outline-offset:3px;transition:outline-color .3s}
+  .sw button[aria-pressed="true"]{outline-color:var(--ink)}
+  .name{font-size:13px;color:var(--muted);margin-bottom:12px}
+  .cta{display:inline-flex;align-items:center;gap:14px;height:48px;padding:0 8px 0 22px;border-radius:99px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:500;transition:transform .3s var(--ease),background 1s,color 1s}
+  .cta:hover{transform:translateY(-2px)}
+  .cta i{width:34px;height:34px;border-radius:50%;background:var(--bg);color:var(--ink);display:grid;place-items:center;font-style:normal;transition:background 1s,color 1s}
+  @keyframes fade{to{opacity:1}}
+
+  .toast{position:fixed;top:84px;left:50%;translate:-50% -12px;opacity:0;z-index:60;padding:11px 18px;border-radius:99px;background:var(--ink);color:var(--bg);font-size:13px;transition:all .5s var(--ease);pointer-events:none}
+  .toast.show{opacity:1;translate:-50% 0}
+
+  @media (max-width:860px){
+    .nav ul{display:none}
+    .copy{top:96px;bottom:auto}
+    .copy p{display:none}
+    .obj img{width:86vw}
+    .title h1{font-size:44vw}
+    .anc{bottom:118px}
+    .buy{left:16px;right:16px;bottom:24px;display:flex;justify-content:space-between;align-items:flex-end;text-align:left}
+    .sw{justify-content:flex-start;margin:0}
+    .name{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="logo" href="#">hush</a>
+  <ul><li><a href="#">Listen</a></li><li><a href="#">Technology</a></li><li><a href="#">Support</a></li></ul>
+  <a href="#">Bag (<span id="bag">0</span>)</a>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="layer bg" data-d="6"></div>
+  <canvas id="wave"></canvas>
+  <div class="layer title" data-d="14"><h1 id="word" aria-label="hush"><span style="animation-delay:.05s">h</span><span style="animation-delay:.12s">u</span><span style="animation-delay:.19s">s</span><span style="animation-delay:.26s">h</span></h1></div>
+  <div class="layer obj" data-d="30"><img src="images/hush/subject.webp" alt="hush over-ear headphones"></div>
+
+  <div class="layer ui">
+    <div class="copy">
+      <h2>Over-ear.<br>Under the noise.</h2>
+      <p>Adaptive cancelling that listens 48,000 times a second, so you don't have to.</p>
+    </div>
+
+    <div class="anc">
+      <span>Noise cancelling</span>
+      <span class="db" id="db">62 dB</span>
+      <button class="switch" id="anc" role="switch" aria-checked="false" aria-label="Toggle noise cancelling"></button>
+    </div>
+
+    <div class="buy">
+      <div>
+        <div class="sw" id="sw">
+          <button aria-pressed="true" aria-label="Sage" data-name="Sage" data-bg="#c7ccc2" data-ink="#1f231d" data-title="#a9b0a2" data-f="none" style="background:#a9b3a0"></button>
+          <button aria-pressed="false" aria-label="Stone" data-name="Stone" data-bg="#d8cfc3" data-ink="#2a241d" data-title="#bfb3a4" data-f="sepia(.45) hue-rotate(-25deg) saturate(.75) brightness(1.06)" style="background:#cbbba6"></button>
+          <button aria-pressed="false" aria-label="Graphite" data-name="Graphite" data-bg="#2a2c2b" data-ink="#ecebe6" data-title="#3d403e" data-f="grayscale(1) brightness(.42) contrast(1.15)" style="background:#3a3c3b"></button>
+        </div>
+        <div class="name"><span id="cname">Sage</span> · $449</div>
+      </div>
+      <button class="cta" id="add">Add to bag <i>+</i></button>
+    </div>
+  </div>
+</section>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const root = document.documentElement, hero = document.getElementById('hero');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let quiet = false, amp = 1, mx = -1, my = -1;
+
+  /* parallax */
+  const layers = [...document.querySelectorAll('[data-d]')];
+  let tx=0,ty=0,cx=0,cy=0;
+  addEventListener('pointermove', e => { tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5; mx=e.clientX; my=e.clientY; });
+
+  /* noise jitter on letters + waveform */
+  const letters = [...document.querySelectorAll('#word span')];
+  const c = document.getElementById('wave'), x = c.getContext('2d'), dpr = Math.min(2, devicePixelRatio);
+  let W,H; const size = () => { W=c.width=innerWidth*dpr; H=c.height=innerHeight*dpr; }; size(); addEventListener('resize', size);
+  const ink = () => getComputedStyle(root).getPropertyValue('--ink').trim();
+
+  function frame(t){
+    cx += (tx-cx)*.05; cy += (ty-cy)*.05;
+    amp += ((quiet ? 0 : 1) - amp) * .03;
+    if (!reduce){
+      layers.forEach(l => { const d=+l.dataset.d; l.style.transform=`translate3d(${-cx*d*2}px,${-cy*d}px,0)`; });
+      letters.forEach((s,i) => {
+        const n = Math.sin(t*.011 + i*1.7) * Math.sin(t*.0037 + i) * 10 * amp;
+        s.style.translate = `0 ${n}px`;
+      });
+    }
+    x.clearRect(0,0,W,H);
+    const lines = 3;
+    for (let k=0;k<lines;k++){
+      x.beginPath();
+      const y0 = H*.56 + (k-1)*14*dpr;
+      for (let px=0; px<=W; px+=4*dpr){
+        const near = mx<0 ? 0 : Math.exp(-Math.pow((px/dpr-mx)/140,2)) * Math.exp(-Math.pow((y0/dpr-my)/260,2));
+        const a = (18 + near*70) * dpr * amp;
+        const y = y0 + Math.sin(px*.006 + t*.003*(k+1)) * a * Math.sin(px*.0013 + t*.0011 + k) + Math.sin(px*.03 + t*.02) * 3*dpr*amp;
+        px ? x.lineTo(px,y) : x.moveTo(px,y);
+      }
+      x.strokeStyle = ink(); x.globalAlpha = .32 - k*.08; x.lineWidth = 1*dpr; x.stroke();
+    }
+    x.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ANC toggle: the world goes quiet */
+  const db = document.getElementById('db'), sw = document.getElementById('anc');
+  let dbVal = 62;
+  sw.addEventListener('click', () => {
+    quiet = !quiet; sw.setAttribute('aria-checked', quiet); hero.classList.toggle('quiet', quiet);
+    const from = dbVal, to = quiet ? 20 : 62, t0 = performance.now();
+    (function f(t){ const p=Math.min(1,(t-t0)/1400); dbVal = Math.round(from+(to-from)*(1-Math.pow(1-p,3))); db.textContent = dbVal+' dB'; if(p<1) requestAnimationFrame(f); })(t0);
+  });
+
+  /* colourways */
+  const btns = [...document.querySelectorAll('#sw button')];
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(o => o.setAttribute('aria-pressed', o===b));
+    root.style.setProperty('--bg', b.dataset.bg); root.style.setProperty('--ink', b.dataset.ink);
+    root.style.setProperty('--title', b.dataset.title); root.style.setProperty('--filter', b.dataset.f);
+    root.style.setProperty('--muted', b.dataset.name==='Graphite' ? 'rgba(236,235,230,.55)' : 'rgba(31,35,29,.55)');
+    root.style.setProperty('--line', b.dataset.name==='Graphite' ? 'rgba(236,235,230,.18)' : 'rgba(31,35,29,.14)');
+    document.getElementById('cname').textContent = b.dataset.name;
+  }));
+
+  /* bag */
+  let n = 0, tid; const toast = document.getElementById('toast');
+  document.getElementById('add').addEventListener('click', () => {
+    document.getElementById('bag').textContent = ++n;
+    toast.textContent = `hush — ${document.getElementById('cname').textContent} added to bag`;
+    toast.classList.add('show'); clearTimeout(tid); tid = setTimeout(() => toast.classList.remove('show'), 2200);
+  });
+})();
+</script>
+</body>
+</html>

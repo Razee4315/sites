@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shizuka — A tea house around a koi pond</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..800&display=swap" rel="stylesheet">
+<style>
+  :root{--text:#f4f1e8;--muted:rgba(244,241,232,.68);--line:rgba(244,241,232,.24);--ease:cubic-bezier(.22,1,.36,1)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#16201b;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #top{pointer-events:none}
+  #gl{touch-action:none;cursor:pointer}
+  body.rain::after{content:"";position:fixed;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(30,40,50,.28),rgba(20,30,40,.12))}
+
+  .glass{background:rgba(16,24,20,.34);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--line)}
+  .nav{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:22px clamp(16px,4vw,48px);font-size:13px;pointer-events:none}
+  .nav > *{pointer-events:auto}
+  .logo{display:flex;align-items:baseline;gap:10px;font-weight:600;font-size:17px;letter-spacing:.02em;text-shadow:0 1px 14px rgba(0,0,0,.4)}
+  .logo small{font-weight:300;font-size:12px;color:var(--muted);letter-spacing:.16em}
+  .nav ul{display:flex;gap:6px;list-style:none;padding:5px;border-radius:99px}
+  .nav ul a{display:block;padding:8px 14px;border-radius:99px;color:var(--muted)}
+  .nav ul a:hover{color:var(--text)}
+
+  .card{position:fixed;left:clamp(16px,4vw,48px);bottom:clamp(20px,5vh,48px);z-index:5;width:min(340px,calc(100vw - 32px));padding:22px;border-radius:24px}
+  .card h2{font-weight:300;font-size:24px;letter-spacing:-.02em;line-height:1.2}
+  .card p{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{height:40px;padding:0 16px;border-radius:99px;border:1px solid var(--line);font-size:13px;transition:background .3s}
+  .btn:hover{background:rgba(244,241,232,.1)}
+  .btn.solid{background:var(--text);color:#16201b;border-color:var(--text);font-weight:600}
+  .btn.on{background:rgba(244,241,232,.18)}
+
+  .fed{position:fixed;right:clamp(16px,4vw,48px);bottom:clamp(20px,5vh,48px);z-index:5;text-align:right;text-shadow:0 1px 14px rgba(0,0,0,.45);font-variant-numeric:tabular-nums}
+  .fed b{display:block;font-weight:200;font-size:44px;letter-spacing:-.03em;line-height:1}
+  .fed span{font-size:12px;color:var(--muted)}
+  .hint{position:fixed;left:50%;top:clamp(80px,12vh,120px);translate:-50% 0;z-index:5;padding:10px 16px;border-radius:99px;font-size:12px;color:var(--muted);white-space:nowrap;transition:opacity .8s}
+
+  .sheet{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:rgba(10,16,12,.45);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .4s}
+  .sheet.open{opacity:1;pointer-events:auto}
+  .sheet .box{width:min(400px,calc(100vw - 32px));padding:26px;border-radius:24px;background:#1b2621;border:1px solid var(--line)}
+  .sheet h3{font-weight:300;font-size:22px;margin-bottom:6px}
+  .sheet .sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .chip{padding:9px 14px;border-radius:99px;border:1px solid var(--line);font-size:13px}
+  .chip[aria-pressed="true"]{background:var(--text);color:#16201b;border-color:var(--text)}
+  .sheet .btn.solid{width:100%;height:46px;margin-top:6px}
+
+  @media (max-width:760px){
+    .nav ul,.hint{display:none}
+    .card p{display:none}
+    .fed{bottom:auto;top:70px}
+    .fed b{font-size:32px}
+  }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="top"></canvas>
+
+<nav class="nav">
+  <a class="logo" href="#">Shizuka <small>静か · TEA HOUSE</small></a>
+  <ul class="glass"><li><a href="#">Tea</a></li><li><a href="#">The garden</a></li><li><a href="#">Ceremony</a></li></ul>
+  <button class="glass btn" id="sound" style="height:38px">Sound off</button>
+</nav>
+
+<div class="hint glass" id="hint">Tap the water to feed them · move slowly and they'll come to you</div>
+
+<div class="card glass">
+  <h2>Sit by the water.<br>Stay a while.</h2>
+  <p>A tea house built around a hundred-year-old koi pond in Kyoto. Nine fish, one kettle, no hurry.</p>
+  <div class="row">
+    <button class="btn solid" id="reserve">Reserve a seat</button>
+    <button class="btn" id="rain">Let it rain</button>
+  </div>
+</div>
+
+<div class="fed"><b id="fed">0</b><span>koi fed by you today</span></div>
+
+<div class="sheet" id="sheet">
+  <div class="box">
+    <h3>Reserve a seat</h3>
+    <div class="sub">Matcha, wagashi and an hour by the pond. ¥4,800</div>
+    <div class="chips" id="days"></div>
+    <div class="chips" id="times"><button class="chip" aria-pressed="false">10:00</button><button class="chip" aria-pressed="true">13:30</button><button class="chip" aria-pressed="false">16:00</button></div>
+    <div class="chips" id="guests"><button class="chip" aria-pressed="false">1 guest</button><button class="chip" aria-pressed="true">2 guests</button><button class="chip" aria-pressed="false">3 guests</button><button class="chip" aria-pressed="false">4 guests</button></div>
+    <button class="btn solid" id="confirm">Confirm</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const gcv=document.getElementById('gl'), gl=gcv.getContext('webgl',{antialias:false});
+  const top=document.getElementById('top'), tx=top.getContext('2d');
+  const under=document.createElement('canvas'), ux=under.getContext('2d');
+  let W,H,dpr,scale;
+  const img={};
+
+  /* ---------------- ripple field (CPU heightfield) ---------------- */
+  const CELL=6; let GW,GH,cur,prev,hbytes;
+  function initGrid(){ GW=Math.ceil(innerWidth/CELL)+2; GH=Math.ceil(innerHeight/CELL)+2; cur=new Float32Array(GW*GH); prev=new Float32Array(GW*GH); hbytes=new Uint8Array(GW*GH); }
+  function disturb(x,y,r,amp){
+    const gx=x/CELL, gy=y/CELL, rr=Math.max(1,r/CELL);
+    for (let j=Math.max(1,gy-rr|0); j<=Math.min(GH-2,gy+rr|0); j++)
+      for (let i=Math.max(1,gx-rr|0); i<=Math.min(GW-2,gx+rr|0); i++){
+        const d=Math.hypot(i-gx,j-gy); if (d<rr) cur[j*GW+i]+=amp*(.5+.5*Math.cos(Math.PI*d/rr));
+      }
+  }
+  function stepGrid(){
+    for (let j=1;j<GH-1;j++){ const o=j*GW; for (let i=1;i<GW-1;i++){ const k=o+i;
+      const v=(cur[k-1]+cur[k+1]+cur[k-GW]+cur[k+GW])*.5-prev[k]; prev[k]=v*.984; } }
+    const t=cur; cur=prev; prev=t;
+    for (let k=0;k<cur.length;k++){ const v=cur[k]*42+128; hbytes[k]=v<0?0:v>255?255:v; }
+  }
+  const heightAt=(x,y)=>{ const i=Math.min(GW-1,Math.max(0,x/CELL|0)), j=Math.min(GH-1,Math.max(0,y/CELL|0)); return cur[j*GW+i]; };
+
+  /* ---------------- water shader ---------------- */
+  const vs=`attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}`;
+  const fs=`precision highp float; varying vec2 v;
+    uniform sampler2D scene, hmap; uniform vec2 hTexel, res; uniform float t, rain;
+    float H(vec2 p){ return texture2D(hmap,p).r-.5; }
+    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+    void main(){
+      vec2 uv=vec2(v.x,1.-v.y);
+      float h=H(uv);
+      float dx=H(uv+vec2(hTexel.x,0.))-H(uv-vec2(hTexel.x,0.));
+      float dy=H(uv+vec2(0.,hTexel.y))-H(uv-vec2(0.,hTexel.y));
+      vec3 nrm=normalize(vec3(-dx*6.,-dy*6.,1.));
+      vec3 col=texture2D(scene, uv + vec2(dx,dy)*.09).rgb;
+      // focusing caustics where the surface curves
+      float lap = H(uv+vec2(hTexel.x,0.))+H(uv-vec2(hTexel.x,0.))+H(uv+vec2(0.,hTexel.y))+H(uv-vec2(0.,hTexel.y))-4.*h;
+      col *= 1. + clamp(-lap*9.,-.25,.6);
+      // slow ambient caustic web on the pond floor
+      vec2 q=uv*res/220.;
+      float c=abs(n(q+vec2(t*.07,t*.05))-n(q*1.3-vec2(t*.05,t*.08)));
+      col += vec3(.95,1.,.85)*pow(1.-c,14.)*.10;
+      // sky sheen and sun glints on the surface
+      vec3 L=normalize(vec3(-.4,-.6,.7));
+      float spec=pow(max(dot(nrm, normalize(L+vec3(0.,0.,1.))),0.),90.);
+      col += vec3(1.,.97,.9)*spec*.9;
+      float fres=pow(1.-nrm.z,1.5);
+      col = mix(col, vec3(.75,.85,.88), clamp(fres*1.6+.04,0.,.35));
+      col *= mix(1.,.82,rain);
+      col *= .9+.1*smoothstep(1.2,.3,length(v-.5));
+      gl_FragColor=vec4(col,1.);
+    }`;
+  function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));return s;}
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const aL=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(aL);gl.vertexAttribPointer(aL,2,gl.FLOAT,false,0,0);
+  const U=n=>gl.getUniformLocation(pr,n); const u={scene:U('scene'),hmap:U('hmap'),hTexel:U('hTexel'),res:U('res'),t:U('t'),rain:U('rain')};
+  function mk(unit){const t=gl.createTexture();gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);return t;}
+  const sceneTex=mk(0), hTex=mk(1); gl.uniform1i(u.scene,0); gl.uniform1i(u.hmap,1);
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
+
+  /* ---------------- koi ---------------- */
+  const VARIANTS=['kohaku','showa','yamabuki'];
+  const shadows={};
+  function makeShadow(name){
+    const im=img[name], c=document.createElement('canvas'); c.width=im.width/4; c.height=im.height/4;
+    const x=c.getContext('2d'); x.filter='blur(10px)'; x.drawImage(im,0,0,c.width,c.height);
+    x.filter='none'; x.globalCompositeOperation='source-in'; x.fillStyle='#000'; x.fillRect(0,0,c.width,c.height);
+    shadows[name]=c;
+  }
+  let koi=[], food=[], pads=[];
+  function spawnKoi(){
+    koi=[];
+    for (let i=0;i<9;i++){
+      koi.push({x:Math.random()*innerWidth, y:Math.random()*innerHeight, ang:Math.random()*6.28, sp:1, ph:Math.random()*6, turn:0,
+        v:VARIANTS[i%3], L:scale*(.8+Math.random()*.35), depth:.82+Math.random()*.18, scared:0, wob:Math.random()*100});
+    }
+  }
+  function placePads(){
+    const s=Math.min(innerWidth,innerHeight);
+    pads=[{x:innerWidth*.85,y:innerHeight*.4,r:s*.17,a:.4},{x:innerWidth*.09,y:innerHeight*.5,r:s*.14,a:2.1},{x:innerWidth*.6,y:innerHeight*.82,r:s*.11,a:4}];
+  }
+
+  const angDiff=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
+  let mx=-999,my=-999,mspeed=0,stillT=0;
+  function updateKoi(k){
+    for (const f of koi){
+      let target=null, want=1, rate=.035;
+      // hunger beats fear beats curiosity
+      let best=null, bd=1e9;
+      for (const p of food){ const d=Math.hypot(p.x-f.x,p.y-f.y); if (d<bd){bd=d;best=p;} }
+      const dm=Math.hypot(mx-f.x,my-f.y);
+      if (mspeed>14 && dm<230){ f.scared=60; }
+      if (f.scared>0){ target=Math.atan2(f.y-my,f.x-mx); want=4.2; rate=.12; f.scared-=k; }
+      else if (best && bd<innerWidth*.6){ target=Math.atan2(best.y-f.y,best.x-f.x); want=Math.min(3.4,1.2+bd/120); rate=.09;
+        if (bd<f.L*.28){ eat(best,f); } }
+      else if (stillT>40 && dm<320 && dm>f.L*.6){ target=Math.atan2(my-f.y,mx-f.x); want=1.1; rate=.05; }
+      else { f.wob+=.006*k; target=f.ang+Math.sin(f.wob*1.7)*.8; want=.9+Math.sin(f.wob)*.35; }
+      // stay in the pond
+      const m=f.L*.8;
+      if (f.x<m) target=0; else if (f.x>innerWidth-m) target=Math.PI;
+      if (f.y<m) target=Math.PI/2; else if (f.y>innerHeight-m) target=-Math.PI/2;
+      // give each other room
+      for (const o of koi){ if (o===f) continue; const d=Math.hypot(o.x-f.x,o.y-f.y); if (d<f.L*.55){ target=Math.atan2(f.y-o.y,f.x-o.x); want=Math.max(want,1.6); } }
+      const d=angDiff(f.ang,target), turn=Math.max(-rate,Math.min(rate,d))*k;
+      f.turn+= (turn-f.turn)*.2; f.ang+=turn;
+      f.sp+=(want-f.sp)*.04*k;
+      f.x+=Math.cos(f.ang)*f.sp*k; f.y+=Math.sin(f.ang)*f.sp*k;
+      f.ph+=(.10+f.sp*.07)*k;
+      if (Math.random()<.04*k*f.sp && f.depth>.9) disturb(f.x+Math.cos(f.ang)*f.L*.4, f.y+Math.sin(f.ang)*f.L*.4, 10, .35);
+    }
+  }
+  function drawKoi(ctx,f,shadow){
+    const im=shadow?shadows[f.v]:img[f.v]; if(!im) return;
+    const N=26, L=f.L*f.depth, w=L*im.width/im.height, sh=im.height/N;
+    const amp=L*.055*(.5+f.sp*.25), bend=Math.max(-1,Math.min(1,f.turn*14));
+    ctx.save();
+    ctx.translate(f.x+(shadow?L*.12:0), f.y+(shadow?L*.16:0));
+    ctx.rotate(f.ang+Math.PI/2);
+    if (shadow) ctx.globalAlpha=.32;
+    for (let i=0;i<N;i++){
+      const t=i/N, off=amp*Math.sin(f.ph - t*4.6)*Math.pow(t,1.5) - bend*L*.16*t*t;
+      ctx.drawImage(im, 0, i*sh, im.width, sh+.5, -w/2+off, -L/2+t*L, w, L/N+.8);
+    }
+    ctx.restore();
+  }
+
+  /* ---------------- food, sound ---------------- */
+  let fedCount=0, ac=null, soundOn=false, rainNode=null;
+  function audio(){ if(!ac) try{ ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} return ac; }
+  function plink(f0=900, vol=.06){
+    if(!soundOn) return; const a=audio(); if(!a) return;
+    const o=a.createOscillator(), g=a.createGain(), t=a.currentTime; o.type='sine';
+    o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f0*.45,t+.12);
+    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.0001,t+.18); o.connect(g).connect(a.destination); o.start(t); o.stop(t+.2);
+  }
+  function eat(p,f){
+    food.splice(food.indexOf(p),1); disturb(p.x,p.y,22,2.2); plink(320+Math.random()*80,.09);
+    f.sp+=1.2; fedCount++; document.getElementById('fed').textContent=fedCount;
+  }
+  function dropFood(x,y){
+    const n=5+Math.random()*4|0;
+    for (let i=0;i<n;i++){ const a=Math.random()*6.28, r=Math.random()*28; food.push({x:x+Math.cos(a)*r, y:y+Math.sin(a)*r, vx:(Math.random()-.5)*.2, vy:(Math.random()-.5)*.2, s:3+Math.random()*2}); }
+    disturb(x,y,24,2.1); plink(900+Math.random()*300,.05);
+    setTimeout(()=>plink(1100+Math.random()*300,.03),70);
+    document.getElementById('hint').style.opacity=0;
+  }
+
+  /* ---------------- input ---------------- */
+  let lastMove=0, lmx=0, lmy=0;
+  gcv.addEventListener('pointermove', e=>{
+    mx=e.clientX; my=e.clientY; const sp=Math.hypot(mx-lmx,my-lmy); lmx=mx; lmy=my;
+    mspeed=Math.max(mspeed,sp); if (sp>2) stillT=0;
+    if (sp>1.5) disturb(mx,my,12+Math.min(18,sp*.6), Math.min(1.6,.25+sp*.05));
+  });
+  gcv.addEventListener('pointerleave', ()=>{ mx=my=-999; });
+  gcv.addEventListener('pointerdown', e=>{ audio()?.resume(); dropFood(e.clientX,e.clientY); });
+
+  let raining=false, rainAmt=0;
+  const rainBtn=document.getElementById('rain');
+  rainBtn.addEventListener('click', ()=>{
+    raining=!raining; document.body.classList.toggle('rain',raining); rainBtn.classList.toggle('on',raining);
+    rainBtn.textContent=raining?'Stop the rain':'Let it rain'; updateRainSound();
+  });
+  function updateRainSound(){
+    const a=audio(); if(!a) return;
+    if (!rainNode){
+      const bf=a.createBuffer(1,a.sampleRate*2,a.sampleRate), d=bf.getChannelData(0); let l=0;
+      for (let i=0;i<d.length;i++){ const w=Math.random()*2-1; l=(l+.02*w)/1.02; d[i]=l*3.5+w*.15; }
+      const s=a.createBufferSource(); s.buffer=bf; s.loop=true; const g=a.createGain(); g.gain.value=0; s.connect(g).connect(a.destination); s.start(); rainNode=g;
+    }
+    rainNode.gain.setTargetAtTime(raining&&soundOn?.22:0, a.currentTime, .6);
+  }
+  document.getElementById('sound').addEventListener('click', e=>{ soundOn=!soundOn; e.target.textContent=soundOn?'Sound on':'Sound off'; audio()?.resume(); updateRainSound(); if(soundOn) plink(880,.05); });
+
+  /* reservation */
+  const days=document.getElementById('days'), d0=new Date();
+  days.innerHTML=Array.from({length:4},(_,i)=>{const d=new Date(d0); d.setDate(d0.getDate()+i+1); return `<button class="chip" aria-pressed="${i===0}">${d.toLocaleDateString(undefined,{weekday:'short',day:'numeric'})}</button>`;}).join('');
+  ['days','times','guests'].forEach(id=>{ const g=document.getElementById(id); g.addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return; g.querySelectorAll('.chip').forEach(o=>o.setAttribute('aria-pressed',o===b)); }); });
+  const sheet=document.getElementById('sheet'), confirm=document.getElementById('confirm');
+  document.getElementById('reserve').addEventListener('click', ()=>{ confirm.textContent='Confirm'; sheet.classList.add('open'); });
+  sheet.addEventListener('click', e=>{ if(e.target===sheet) sheet.classList.remove('open'); });
+  confirm.addEventListener('click', ()=>{
+    const pick=id=>document.querySelector(`#${id} [aria-pressed="true"]`).textContent;
+    confirm.textContent=`Booked · ${pick('days')}, ${pick('times')}, ${pick('guests')}`;
+    setTimeout(()=>sheet.classList.remove('open'),2000);
+  });
+
+  /* ---------------- scene ---------------- */
+  function resize(){
+    dpr=Math.min(2,devicePixelRatio);
+    W=gcv.width=Math.round(innerWidth*dpr); H=gcv.height=Math.round(innerHeight*dpr); gl.viewport(0,0,W,H);
+    top.width=W; top.height=H;
+    under.width=innerWidth; under.height=innerHeight;
+    scale=Math.max(120,Math.min(innerWidth,innerHeight)*.24);
+    initGrid(); placePads();
+    if (!koi.length) spawnKoi(); else koi.forEach(f=>{ f.x=Math.min(f.x,innerWidth-20); f.y=Math.min(f.y,innerHeight-20); });
+  }
+  function drawUnder(t){
+    const w=innerWidth, h=innerHeight;
+    if (img.pond){ const s=Math.max(w/img.pond.width,h/img.pond.height), iw=img.pond.width*s, ih=img.pond.height*s; ux.drawImage(img.pond,(w-iw)/2,(h-ih)/2,iw,ih); }
+    else { ux.fillStyle='#24332b'; ux.fillRect(0,0,w,h); }
+    // the name is set into the pond floor
+    const size=Math.min(w*.2,h*.3);
+    ux.save(); ux.font=`800 ${size}px Inter, sans-serif`; ux.textAlign='center'; ux.textBaseline='middle';
+    if ('letterSpacing' in ux) ux.letterSpacing=`${size*.06}px`;
+    ux.fillStyle='rgba(245,240,225,.2)'; ux.fillText('SHIZUKA', w/2, h*.44);
+    ux.font=`300 ${size*.34}px Inter, sans-serif`; ux.fillStyle='rgba(245,240,225,.24)'; ux.fillText('静か', w/2, h*.44+size*.72);
+    ux.restore();
+    for (const f of koi) drawKoi(ux,f,true);
+    const sorted=[...koi].sort((a,b)=>a.depth-b.depth);
+    for (const f of sorted){ ux.globalAlpha=.75+.25*(f.depth-.82)/.18; drawKoi(ux,f,false); }
+    ux.globalAlpha=1;
+  }
+  function drawTop(t){
+    tx.setTransform(dpr,0,0,dpr,0,0); tx.clearRect(0,0,innerWidth,innerHeight);
+    for (const p of food){
+      tx.fillStyle='rgba(0,0,0,.25)'; tx.beginPath(); tx.arc(p.x+2,p.y+3,p.s,0,6.28); tx.fill();
+      const g=tx.createRadialGradient(p.x-1,p.y-1,0,p.x,p.y,p.s); g.addColorStop(0,'#d8a467'); g.addColorStop(1,'#8a5426');
+      tx.fillStyle=g; tx.beginPath(); tx.arc(p.x,p.y,p.s,0,6.28); tx.fill();
+    }
+    if (img.lily) for (const p of pads){
+      const h=heightAt(p.x,p.y), s=1+h*.03;
+      tx.save(); tx.translate(p.x+h*1.5,p.y+h*1.5); tx.rotate(p.a+Math.sin(t*.2+p.a)*.05); tx.scale(s,s);
+      tx.shadowColor='rgba(0,0,0,.35)'; tx.shadowBlur=24; tx.shadowOffsetY=10;
+      tx.drawImage(img.lily,-p.r,-p.r,p.r*2,p.r*2); tx.restore();
+    }
+  }
+
+  let last=performance.now();
+  function frame(now){
+    if (gcv.width!==Math.round(innerWidth*Math.min(2,devicePixelRatio))) resize();
+    const k=Math.min(3,(now-last)/16.67); last=now; const t=now/1000;
+    mspeed*=.85; stillT+=k;
+    rainAmt+=((raining?1:0)-rainAmt)*.03;
+    if (raining) for (let i=0;i<3;i++) if (Math.random()<.7) disturb(Math.random()*innerWidth, Math.random()*innerHeight, 5+Math.random()*5, 1.2+Math.random());
+    if (Math.random()<.01) disturb(Math.random()*innerWidth, Math.random()*innerHeight, 8, .8);
+    for (const p of food){ p.x+=p.vx*k; p.y+=p.vy*k; p.vx+=(Math.random()-.5)*.02; p.vy+=(Math.random()-.5)*.02; }
+    updateKoi(k);
+    stepGrid(); if (k>1.6) stepGrid();
+    drawUnder(t); drawTop(t);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,sceneTex); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,under);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,hTex); gl.texImage2D(gl.TEXTURE_2D,0,gl.LUMINANCE,GW,GH,0,gl.LUMINANCE,gl.UNSIGNED_BYTE,hbytes);
+    gl.uniform2f(u.hTexel,1/GW,1/GH); gl.uniform2f(u.res,innerWidth,innerHeight); gl.uniform1f(u.t,t); gl.uniform1f(u.rain,rainAmt);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(frame);
+  }
+
+  const load=s=>new Promise(r=>{const i=new Image(); i.onload=()=>r(i); i.onerror=()=>r(null); i.src=s;});
+  Promise.all(['pond','koi-kohaku','koi-showa','koi-yamabuki','lily'].map(n=>load(`images/koi/${n}.webp`))).then(([pond,k1,k2,k3,lily])=>{
+    Object.assign(img,{pond,kohaku:k1,showa:k2,yamabuki:k3,lily});
+    VARIANTS.forEach(v=>img[v]&&makeShadow(v));
+  });
+  resize(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

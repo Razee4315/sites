@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NORD Arkitekter — We draw it. Then we build it.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{--text:#eef6ff;--muted:rgba(238,246,255,.6);--line:rgba(238,246,255,.2);--cyan:#7fe7ff;--ease:cubic-bezier(.22,1,.36,1)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#0b2a4a;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #gl{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:none;touch-action:none}
+  .mono{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.08em}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:24px clamp(16px,4vw,48px);font-size:13px}
+  .logo{font-weight:800;letter-spacing:.04em;font-size:16px}
+  .logo span{font-weight:300}
+  .nav ul{display:flex;gap:30px;list-style:none;color:var(--muted)}
+  .nav a:hover{color:var(--text)}
+
+  .title{position:fixed;left:clamp(16px,4vw,48px);top:clamp(96px,16vh,150px);z-index:5;pointer-events:none}
+  .title h1{font-weight:300;font-size:clamp(40px,5.4vw,84px);letter-spacing:-.04em;line-height:1}
+  .title h1 b{font-weight:700}
+  .title h1 span{display:block;overflow:hidden}
+  .title h1 span i{display:block;font-style:normal;transform:translateY(105%);animation:up 1.2s var(--ease) forwards}
+  @keyframes up{to{transform:none}}
+
+  .cursor{position:fixed;z-index:6;left:0;top:0;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:1px solid rgba(127,231,255,.7);pointer-events:none;transition:width .3s,height .3s,margin .3s}
+  .cursor::before,.cursor::after{content:"";position:absolute;background:rgba(127,231,255,.7)}
+  .cursor::before{left:50%;top:-10px;bottom:-10px;width:1px}
+  .cursor::after{top:50%;left:-10px;right:-10px;height:1px}
+  .cursor span{position:absolute;left:calc(100% + 10px);top:50%;white-space:nowrap;color:var(--cyan)}
+
+  .bottom{position:fixed;left:clamp(16px,4vw,48px);right:clamp(16px,4vw,48px);bottom:clamp(24px,6vh,56px);z-index:5;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;pointer-events:none}
+  .bottom > *{pointer-events:auto}
+  .proj p{font-size:14px;color:var(--muted);max-width:300px;line-height:1.6;margin-top:10px}
+  .actions{display:flex;gap:10px;align-items:center}
+  .build{height:50px;padding:0 24px;border-radius:99px;background:var(--text);color:#0b2a4a;font-weight:600;font-size:14px;transition:transform .3s var(--ease)}
+  .build:hover{transform:translateY(-2px)}
+  .meter{width:180px}
+  .meter .bar{height:2px;background:var(--line);margin-top:8px;overflow:hidden}
+  .meter .bar i{display:block;height:100%;width:0;background:var(--cyan);transition:width .3s}
+  .fade{opacity:0;animation:fade 1.2s forwards}
+  @keyframes fade{to{opacity:1}}
+
+  @media (max-width:760px){
+    .nav ul,.cursor,.meter{display:none}
+    .bottom{flex-direction:column;align-items:flex-start}
+    .proj p{display:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div class="cursor mono" id="cursor"><span id="coord">x 0.000 y 0.000</span></div>
+
+<nav class="nav">
+  <a class="logo" href="#">NORD <span>Arkitekter</span></a>
+  <ul><li><a href="#">Projects</a></li><li><a href="#">Practice</a></li><li><a href="#">Contact</a></li></ul>
+  <a href="#">Oslo · Bergen</a>
+</nav>
+
+<div class="title">
+  <h1><span><i style="animation-delay:.2s">We draw it.</i></span><span><i style="animation-delay:.35s"><b>Then we build it.</b></i></span></h1>
+</div>
+
+<div class="bottom">
+  <div class="proj fade" style="animation-delay:1s">
+    <div class="mono" style="color:var(--cyan)">PROJECT 031 — HUS VED FJORDEN</div>
+    <p>A cantilevered concrete house over Lysefjord. Paint across the drawing to see what it became.</p>
+  </div>
+  <div class="meter fade mono" style="animation-delay:1.2s">REALITY <span id="pct">0%</span><div class="bar"><i id="bar"></i></div></div>
+  <div class="actions fade" style="animation-delay:1.4s">
+    <button class="build" id="build">Build it</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const cv=document.getElementById('gl'), gl=cv.getContext('webgl',{antialias:false});
+  let dpr=Math.min(2,devicePixelRatio);
+  let W,H;
+
+  /* ink mask painted on a small 2D canvas, then used as a texture */
+  const mc=document.createElement('canvas'), mx=mc.getContext('2d',{willReadFrequently:true});
+  const MS=.25;
+
+  const vs=`attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}`;
+  const fs=`
+  precision highp float;
+  varying vec2 v;
+  uniform sampler2D photo, plan, mask;
+  uniform vec2 res; uniform float imgAspect, t, flood;
+  float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+  float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*n(p);p*=2.1;a*=.5;}return s;}
+  vec2 cover(vec2 uv){float sa=res.x/res.y;vec2 s=sa>imgAspect?vec2(1.,imgAspect/sa):vec2(sa/imgAspect,1.);return (uv-.5)*s+.5;}
+  void main(){
+    vec2 uv=cover(v); uv.y=1.-uv.y;
+    float m = texture2D(mask, vec2(v.x,1.-v.y)).r;
+    // flood: a noisy wave rolling out from the house
+    float r = length((v-vec2(.55,.5))*vec2(res.x/res.y,1.));
+    float wave = smoothstep(-.2, 0., flood*1.9 - .05 - r - (fbm(v*4.+t*.2)-.5)*.5) * step(.002, flood);
+    m = max(m, wave);
+    float k = m + (fbm(v*vec2(7.,5.)*vec2(res.x/res.y,1.)+vec2(t*.08,-t*.05))-.5)*.55;
+    float a = smoothstep(.42,.58,k);
+    float edge = smoothstep(.30,.44,k)*(1.-smoothstep(.46,.62,k));
+
+    vec2 warp = (vec2(fbm(uv*9.+t*.3), fbm(uv*9.-t*.3))-.5)*.012*edge;
+    vec3 ph = vec3(texture2D(photo,uv+warp+vec2(.002,0.)*edge).r, texture2D(photo,uv+warp).g, texture2D(photo,uv+warp-vec2(.002,0.)*edge).b);
+    vec3 bp = texture2D(plan,uv).rgb;
+    // blueprint breathes faintly with a scan line
+    bp += vec3(.25,.7,1.)*.06*smoothstep(.995,1.,fract(uv.y*1.5 - t*.12));
+    vec3 col = mix(bp, ph, a);
+    col += vec3(.5,.92,1.)*edge*1.1;
+    col *= .9 + .1*smoothstep(1.1,.3,length(v-.5));
+    gl_FragColor=vec4(col,1.);
+  }`;
+  function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));return s;}
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const aL=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(aL);gl.vertexAttribPointer(aL,2,gl.FLOAT,false,0,0);
+  const U=x=>gl.getUniformLocation(pr,x);
+  const u={photo:U('photo'),plan:U('plan'),mask:U('mask'),res:U('res'),imgAspect:U('imgAspect'),t:U('t'),flood:U('flood')};
+  function mkTex(unit){const tx=gl.createTexture();gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tx);
+    [[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE],[gl.TEXTURE_MIN_FILTER,gl.LINEAR],[gl.TEXTURE_MAG_FILTER,gl.LINEAR]].forEach(p=>gl.texParameteri(gl.TEXTURE_2D,p[0],p[1]));
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([11,42,74,255]));return tx;}
+  function loadTex(unit,src){const tx=mkTex(unit),im=new Image();im.onload=()=>{gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tx);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);};im.src=src;}
+  loadTex(0,'images/nord/photo.webp'); loadTex(1,'images/nord/blueprint.webp');
+  const maskTex=mkTex(2);
+  gl.uniform1i(u.photo,0);gl.uniform1i(u.plan,1);gl.uniform1i(u.mask,2);
+
+  function resize(){dpr=Math.min(2,devicePixelRatio);W=cv.width=Math.round(innerWidth*dpr);H=cv.height=Math.round(innerHeight*dpr);gl.viewport(0,0,W,H);mc.width=Math.ceil(innerWidth*MS);mc.height=Math.ceil(innerHeight*MS);mx.fillStyle='#000';mx.fillRect(0,0,mc.width,mc.height);}
+  resize(); addEventListener('resize',resize);
+
+  /* painting */
+  let px=null, py=null, lastMove=0;
+  function stamp(x,y,r){
+    const g=mx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,'rgba(255,255,255,.55)'); g.addColorStop(.6,'rgba(255,255,255,.25)'); g.addColorStop(1,'rgba(255,255,255,0)');
+    mx.fillStyle=g; mx.beginPath(); mx.arc(x,y,r,0,6.283); mx.fill();
+  }
+  function paint(cx,cy){
+    const x=cx*MS, y=cy*MS;
+    if (px===null){ px=x; py=y; }
+    const dist=Math.hypot(x-px,y-py), r=Math.min(46, 16 + dist*1.2);
+    const steps=Math.max(1, Math.ceil(dist/3));
+    for (let i=1;i<=steps;i++) stamp(px+(x-px)*i/steps, py+(y-py)*i/steps, r);
+    px=x; py=y;
+  }
+  const cur=document.getElementById('cursor'), coord=document.getElementById('coord');
+  cv.addEventListener('pointermove', e => {
+    paint(e.clientX, e.clientY); lastMove=performance.now(); demo=false;
+    cur.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;
+    coord.textContent=`x ${(e.clientX/innerWidth).toFixed(3)}  y ${(e.clientY/innerHeight).toFixed(3)}`;
+  });
+  cv.addEventListener('pointerleave', () => { px=py=null; });
+
+  /* intro demo stroke so visitors immediately see the effect */
+  let demo=true;
+  const t0=performance.now();
+
+  /* flood / build toggle */
+  let flood=0, floodT=0;
+  const btn=document.getElementById('build');
+  btn.addEventListener('click', () => { floodT = floodT ? 0 : 1; btn.textContent = floodT ? 'Back to the drawing' : 'Build it'; });
+
+  const pct=document.getElementById('pct'), bar=document.getElementById('bar');
+  let sampleT=0;
+  function frame(now){
+    if (cv.width !== Math.round(innerWidth*Math.min(2,devicePixelRatio))) resize();
+    const t=(now-t0)/1000;
+    if (demo && t>1 && t<4.2){
+      const k=(t-1)/3.2, ang=k*Math.PI*2.2;
+      paint(innerWidth*(.32+k*.45), innerHeight*(.52+Math.sin(ang)*.12));
+    }
+    if (demo && t>=4.2) px=py=null;
+    // ink slowly dries back into the drawing
+    mx.globalCompositeOperation='source-over';
+    mx.fillStyle = `rgba(0,0,0,${now-lastMove>1500 ? .012 : .004})`;
+    mx.fillRect(0,0,mc.width,mc.height);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D,maskTex);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,mc);
+
+    flood += (floodT-flood)*.02;
+    gl.uniform2f(u.res,W,H); gl.uniform1f(u.imgAspect,1.5); gl.uniform1f(u.t,t); gl.uniform1f(u.flood,flood);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+
+    if (now-sampleT>250){
+      sampleT=now;
+      const d=mx.getImageData(0,0,mc.width,mc.height).data; let s=0, c=0;
+      for (let i=0;i<d.length;i+=64){ s+=d[i]>110?1:0; c++; }
+      const p=Math.round(Math.max(s/c, flood)*100);
+      pct.textContent=p+'%'; bar.style.width=p+'%';
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

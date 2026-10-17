@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morrow — Independent design studio</title>
+<meta name="description" content="Morrow is an independent design studio in Lisbon and New York building brand identities.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── tokens ─────────────────────────────────────────── */
+  :root{
+    --bg:#0E0E0C; --fg:#ECE9E2; --acid:#D4FF3A;
+    --muted:rgba(236,233,226,.52); --line:rgba(236,233,226,.14);
+    --edge:clamp(20px,4vw,64px);
+    --ease-out:cubic-bezier(.16,1,.3,1);       /* expo out: the house curve */
+    --ease-inout:cubic-bezier(.77,0,.175,1);
+    --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+    --mono:"Geist Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--bg)}
+  body{background:var(--bg);color:var(--fg);font-family:var(--display);font-optical-sizing:auto;-webkit-font-smoothing:antialiased;min-height:100dvh;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button,input,textarea{font:inherit;color:inherit;background:none;border:0}
+  button{cursor:pointer;text-transform:inherit;letter-spacing:inherit}
+  :focus-visible{outline:1px solid var(--acid);outline-offset:4px}
+  .mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+  .grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* ── header ─────────────────────────────────────────── */
+  .top{position:fixed;inset:0 0 auto;z-index:40;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:22px var(--edge);mix-blend-mode:difference}
+  .wordmark{font-weight:700;font-size:20px;letter-spacing:-.04em}
+  .nav{display:flex;gap:28px;font-size:14px}
+  .nav a{position:relative}
+  .nav a::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .5s var(--ease-out)}
+  .nav a:hover::after{transform:scaleX(1);transform-origin:left}
+  .top-r{justify-self:end;display:flex;align-items:center;gap:24px}
+  .clock{font-variant-numeric:tabular-nums}
+  .cta{position:relative;display:inline-flex;align-items:center;gap:10px;height:42px;padding:0 18px;border-radius:99px;background:var(--fg);color:var(--bg);font-size:14px;font-weight:500;overflow:hidden;mix-blend-mode:normal;will-change:transform}
+  .cta i{width:7px;height:7px;border-radius:50%;background:var(--bg);transition:transform .5s var(--ease-out)}
+  .cta:hover i{transform:scale(1.6)}
+  .cta .lbl{display:grid;overflow:hidden;height:1.2em;line-height:1.2em}
+  .cta .lbl span{transition:transform .5s var(--ease-out)}
+  .cta .lbl span:last-child{position:absolute;transform:translateY(110%)}
+  .cta:hover .lbl span:first-child{transform:translateY(-110%)}
+  .cta:hover .lbl span:last-child{transform:none}
+  .cta:active{transform:translateY(1px)}
+
+  /* ── hero ───────────────────────────────────────────── */
+  .hero{min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;padding:110px var(--edge) 28px}
+  .meta{display:grid;grid-template-columns:repeat(12,1fr);gap:24px;color:var(--muted)}
+  .meta > :nth-child(1){grid-column:1/4}
+  .meta > :nth-child(2){grid-column:7/10}
+  .meta > :nth-child(3){grid-column:10/13;text-align:right}
+
+  h1{align-self:center;font-weight:700;font-size:clamp(52px,8.2vw,168px);line-height:.9;letter-spacing:-.05em;margin:3vh 0 4vh;max-width:14ch}
+  h1 .thin{font-weight:200;letter-spacing:-.045em}
+  h1 .acid{color:var(--acid)}
+  h1 .line{display:block}
+
+  /* ── project index ─────────────────────────────────── */
+  .index{border-top:1px solid var(--line)}
+  .index-head{display:grid;grid-template-columns:56px 1.4fr 1.2fr 100px 40px;gap:24px;padding:12px 0;color:var(--muted)}
+  .row{position:relative;display:grid;grid-template-columns:56px 1.4fr 1.2fr 100px 40px;gap:24px;align-items:baseline;padding:13px 0 12px;border-top:1px solid var(--line);width:100%;text-align:left;transition:opacity .45s var(--ease-out)}
+  .row .n,.row .yr{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .row .client{font-size:clamp(22px,2.4vw,36px);font-weight:500;letter-spacing:-.03em;transition:transform .55s var(--ease-out)}
+  .row .what{font-size:14px;color:var(--muted)}
+  .row .arrow{justify-self:end;font-size:18px;transition:transform .55s var(--ease-out),color .3s}
+  .index.hovering .row{opacity:.28}
+  .index.hovering .row.on{opacity:1}
+  .row.on .client{transform:translateX(14px)}
+  .row.on .arrow{transform:rotate(45deg);color:var(--acid)}
+
+  /* follower image: the signature move */
+  .follow{position:fixed;left:0;top:0;z-index:30;width:clamp(260px,26vw,460px);aspect-ratio:4/3;pointer-events:none;overflow:hidden;clip-path:inset(50% 50% 50% 50%);transition:clip-path .6s var(--ease-out);will-change:transform}
+  .follow.show{clip-path:inset(0 0 0 0)}
+  .follow img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.18);transition:opacity .45s var(--ease-out),transform 1.2s var(--ease-out)}
+  .follow img.on{opacity:1;transform:scale(1)}
+  .follow .tag{position:absolute;left:12px;bottom:10px;z-index:2;color:var(--fg);mix-blend-mode:difference}
+
+  /* cursor */
+  .cursor{position:fixed;left:0;top:0;z-index:60;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--fg);mix-blend-mode:difference;pointer-events:none;transition:width .45s var(--ease-out),height .45s var(--ease-out),margin .45s var(--ease-out)}
+  .cursor.big{width:84px;height:84px;margin:-42px 0 0 -42px}
+  .cursor span{position:absolute;inset:0;display:grid;place-items:center;color:var(--bg);font-family:var(--mono);font-size:10px;letter-spacing:.1em;opacity:0;transition:opacity .3s}
+  .cursor.big span{opacity:1}
+  @media (hover:hover) and (pointer:fine){ body{cursor:none} a,button{cursor:none} }
+  @media not ((hover:hover) and (pointer:fine)){ .cursor,.follow{display:none} }
+
+  .foot{display:flex;justify-content:space-between;align-items:center;padding-top:22px;color:var(--muted)}
+  .foot .scroll{display:flex;align-items:center;gap:10px}
+  .foot .scroll i{width:40px;height:1px;background:var(--muted);transform-origin:left;animation:tick 2.4s var(--ease-inout) infinite}
+  @keyframes tick{0%{transform:scaleX(0)}50%{transform:scaleX(1);transform-origin:left}51%{transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
+
+  /* ── case overlay ───────────────────────────────────── */
+  .case{position:fixed;inset:0;z-index:70;background:var(--bg);display:grid;grid-template-columns:1.25fr 1fr;clip-path:inset(100% 0 0 0);transition:clip-path .8s var(--ease-inout);visibility:hidden}
+  .case.open{clip-path:inset(0 0 0 0);visibility:visible}
+  .case .pic{position:relative;overflow:hidden}
+  .case .pic img{width:100%;height:100%;object-fit:cover;transform:scale(1.15);transition:transform 1.6s var(--ease-out)}
+  .case.open .pic img{transform:scale(1)}
+  .case .body{padding:110px var(--edge) 40px;display:flex;flex-direction:column;gap:22px}
+  .case h2{font-weight:700;font-size:clamp(44px,5.6vw,96px);letter-spacing:-.05em;line-height:.9}
+  .case p{font-size:17px;line-height:1.55;color:var(--muted);max-width:44ch}
+  .case dl{display:grid;grid-template-columns:auto 1fr;gap:10px 28px;margin-top:auto;border-top:1px solid var(--line);padding-top:20px}
+  .case dt{color:var(--muted)} .case dd{font-size:15px}
+  .x{position:absolute;right:var(--edge);top:22px;z-index:2}
+
+  /* ── brief drawer ───────────────────────────────────── */
+  .brief{position:fixed;inset:0 0 0 auto;z-index:80;width:min(540px,100vw);background:var(--fg);color:var(--bg);padding:28px var(--edge) 32px;display:flex;flex-direction:column;gap:22px;transform:translateX(100%);transition:transform .8s var(--ease-inout);overflow:auto}
+  .brief.open{transform:none}
+  .scrim{position:fixed;inset:0;z-index:79;background:rgba(14,14,12,.55);opacity:0;pointer-events:none;transition:opacity .6s var(--ease-out)}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .brief h3{font-weight:700;font-size:clamp(36px,4vw,56px);letter-spacing:-.045em;line-height:.95;margin-top:28px}
+  .field{display:flex;flex-direction:column;gap:8px;border-bottom:1px solid rgba(14,14,12,.2);padding-bottom:10px}
+  .field label{color:rgba(14,14,12,.55)}
+  .field input,.field textarea{outline:none;font-size:18px;resize:none}
+  .field:focus-within{border-color:var(--bg)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{height:38px;padding:0 16px;border-radius:99px;border:1px solid rgba(14,14,12,.25);font-size:14px;transition:background .3s,color .3s}
+  .chip[aria-pressed="true"]{background:var(--bg);color:var(--fg);border-color:var(--bg)}
+  .send{height:56px;border-radius:99px;background:var(--bg);color:var(--fg);font-size:15px;font-weight:500;margin-top:6px}
+  .err{color:#9b2c1d;font-size:13px;min-height:16px}
+  .brief .close{align-self:flex-end}
+
+  @media (max-width:860px){
+    .top{grid-template-columns:1fr auto}
+    .nav,.clock{display:none}
+    .meta > :nth-child(2){display:none}
+    .meta > :nth-child(1){grid-column:1/8}
+    .meta > :nth-child(3){grid-column:8/13}
+    .index-head{display:none}
+    .row{grid-template-columns:32px 1fr 28px}
+    .row .what,.row .yr{display:none}
+    .case{grid-template-columns:1fr;grid-template-rows:42vh 1fr}
+    .case .body{padding-top:28px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition-duration:.01ms!important;animation:none!important}
+  }
+
+  /* SplitText line masks: leave room for descenders at tight line-heights */
+  h1 > div, h2 > div{padding-bottom:.14em;margin-bottom:-.14em}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"><span>VIEW</span></div>
+
+<header class="top">
+  <a class="wordmark" href="#">Morrow</a>
+  <nav class="nav" aria-label="Primary"><a href="#">Work</a><a href="#">Studio</a><a href="#">Notes</a><a href="#">Careers</a></nav>
+  <div class="top-r">
+    <span class="mono clock" id="clock">LIS --:--</span>
+    <button class="cta" id="openBrief" data-magnetic><i></i><span class="lbl"><span>Start a project</span><span>Tell us everything</span></span></button>
+  </div>
+</header>
+
+<main class="hero">
+  <div class="meta mono">
+    <span>(Independent design studio)</span>
+    <span>Identity · Digital · Motion</span>
+    <span>Lisbon — New York</span>
+  </div>
+
+  <h1 id="headline" aria-label="We design brands that outlive their launch.">
+    <span class="line">We design brands</span>
+    <span class="line">that <span class="thin acid">outlive</span></span>
+    <span class="line">their launch.</span>
+  </h1>
+
+  <section class="index" id="index" aria-label="Selected work">
+    <div class="index-head mono"><span>No.</span><span>Client</span><span>What we did</span><span>Year</span><span></span></div>
+  </section>
+
+  <div class="foot mono">
+    <span>Selected work, 2019 — 2026</span>
+    <span class="scroll"><i></i>Hover the list</span>
+  </div>
+</main>
+
+<div class="follow" id="follow" aria-hidden="true"><span class="tag mono" id="followTag"></span></div>
+
+<section class="case" id="case" aria-modal="true" role="dialog" aria-labelledby="caseTitle">
+  <div class="pic"><img id="caseImg" alt=""></div>
+  <div class="body">
+    <span class="mono" id="caseNo" style="color:var(--muted)"></span>
+    <h2 id="caseTitle"></h2>
+    <p id="caseText"></p>
+    <dl><dt class="mono">Scope</dt><dd id="caseScope"></dd><dt class="mono">Year</dt><dd id="caseYear"></dd><dt class="mono">Status</dt><dd>Full case study coming soon</dd></dl>
+  </div>
+  <button class="x mono" id="closeCase">Close ✕</button>
+</section>
+
+<div class="scrim" id="scrim"></div>
+<aside class="brief" id="brief" aria-label="Start a project" aria-hidden="true">
+  <button class="close mono" id="closeBrief">Close ✕</button>
+  <h3>Tell us what you're building.</h3>
+  <form id="form" novalidate style="display:flex;flex-direction:column;gap:22px">
+    <div class="field"><label class="mono" for="fName">Your name</label><input id="fName" autocomplete="name"></div>
+    <div class="field"><label class="mono" for="fMail">Email</label><input id="fMail" type="email" autocomplete="email"></div>
+    <div><div class="mono" style="color:rgba(14,14,12,.55);margin-bottom:10px">Budget</div>
+      <div class="chips" id="budget"><button type="button" class="chip" aria-pressed="false">€25–50k</button><button type="button" class="chip" aria-pressed="true">€50–100k</button><button type="button" class="chip" aria-pressed="false">€100k+</button></div></div>
+    <div class="field"><label class="mono" for="fMsg">The short version</label><textarea id="fMsg" rows="3"></textarea></div>
+    <div class="err" id="err" role="status"></div>
+    <button class="send" type="submit" id="send">Send brief — we reply within two days</button>
+  </form>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script>
+(() => {
+  const work = [
+    {client:'Aurel Parfums',  what:'Identity, packaging',      year:'2026', img:'images/morrow/p1.webp', scope:'Naming, identity, bottle, packaging system',
+     text:'A fragrance house built around a single volcanic stone. We drew the cap first, then the brand around it.'},
+    {client:'Nord Hotels',    what:'Brand system, print',      year:'2025', img:'images/morrow/p2.webp', scope:'Brand platform, print collateral, signage',
+     text:'Eleven hotels across Scandinavia that wanted to feel like one quiet house. Travertine, brass and a typeface cut for room numbers.'},
+    {client:'Kin Coffee',     what:'Packaging, retail',        year:'2024', img:'images/morrow/p3.webp', scope:'Packaging, retail interiors, wholesale kit',
+     text:'A roaster that names every bag after the farmer. The geometric marks are drawn from each farm’s field plan.'},
+    {client:'Volt Cycles',    what:'Campaign, digital',        year:'2023', img:'images/morrow/p4.webp', scope:'Launch campaign, website, out-of-home',
+     text:'Launching a city e-bike at night, on purpose. One colour of light, every touchpoint.'},
+    {client:'Haven',          what:'Product, motion',          year:'2022', img:'images/morrow/p5.webp', scope:'Product design, motion language, app store',
+     text:'A savings app that moves slower than every other fintech. Calm motion, soft shapes, no confetti.'},
+  ];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  /* build the index */
+  const index = document.getElementById('index'), follow = document.getElementById('follow');
+  work.forEach((w,i) => {
+    const b = document.createElement('button');
+    b.className = 'row'; b.dataset.i = i;
+    b.innerHTML = `<span class="n">${String(i+1).padStart(2,'0')}</span><span class="client">${w.client}</span><span class="what">${w.what}</span><span class="yr">${w.year}</span><span class="arrow" aria-hidden="true">↗</span>`;
+    index.appendChild(b);
+    const im = new Image(); im.src = w.img; im.alt = ''; im.decoding = 'async'; follow.appendChild(im);
+  });
+  const rows = [...index.querySelectorAll('.row')], imgs = [...follow.querySelectorAll('img')];
+
+  /* live studio clock */
+  const clock = document.getElementById('clock');
+  const tick = () => clock.textContent = 'LIS ' + new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit'}).format(new Date());
+  tick(); setInterval(tick, 15000);
+
+  /* intro: masked line reveal (SplitText), then meta and rows */
+  document.fonts.ready.then(() => {
+    if (reduce) return;
+    const split = SplitText.create('#headline', {type:'lines', mask:'lines', linesClass:'ln'});
+    const tl = gsap.timeline({defaults:{ease:'expo.out'}});
+    tl.from('.top', {opacity:0, duration:.8, clearProps:'opacity'}, 0)
+      .from(split.lines, {yPercent:110, duration:1.2, stagger:.1}, .1)
+      .from('.meta span', {opacity:0, y:8, duration:.8, stagger:.06, clearProps:'all'}, .35)
+      .fromTo('.index-head, .row', {opacity:0, y:14}, {opacity:1, y:0, duration:.9, stagger:.05, clearProps:'opacity,transform'}, .55)
+      .from('.foot', {opacity:0, duration:.8, clearProps:'opacity'}, .9);
+  });
+
+  /* cursor + follower with velocity skew: the signature move */
+  if (fine && !reduce){
+    const cur = document.getElementById('cursor'), tag = document.getElementById('followTag');
+    let mx = innerWidth/2, my = innerHeight/2, fx = mx, fy = my, cx = mx, cy = my, vx = 0, active = -1;
+    addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; });
+    const W = () => follow.offsetWidth, H = () => follow.offsetHeight;
+    gsap.ticker.add(() => {
+      cx += (mx-cx)*.35; cy += (my-cy)*.35;
+      cur.style.transform = `translate(${cx}px,${cy}px)`;
+      const px = fx; fx += (mx - fx)*.12; fy += (my - fy)*.12;
+      vx += ((fx - px) - vx)*.2;
+      const skew = Math.max(-14, Math.min(14, vx*.6)), rot = Math.max(-6, Math.min(6, vx*.18));
+      follow.style.transform = `translate(${fx + 48}px,${fy - H()*.5}px) rotate(${rot}deg) skewX(${-skew}deg)`;
+    });
+    rows.forEach(r => {
+      r.addEventListener('mouseenter', () => {
+        const i = +r.dataset.i;
+        index.classList.add('hovering'); rows.forEach(o => o.classList.toggle('on', o===r));
+        imgs.forEach((im,k) => im.classList.toggle('on', k===i));
+        tag.textContent = `${String(i+1).padStart(2,'0')} — ${work[i].client}`;
+        follow.classList.add('show'); cur.classList.add('big'); active = i;
+      });
+    });
+    index.addEventListener('mouseleave', () => {
+      index.classList.remove('hovering'); rows.forEach(o => o.classList.remove('on'));
+      follow.classList.remove('show'); cur.classList.remove('big'); active = -1;
+    });
+
+    /* magnetic CTA */
+    document.querySelectorAll('[data-magnetic]').forEach(el => {
+      el.addEventListener('mousemove', e => { const r = el.getBoundingClientRect(); gsap.to(el, {x:(e.clientX-r.left-r.width/2)*.3, y:(e.clientY-r.top-r.height/2)*.4, duration:.6, ease:'expo.out'}); });
+      el.addEventListener('mouseleave', () => gsap.to(el, {x:0, y:0, duration:.8, ease:'expo.out'}));
+    });
+  }
+
+  /* case overlay */
+  const caseEl = document.getElementById('case');
+  let lastFocus = null;
+  function openCase(i){
+    const w = work[i];
+    document.getElementById('caseImg').src = w.img; document.getElementById('caseImg').alt = `${w.client} — ${w.what}`;
+    document.getElementById('caseNo').textContent = `Case ${String(i+1).padStart(2,'0')} / ${String(work.length).padStart(2,'0')}`;
+    document.getElementById('caseTitle').textContent = w.client;
+    document.getElementById('caseText').textContent = w.text;
+    document.getElementById('caseScope').textContent = w.scope;
+    document.getElementById('caseYear').textContent = w.year;
+    lastFocus = document.activeElement; caseEl.classList.add('open');
+    setTimeout(() => document.getElementById('closeCase').focus(), 50);
+  }
+  rows.forEach(r => r.addEventListener('click', () => openCase(+r.dataset.i)));
+  const closeCase = () => { caseEl.classList.remove('open'); lastFocus && lastFocus.focus(); };
+  document.getElementById('closeCase').addEventListener('click', closeCase);
+
+  /* brief drawer */
+  const brief = document.getElementById('brief'), scrim = document.getElementById('scrim');
+  const openBrief = () => { brief.classList.add('open'); scrim.classList.add('open'); brief.setAttribute('aria-hidden','false'); setTimeout(()=>document.getElementById('fName').focus(), 300); };
+  const closeBrief = () => { brief.classList.remove('open'); scrim.classList.remove('open'); brief.setAttribute('aria-hidden','true'); };
+  document.getElementById('openBrief').addEventListener('click', openBrief);
+  document.getElementById('closeBrief').addEventListener('click', closeBrief);
+  scrim.addEventListener('click', closeBrief);
+  addEventListener('keydown', e => { if (e.key === 'Escape'){ closeBrief(); if (caseEl.classList.contains('open')) closeCase(); } });
+  document.getElementById('budget').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; document.querySelectorAll('#budget .chip').forEach(o => o.setAttribute('aria-pressed', o===b)); });
+  document.getElementById('form').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('fName').value.trim(), mail = document.getElementById('fMail').value.trim(), err = document.getElementById('err');
+    if (!name){ err.textContent = 'Who should we write back to?'; return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ err.textContent = 'That email looks off. Mind checking it?'; return; }
+    err.textContent = '';
+    const send = document.getElementById('send');
+    send.textContent = `Thanks, ${name.split(' ')[0]}. Expect a reply by ${new Date(Date.now()+2*864e5).toLocaleDateString(undefined,{weekday:'long'})}.`;
+    send.disabled = true;
+  });
+})();
+</script>
+</body>
+</html>

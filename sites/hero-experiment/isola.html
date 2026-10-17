@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isola — Hotels at the edge of the map</title>
+<meta name="description" content="Isola is a collection of four remote hotels in Kyoto, Amalfi, Bali and the Atacama.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..600;1,6..72,200..600&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="images/isola/kyoto.webp" fetchpriority="high">
+<style>
+  :root{
+    --ink:#1C1A17; --sand:#E9E1D3; --gold:#B89A64;
+    --sand-muted:rgba(233,225,211,.72); --hair:rgba(233,225,211,.28); --ink-hair:rgba(28,26,23,.16);
+    --edge:clamp(20px,4.2vw,72px);
+    --ease-out:cubic-bezier(.16,1,.3,1);
+    --ease-inout:cubic-bezier(.77,0,.175,1);
+    --serif:"Newsreader",Georgia,serif;
+    --sans:"Hanken Grotesk",ui-sans-serif,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--ink)}
+  body{color:var(--sand);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button,input,select{font:inherit;color:inherit;background:none;border:0;border-radius:0}
+  button{cursor:pointer;text-transform:inherit;letter-spacing:inherit}
+  :focus-visible{outline:1px solid var(--gold);outline-offset:3px}
+  .label{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+  .grain{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* ── stage ─────────────────────────────────────────── */
+  .hero{position:relative;height:100dvh;min-height:640px;overflow:hidden}
+  .slide{position:absolute;inset:0;overflow:hidden;clip-path:inset(0 0 0 100%)}
+  .slide.current{clip-path:inset(0 0 0 0)}
+  .slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.14);transform-origin:60% 50%}
+  .shade{position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:linear-gradient(90deg,rgba(20,18,15,.72) 0%,rgba(20,18,15,.28) 42%,rgba(20,18,15,0) 70%),
+               linear-gradient(0deg,rgba(20,18,15,.7) 0%,rgba(20,18,15,0) 34%),
+               linear-gradient(180deg,rgba(20,18,15,.45) 0%,rgba(20,18,15,0) 18%),linear-gradient(270deg,rgba(20,18,15,.55) 0%,rgba(20,18,15,0) 26%)}
+
+  /* ── header ────────────────────────────────────────── */
+  .top{position:absolute;inset:0 0 auto;z-index:10;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:26px var(--edge)}
+  .top nav{display:flex;gap:30px}
+  .top a{position:relative}
+  .top nav a::after,.link::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .6s var(--ease-out)}
+  .top nav a:hover::after,.link:hover::after{transform:scaleX(1);transform-origin:left}
+  .mark{font-family:var(--serif);font-weight:300;font-size:26px;letter-spacing:.42em;padding-left:.42em}
+  .top .r{justify-self:end;display:flex;gap:28px;align-items:center}
+  .reserve{border:1px solid var(--hair);padding:11px 18px;transition:background .5s var(--ease-out),color .5s var(--ease-out),border-color .5s}
+  .reserve:hover{background:var(--sand);color:var(--ink);border-color:var(--sand)}
+
+  /* ── copy ──────────────────────────────────────────── */
+  .copy{position:absolute;z-index:5;left:var(--edge);top:50%;translate:0 -58%;max-width:min(620px,52vw)}
+  .kicker{display:flex;align-items:center;gap:14px;color:var(--sand-muted);margin-bottom:26px}
+  .kicker i{width:36px;height:1px;background:var(--gold)}
+  h1{font-family:var(--serif);font-weight:250;font-size:clamp(46px,6.6vw,118px);line-height:.98;letter-spacing:-.035em;text-wrap:balance}
+  h1 em{font-style:italic;font-weight:250;color:var(--gold)}
+  .sub{margin-top:26px;font-size:15px;line-height:1.65;color:var(--sand-muted);max-width:40ch}
+  .facts{display:flex;gap:32px;margin-top:30px;color:var(--sand-muted)}
+  .facts b{display:block;font-family:var(--serif);font-weight:300;font-size:26px;letter-spacing:-.01em;color:var(--sand);text-transform:none;margin-top:6px}
+
+  /* ── index ─────────────────────────────────────────── */
+  .index{position:absolute;z-index:6;right:var(--edge);top:50%;translate:0 -50%;display:flex;flex-direction:column;gap:6px;text-align:right}
+  .dest{display:grid;grid-template-columns:auto auto;justify-content:end;gap:14px;align-items:center;padding:8px 0;color:var(--sand-muted);transition:color .5s}
+  .dest .num{font-variant-numeric:tabular-nums}
+  .dest .name{font-family:var(--serif);font-size:22px;font-weight:300;letter-spacing:-.01em;text-transform:none}
+  .dest .bar{grid-column:1/3;height:1px;background:var(--hair);position:relative;overflow:hidden;width:120px;justify-self:end}
+  .dest .bar i{position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:right}
+  .dest[aria-current="true"]{color:var(--sand)}
+  .dest:hover{color:var(--sand)}
+  .arrows{display:flex;gap:6px;justify-content:flex-end;margin-top:18px}
+  .arrows button{width:46px;height:46px;border:1px solid var(--hair);display:grid;place-items:center;transition:background .4s,color .4s}
+  .arrows button:hover{background:var(--sand);color:var(--ink)}
+
+  /* ── booking bar ───────────────────────────────────── */
+  .book{position:absolute;z-index:8;left:var(--edge);right:var(--edge);bottom:28px;display:grid;grid-template-columns:1.3fr 1fr 1fr .9fr auto;background:var(--sand);color:var(--ink)}
+  .cell{position:relative;padding:16px 22px 14px;border-right:1px solid var(--ink-hair);display:flex;flex-direction:column;gap:6px;min-width:0}
+  .cell .label{color:rgba(28,26,23,.58)}
+  .cell select,.cell input{font-family:var(--serif);font-size:21px;font-weight:350;letter-spacing:-.01em;outline:none;width:100%;appearance:none;-webkit-appearance:none}
+  .cell input::-webkit-calendar-picker-indicator{opacity:.4;cursor:pointer}
+  .cell:focus-within{background:#f1ebe0}
+  .guests{display:flex;align-items:center;gap:14px;font-family:var(--serif);font-size:21px}
+  .guests button{width:28px;height:28px;border:1px solid var(--ink-hair);font-family:var(--sans);font-size:15px;display:grid;place-items:center;transition:background .3s}
+  .guests button:hover{background:var(--ink);color:var(--sand)}
+  .go{position:relative;padding:0 34px;background:var(--ink);color:var(--sand);font-weight:500;letter-spacing:.02em;overflow:hidden;min-width:220px;text-align:left}
+  .go::before{content:"";position:absolute;inset:0;background:var(--gold);transform:scaleY(0);transform-origin:bottom;transition:transform .6s var(--ease-out)}
+  .go:hover::before{transform:scaleY(1)}
+  .go span{position:relative;display:flex;justify-content:space-between;gap:18px}
+  .result{position:absolute;left:0;right:0;bottom:100%;background:var(--ink);color:var(--sand);display:flex;justify-content:space-between;align-items:center;gap:20px;padding:0 22px;height:0;overflow:hidden;transition:height .7s var(--ease-inout)}
+  .result.open{height:64px}
+  .result p{font-family:var(--serif);font-size:19px;font-weight:300}
+  .result p b{font-weight:400;color:var(--gold)}
+  .result .err{color:#e6a78a}
+  .link{position:relative;font-size:14px;font-weight:500}
+
+  @media (max-width:980px){
+    .top nav,.top .r .link{display:none}
+    .top{grid-template-columns:auto 1fr}
+    .top .mark{justify-self:start}
+    .copy{top:auto;bottom:372px;translate:0;max-width:none;right:var(--edge)}
+    .shade{background:linear-gradient(0deg,rgba(20,18,15,.92) 0%,rgba(20,18,15,.55) 55%,rgba(20,18,15,.1) 80%),linear-gradient(180deg,rgba(20,18,15,.5) 0%,rgba(20,18,15,0) 20%)}
+    .sub,.facts{display:none}
+    .index{top:auto;bottom:300px;right:auto;left:var(--edge);flex-direction:row;gap:16px}
+    .dest{grid-template-columns:auto;padding:0}
+    .dest .name{display:none}
+    .dest .bar{width:44px;grid-column:1}
+    .arrows{display:none}
+    .book{grid-template-columns:1fr 1fr;bottom:16px;left:16px;right:16px}
+    .cell{padding:12px 16px 10px}
+    .cell select,.cell input,.guests{font-size:18px}
+    .c-dest{grid-column:1/3;border-right:0;border-bottom:1px solid var(--ink-hair)}
+    .c-in{border-bottom:1px solid var(--ink-hair)}
+    .c-out{border-right:0;border-bottom:1px solid var(--ink-hair)}
+    .go{min-width:0;padding:0 18px}
+    .go{min-height:56px}
+    .result.open{height:auto;padding:14px 22px;flex-direction:column;align-items:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition-duration:.01ms!important} }
+
+  /* SplitText line masks: leave room for descenders at tight line-heights */
+  h1 > div, h2 > div{padding-bottom:.14em;margin-bottom:-.14em}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<section class="hero" id="hero" aria-roledescription="carousel" aria-label="Isola destinations">
+  <div id="slides"></div>
+  <div class="shade"></div>
+
+  <header class="top">
+    <nav class="label" aria-label="Primary"><a href="#">Destinations</a><a href="#">Journal</a><a href="#">Gift</a></nav>
+    <a class="mark" href="#" aria-label="Isola home">ISOLA</a>
+    <div class="r label"><a class="link" href="#">Sign in</a><a class="reserve" href="#book">Reserve</a></div>
+  </header>
+
+  <div class="copy" aria-live="polite">
+    <div class="kicker label"><i></i><span id="kicker">No. 01 — Kyoto, Japan</span></div>
+    <h1 id="headline"></h1>
+    <p class="sub" id="sub"></p>
+    <div class="facts label" id="facts"></div>
+  </div>
+
+  <div class="index label" id="index" role="tablist" aria-label="Choose a destination"></div>
+
+  <form class="book" id="book" autocomplete="off" aria-label="Check availability">
+    <div class="result" id="result" role="status"><p id="resultText"></p><a class="link" href="#" id="resultLink">Hold these dates →</a></div>
+    <label class="cell c-dest"><span class="label">Destination</span><select id="fDest"></select></label>
+    <label class="cell c-in"><span class="label">Arrive</span><input type="date" id="fIn"></label>
+    <label class="cell c-out"><span class="label">Depart</span><input type="date" id="fOut"></label>
+    <div class="cell c-guests"><span class="label">Guests</span><div class="guests"><button type="button" id="gMinus" aria-label="Fewer guests">−</button><span id="gNum">2</span><button type="button" id="gPlus" aria-label="More guests">+</button></div></div>
+    <button class="go" type="submit"><span><span>Check availability</span><span aria-hidden="true">→</span></span></button>
+  </form>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script>
+(() => {
+  const D = [
+    {key:'kyoto',   place:'Kyoto, Japan',     title:'Where the moss <em>keeps time.</em>', sub:'Twelve rooms around a four-hundred-year-old garden. Tea at dawn, silence until noon.', facts:[['Rooms','12'],['From','¥128,000']], rate:128000, cur:'¥', suites:3},
+    {key:'amalfi',  place:'Amalfi, Italy',    title:'Salt, stone, <em>and nothing else.</em>', sub:'A former lemon terrace, cut into the cliff above Positano. One pool, the whole sea.', facts:[['Rooms','9'],['From','€1,450']], rate:1450, cur:'€', suites:2},
+    {key:'bali',    place:'Sidemen, Bali',    title:'Wake up <em>above the valley.</em>', sub:'Teak and river stone in the rice terraces of Sidemen, far from everyone you know.', facts:[['Villas','8'],['From','$980']], rate:980, cur:'$', suites:4},
+    {key:'atacama', place:'Atacama, Chile',   title:'The quietest sky <em>on earth.</em>', sub:'Rammed earth at 2,400 metres. Nights so clear the guides switch the lights off for you.', facts:[['Rooms','14'],['From','$1,120']], rate:1120, cur:'$', suites:5},
+  ];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HOLD = 7;  // seconds per destination
+
+  /* build slides, index, select */
+  const slidesEl = document.getElementById('slides'), indexEl = document.getElementById('index'), sel = document.getElementById('fDest');
+  D.forEach((d,i) => {
+    const s = document.createElement('div'); s.className = 'slide' + (i===0?' current':'');
+    s.innerHTML = `<img src="images/isola/${d.key}.webp" alt="Isola ${d.place}" width="1536" height="1024" ${i===0?'fetchpriority="high"':'loading="lazy"'}>`;
+    slidesEl.appendChild(s);
+    const b = document.createElement('button'); b.type='button'; b.className='dest'; b.setAttribute('role','tab'); b.setAttribute('aria-current', i===0);
+    b.innerHTML = `<span class="num">0${i+1}</span><span class="name">${d.place.split(',')[0]}</span><span class="bar"><i></i></span>`;
+    b.addEventListener('click', () => go(i));
+    indexEl.appendChild(b);
+    sel.add(new Option(`${d.place.split(',')[0]} — ${d.place.split(', ')[1]}`, i));
+  });
+  const arrows = document.createElement('div'); arrows.className = 'arrows';
+  arrows.innerHTML = '<button type="button" aria-label="Previous destination">←</button><button type="button" aria-label="Next destination">→</button>';
+  indexEl.appendChild(arrows);
+  arrows.children[0].addEventListener('click', () => go((cur-1+D.length)%D.length));
+  arrows.children[1].addEventListener('click', () => go((cur+1)%D.length));
+  const slides = [...slidesEl.children], dests = [...indexEl.querySelectorAll('.dest')];
+
+  /* copy with masked line reveal */
+  const h1 = document.getElementById('headline'), sub = document.getElementById('sub'), facts = document.getElementById('facts'), kicker = document.getElementById('kicker');
+  let split = null;
+  function setCopy(i, animate){
+    const d = D[i];
+    if (split) split.revert();
+    h1.innerHTML = d.title; h1.setAttribute('aria-label', h1.textContent);
+    sub.textContent = d.sub; kicker.textContent = `No. 0${i+1} — ${d.place}`;
+    facts.innerHTML = d.facts.map(f => `<div>${f[0]}<b>${f[1]}</b></div>`).join('');
+    if (!animate || reduce) return;
+    split = SplitText.create(h1, {type:'lines', mask:'lines'});
+    gsap.timeline({defaults:{ease:'expo.out'}})
+      .from(split.lines, {yPercent:110, duration:1.3, stagger:.1})
+      .from([kicker.parentNode, sub, facts], {opacity:0, y:10, duration:1, stagger:.08}, .25);
+  }
+
+  /* progress + transitions */
+  let cur = 0, busy = false, prog = null;
+  function runProgress(){
+    dests.forEach((b,k) => { b.setAttribute('aria-current', k===cur); gsap.set(b.querySelector('.bar i'), {scaleX: 0}); });
+    if (prog) prog.kill();
+    if (reduce) return;
+    prog = gsap.to(dests[cur].querySelector('.bar i'), {scaleX:1, duration:HOLD, ease:'none', onComplete:() => go((cur+1)%D.length)});
+  }
+  function go(i){
+    if (i===cur || busy) return;
+    busy = true;
+    const from = slides[cur], to = slides[i], dir = i > cur || (cur===D.length-1 && i===0) ? 1 : -1;
+    cur = i; sel.value = i; runProgress();
+    document.getElementById('result').classList.remove('open');
+    to.style.zIndex = 1; from.style.zIndex = 0;
+    if (reduce){ from.classList.remove('current'); to.classList.add('current'); gsap.set(to, {clipPath:'inset(0 0 0 0)'}); setCopy(i,false); busy=false; return; }
+    gsap.timeline({onComplete:() => { from.classList.remove('current'); gsap.set(from, {clipPath:'inset(0 0 0 100%)'}); to.classList.add('current'); busy=false; }})
+      .fromTo(to, {clipPath: dir>0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)'}, {clipPath:'inset(0 0% 0 0%)', duration:1.5, ease:'power4.inOut'}, 0)
+      .fromTo(to.querySelector('img'), {scale:1.25, xPercent: 6*dir}, {scale:1.04, xPercent:0, duration:2.6, ease:'expo.out'}, 0)
+      .to(from.querySelector('img'), {xPercent:-8*dir, scale:1.1, duration:1.5, ease:'power4.inOut'}, 0)
+      .to('.copy', {opacity:0, y:-12, duration:.45, ease:'power2.in'}, 0)
+      .add(() => { gsap.set('.copy', {opacity:1, y:0}); setCopy(i, true); }, .7);
+  }
+
+
+  /* pause while booking */
+  const book = document.getElementById('book');
+  book.addEventListener('focusin', () => prog && prog.pause());
+  book.addEventListener('focusout', () => prog && prog.resume());
+  addEventListener('keydown', e => { if (e.target.closest('form')) return; if (e.key==='ArrowRight') go((cur+1)%D.length); if (e.key==='ArrowLeft') go((cur-1+D.length)%D.length); });
+
+  /* booking logic */
+  const fIn = document.getElementById('fIn'), fOut = document.getElementById('fOut');
+  const iso = d => d.toISOString().slice(0,10);
+  const today = new Date(); const a = new Date(today); a.setDate(a.getDate()+21); const b = new Date(a); b.setDate(b.getDate()+4);
+  fIn.min = iso(today); fIn.value = iso(a); fOut.value = iso(b); fOut.min = iso(a);
+  fIn.addEventListener('change', () => { fOut.min = fIn.value; if (fOut.value <= fIn.value){ const n = new Date(fIn.value); n.setDate(n.getDate()+3); fOut.value = iso(n); } });
+  sel.addEventListener('change', () => go(+sel.value));
+  let guests = 2; const gNum = document.getElementById('gNum');
+  document.getElementById('gMinus').addEventListener('click', () => { guests = Math.max(1, guests-1); gNum.textContent = guests; });
+  document.getElementById('gPlus').addEventListener('click', () => { guests = Math.min(6, guests+1); gNum.textContent = guests; });
+  const result = document.getElementById('result'), rText = document.getElementById('resultText'), rLink = document.getElementById('resultLink');
+  book.addEventListener('submit', e => {
+    e.preventDefault();
+    const d = D[+sel.value], nights = Math.round((new Date(fOut.value) - new Date(fIn.value)) / 864e5);
+    if (!fIn.value || !fOut.value || nights < 1){
+      rText.innerHTML = '<span class="err">Choose a departure after your arrival.</span>'; rLink.style.display='none';
+    } else {
+      const left = Math.max(1, d.suites - (guests > 2 ? 1 : 0));
+      const total = (d.rate * nights * (guests > 2 ? 1.35 : 1)).toLocaleString();
+      rText.innerHTML = `${d.place.split(',')[0]}: <b>${left} ${left===1?'room':'rooms'} open</b> for ${nights} nights · ${d.cur}${total} total`;
+      rLink.style.display='';
+    }
+    result.classList.add('open');
+  });
+  rLink.addEventListener('click', e => { e.preventDefault(); rText.innerHTML = 'Held for 24 hours. <b>A host will write to you within the hour.</b>'; rLink.style.display='none'; });
+
+  /* intro */
+  setCopy(0, false);
+  document.fonts.ready.then(() => {
+    if (reduce){ runProgress(); return; }
+    split = SplitText.create(h1, {type:'lines', mask:'lines'});
+    gsap.timeline({defaults:{ease:'expo.out'}, onComplete: runProgress})
+      .fromTo(slides[0], {clipPath:'inset(12% 18% 12% 18%)'}, {clipPath:'inset(0% 0% 0% 0%)', duration:1.8, ease:'power4.inOut'}, 0)
+      .fromTo(slides[0].querySelector('img'), {scale:1.35}, {scale:1.04, duration:3, ease:'expo.out'}, 0)
+      .from('.top', {opacity:0, y:-10, duration:1, clearProps:'all'}, .8)
+      .from(split.lines, {yPercent:110, duration:1.3, stagger:.1}, 1)
+      .from([kicker.parentNode, sub, facts], {opacity:0, y:10, duration:1, stagger:.08}, 1.25)
+      .fromTo('.index, .book', {opacity:0, y:16}, {opacity:1, y:0, duration:1, stagger:.1, clearProps:'opacity,transform'}, 1.35);
+  });
+})();
+</script>
+</body>
+</html>

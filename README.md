@@ -14,8 +14,9 @@ A collection of websites in one repository, with a gallery page that links to ea
 | 06 | [Byarsa](sites/byarsa) | Guides who walk small groups across Deosai |
 | 07 | [Cadran](sites/cadran) | Five fragrances, one for each hour of light |
 | 08 | [Toller & Daughters](sites/toller-and-daughters) | Bellfounders since 1687 |
+| 09 | [Hero Experiment](sites/hero-experiment) | Twenty-one hero sections for invented brands |
 
-Every business here is invented; Deosai is a real place. Each site is a separate Vite project using GSAP and Lenis.
+Every business here is invented; Deosai is a real place. Each site is a separate Vite project using GSAP and Lenis, except Hero Experiment, which is plain HTML and is copied into the build as it is.
 
 ## Layout
 

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>still — Ceramics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#efe9e1;
+    --ink:#2b2621;
+    --muted:rgba(43,38,33,.55);
+    --line:rgba(43,38,33,.15);
+    --tint:rgba(255,255,255,0);
+    --shadow-x:0px;
+    --shadow-skew:0deg;
+    --sun:.5;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button,input{font:inherit;color:inherit;background:none;border:0}
+  button{cursor:pointer}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:26px clamp(16px,4vw,56px);font-size:13px;transition:color 1s}
+  .logo{font-weight:500;font-size:17px;letter-spacing:-.02em}
+  .nav ul{display:flex;gap:32px;list-style:none;color:var(--muted)}
+
+  .hero{position:relative;height:100vh;min-height:700px;overflow:hidden;isolation:isolate}
+  .layer{position:absolute;inset:0;will-change:transform}
+  .bg{inset:-3%;background:url(images/still/bg.webp) center/cover}
+
+  /* moving window light */
+  .window{position:absolute;inset:-20%;z-index:1;pointer-events:none;mix-blend-mode:multiply;opacity:calc(.1 + var(--sun)*.75);
+    background:
+      repeating-linear-gradient(90deg,transparent 0 22%,rgba(120,98,76,.75) 22% 24%),
+      repeating-linear-gradient(0deg,transparent 0 30%,rgba(120,98,76,.75) 30% 32%);
+    filter:blur(9px);transform:translateX(var(--shadow-x)) skewX(var(--shadow-skew)) scale(1.1);
+    -webkit-mask-image:radial-gradient(ellipse 55% 60% at 30% 40%,#000,transparent 70%);mask-image:radial-gradient(ellipse 55% 60% at 30% 40%,#000,transparent 70%)}
+  .grade{position:absolute;inset:0;z-index:4;pointer-events:none;background:var(--tint);mix-blend-mode:overlay;transition:background .3s}
+  .dim{position:absolute;inset:0;z-index:4;pointer-events:none;background:#1b2233;opacity:calc((1 - var(--sun)) * .55);mix-blend-mode:multiply}
+
+  .title{z-index:2;display:grid;place-items:center;pointer-events:none}
+  .title h1{font-weight:200;font-size:clamp(150px,30vw,540px);letter-spacing:-.06em;line-height:.8;color:#d8cfc3;margin-top:-6vh;opacity:0;animation:fade 2.4s .2s forwards}
+
+  .obj{z-index:3;display:grid;place-items:end center;pointer-events:none}
+  .vase{position:relative;height:min(86vh,900px);aspect-ratio:2/3;margin-bottom:4vh;opacity:0;animation:fade 2s .6s forwards}
+  .vase img{position:relative;width:100%;height:100%;object-fit:contain;z-index:1}
+  .vase .cast{position:absolute;left:44%;bottom:6%;width:46%;height:8%;border-radius:50%;background:radial-gradient(ellipse,rgba(60,48,36,.45),transparent 70%);filter:blur(6px);transform-origin:left center;transform:translateX(var(--shadow-x)) skewX(calc(var(--shadow-skew) * -2)) scaleX(calc(1.6 - var(--sun)));opacity:calc(.3 + var(--sun)*.5)}
+
+  @keyframes fade{to{opacity:1}}
+
+  .ui{z-index:5;pointer-events:none}
+  .ui > *{pointer-events:auto}
+  .copy{position:absolute;left:clamp(16px,4vw,56px);top:50%;translate:0 -50%;max-width:250px;opacity:0;animation:fade 1.4s 1.2s forwards}
+  .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .copy h2{font-weight:300;font-size:24px;letter-spacing:-.02em;line-height:1.3;margin:12px 0}
+  .copy p{color:var(--muted);font-size:14px;line-height:1.7}
+
+  .daylight{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(26px,6vh,56px);width:min(340px,calc(100vw - 32px));opacity:0;animation:fade 1.4s 1.4s forwards}
+  .dl-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:12px;font-variant-numeric:tabular-nums}
+  .dl-top b{color:var(--ink);font-weight:500}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:20px;background:transparent;cursor:pointer}
+  input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--ink);opacity:.35}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--ink);margin-top:-10px;box-shadow:0 0 0 6px rgba(255,236,200,calc(var(--sun)*.6))}
+  input[type=range]::-moz-range-track{height:1px;background:var(--ink);opacity:.35}
+  input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--ink)}
+  .ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:8px}
+
+  .notify{position:absolute;right:clamp(16px,4vw,56px);top:50%;translate:0 -50%;width:250px;opacity:0;animation:fade 1.4s 1.6s forwards}
+  .notify p{font-size:14px;line-height:1.6;color:var(--muted);margin:12px 0 16px}
+  .field{display:flex;border-bottom:1px solid var(--ink);padding-bottom:6px}
+  .field input{flex:1;outline:none;font-size:14px;padding:6px 0}
+  .field input::placeholder{color:var(--muted)}
+  .field button{font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer}
+  .msg{font-size:12px;margin-top:10px;min-height:16px;color:var(--muted)}
+  .msg.err{color:#9a3b2b}
+
+  @media (max-width:860px){
+    .nav ul{display:none}
+    .copy{top:96px;translate:0}
+    .copy p{display:none}
+    .daylight{left:16px;right:16px;width:auto}
+    .notify{top:auto;bottom:130px;translate:0;left:16px;right:16px;width:auto}
+    .notify .eyebrow,.notify p{display:none}
+    .title h1{font-size:46vw;margin-top:-18vh}
+    .vase{height:58vh;margin-bottom:24vh}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="logo" href="#">still</a>
+  <ul><li><a href="#">Vessels</a></li><li><a href="#">Tableware</a></li><li><a href="#">The kiln</a></li></ul>
+  <a href="#">Cart (0)</a>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="layer bg" data-d="5"></div>
+  <div class="window" id="window"></div>
+  <div class="layer title" data-d="12"><h1>still</h1></div>
+  <div class="layer obj" data-d="22">
+    <div class="vase"><span class="cast"></span><img src="images/still/subject.webp" alt="Speckled stoneware vase with a dried branch"></div>
+  </div>
+  <div class="grade"></div>
+  <div class="dim"></div>
+
+  <div class="layer ui">
+    <div class="copy">
+      <div class="eyebrow">Vessel No. 14</div>
+      <h2>Made slowly,<br>for slow rooms.</h2>
+      <p>Thrown by hand, fired for thirty hours, glazed in a speckled oat that changes with the light. Move the sun and see.</p>
+    </div>
+
+    <div class="daylight">
+      <div class="dl-top"><span>Light in the room</span><b id="clock">08:30</b></div>
+      <input id="sun" type="range" min="360" max="1230" value="510" aria-label="Time of day">
+      <div class="ticks"><span>Dawn</span><span>Noon</span><span>Dusk</span></div>
+    </div>
+
+    <div class="notify">
+      <div class="eyebrow">Next kiln opening</div>
+      <p>Fourteen pieces, once a month. Be the first to know.</p>
+      <form class="field" id="form" novalidate>
+        <input id="email" type="email" placeholder="Email address" autocomplete="email">
+        <button type="submit">Notify me</button>
+      </form>
+      <div class="msg" id="msg"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* light grading across the day: [minute, tint rgba, sun strength] */
+  const stops = [
+    [360,  [140,165,230,.8],  .12],  // dawn: cool blue
+    [540,  [255,240,220,.35], .7],   // morning: soft warm-white
+    [780,  [255,255,255,.0],  1],    // noon: neutral, strong
+    [1050, [255,150,60,.95],  .8],  // golden hour
+    [1230, [60,75,150,.9],    .02],  // dusk: blue hour
+  ];
+  const lerp = (a,b,t) => a+(b-a)*t;
+  const sun = document.getElementById('sun'), clock = document.getElementById('clock');
+  let mouseShift = 0;
+  function apply(){
+    const m = +sun.value;
+    let i = stops.findIndex((s,k) => m <= stops[k+1]?.[0]); if (i < 0) i = stops.length-2;
+    const [m0,c0,s0] = stops[i], [m1,c1,s1] = stops[i+1], t = (m-m0)/(m1-m0);
+    const c = c0.map((v,k) => lerp(v,c1[k],t));
+    root.style.setProperty('--tint', `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${c[3].toFixed(2)})`);
+    root.style.setProperty('--sun', lerp(s0,s1,t).toFixed(3));
+    const day = (m-360)/(1230-360);           // 0 → 1 across the day
+    root.style.setProperty('--shadow-x', `${(day-.5)*-38 + mouseShift}vw`);
+    root.style.setProperty('--shadow-skew', `${(day-.5)*-40}deg`);
+    clock.textContent = `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+  }
+  sun.addEventListener('input', apply);
+  apply();
+
+  /* gentle auto-drift of the sun until the visitor takes over */
+  let auto = !reduce, dir = 1;
+  sun.addEventListener('pointerdown', () => auto = false);
+  setInterval(() => { if (!auto) return; let v = +sun.value + dir*2; if (v>1230||v<360) dir*=-1; sun.value = v; apply(); }, 60);
+
+  /* parallax */
+  const layers = [...document.querySelectorAll('[data-d]')];
+  let tx=0,ty=0,cx=0,cy=0;
+  addEventListener('pointermove', e => { tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5; mouseShift = tx*-3; });
+  (function loop(){
+    cx+=(tx-cx)*.04; cy+=(ty-cy)*.04;
+    if (!reduce) layers.forEach(l => { const d=+l.dataset.d; l.style.transform=`translate3d(${-cx*d*2}px,${-cy*d}px,0)`; });
+    requestAnimationFrame(loop);
+  })();
+
+  /* notify form */
+  const form = document.getElementById('form'), email = document.getElementById('email'), msg = document.getElementById('msg');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+    msg.classList.toggle('err', !ok);
+    msg.textContent = ok ? 'Thank you. We\'ll write when the kiln cools.' : 'That address doesn\'t look quite right.';
+    if (ok) { email.value = ''; email.blur(); }
+  });
+})();
+</script>
+</body>
+</html>

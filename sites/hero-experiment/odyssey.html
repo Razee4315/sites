@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ODYSSEY — Orbital Travel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;800;900&family=Space+Grotesk:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#04030a;
+    --text:#ecebff;
+    --muted:rgba(236,235,255,.55);
+    --line:rgba(236,235,255,.14);
+    --teal:#4ef0d8;
+    --mag:#ff4fd8;
+    --planet-hue:0deg;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--void);color:var(--text);font-family:"Space Grotesk",system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:24px clamp(16px,4vw,56px)}
+  .logo{font-family:Unbounded,sans-serif;font-weight:500;font-size:15px;letter-spacing:.32em;display:flex;align-items:center;gap:12px}
+  .logo svg{width:26px;height:26px}
+  .nav ul{display:flex;gap:6px;list-style:none;padding:6px;border:1px solid var(--line);border-radius:99px;backdrop-filter:blur(10px);background:rgba(4,3,10,.3)}
+  .nav ul a{display:block;padding:9px 18px;border-radius:99px;font-size:13px;color:var(--muted);transition:all .3s}
+  .nav ul a:hover,.nav ul a.on{color:var(--text);background:rgba(236,235,255,.08)}
+  .nav .login{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid var(--muted);padding-bottom:3px}
+
+  .hero{position:relative;height:100vh;min-height:700px;overflow:hidden;isolation:isolate}
+  .layer{position:absolute;inset:0;will-change:transform}
+  .bg{inset:-5%;background:url(images/odyssey/bg.webp) center/cover no-repeat;filter:hue-rotate(var(--planet-hue)) saturate(1.15);transition:filter 1.6s var(--ease)}
+  .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,3,10,.55),transparent 30%,transparent 65%,rgba(4,3,10,.9)),radial-gradient(ellipse at 0% 100%,rgba(4,3,10,.85),transparent 50%)}
+  #stars{position:absolute;inset:0;z-index:1;width:100%;height:100%}
+
+  .title{z-index:2;display:grid;place-items:center;pointer-events:none}
+  .title h1{font-family:Unbounded,sans-serif;font-weight:900;font-size:clamp(64px,14.6vw,300px);letter-spacing:-.04em;line-height:.85;margin-top:-10vh;white-space:nowrap;
+    background:linear-gradient(100deg,#fff 10%,var(--teal) 45%,var(--mag) 80%);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 40px rgba(78,240,216,.25));clip-path:inset(0 100% 0 0);animation:wipe 1.8s .2s var(--ease) forwards}
+  @keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+  .echo{z-index:4}
+  .echo h1{background:none;filter:none;color:transparent;-webkit-text-stroke:1px rgba(236,235,255,.35)}
+
+  .astro-wrap{z-index:3;display:grid;place-items:center;pointer-events:none}
+  .astro{height:min(84vh,920px);aspect-ratio:2/3;margin-top:-2vh;margin-left:6vw;opacity:0;transform:translateY(-120px) rotate(14deg) scale(.85);animation:arrive 2.4s .6s var(--ease) forwards}
+  .astro img{width:100%;height:100%;object-fit:contain;animation:drift 11s ease-in-out infinite 3s;filter:drop-shadow(0 30px 80px rgba(78,240,216,.18))}
+  @keyframes arrive{to{opacity:1;transform:none}}
+  @keyframes drift{0%,100%{transform:translate(0,0) rotate(0)}33%{transform:translate(10px,-18px) rotate(3deg)}66%{transform:translate(-8px,10px) rotate(-2.5deg)}}
+
+  .ui{z-index:6;pointer-events:none}
+  .ui > *{pointer-events:auto}
+  .mono{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+
+  .left{position:absolute;left:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,72px);max-width:360px;opacity:0;animation:fade 1s 1.6s forwards}
+  .left .mono{color:var(--teal);display:flex;align-items:center;gap:10px}
+  .left .mono::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 12px var(--teal);animation:blink 1.6s infinite}
+  @keyframes blink{50%{opacity:.2}}
+  .left h2{font-family:Unbounded,sans-serif;font-weight:300;font-size:clamp(24px,2.4vw,34px);line-height:1.15;margin:14px 0 14px}
+  .left h2 em{font-style:normal;font-weight:800;background:linear-gradient(90deg,var(--teal),var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .left p{color:var(--muted);line-height:1.6;font-size:15px}
+  .actions{display:flex;gap:12px;margin-top:24px;align-items:center}
+  .launch{position:relative;white-space:nowrap;padding:17px 28px;border-radius:99px;font-weight:500;color:var(--void);background:var(--text);overflow:hidden;display:flex;align-items:center;gap:10px;transition:transform .3s var(--ease)}
+  .launch::before{content:"";position:absolute;inset:-2px;background:conic-gradient(from var(--a,0deg),var(--teal),var(--mag),var(--teal));opacity:0;transition:opacity .4s;z-index:-1}
+  .launch:hover{transform:translateY(-2px);color:var(--text);background:transparent}
+  .launch:hover::before{opacity:1;animation:spin 2s linear infinite}
+  @property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+  @keyframes spin{to{--a:360deg}}
+  .ghost{white-space:nowrap;padding:17px 22px;border-radius:99px;border:1px solid var(--line);color:var(--muted);transition:all .3s}
+  .ghost:hover{color:var(--text);border-color:var(--muted)}
+
+  .dest{position:absolute;right:clamp(16px,4vw,56px);bottom:clamp(28px,7vh,72px);width:340px;opacity:0;animation:fade 1s 1.8s forwards}
+  .tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:99px;margin-bottom:16px;background:rgba(4,3,10,.35);backdrop-filter:blur(12px);position:relative}
+  .tab{flex:1;padding:10px 0;border-radius:99px;font-size:13px;color:var(--muted);position:relative;z-index:1;transition:color .3s}
+  .tab[aria-selected="true"]{color:var(--void)}
+  .pill{position:absolute;top:4px;bottom:4px;left:4px;border-radius:99px;background:var(--text);transition:transform .6s var(--ease),width .6s var(--ease)}
+  .card{border:1px solid var(--line);border-radius:22px;padding:20px;background:rgba(4,3,10,.38);backdrop-filter:blur(16px)}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:18px 12px}
+  .stat .mono{color:var(--muted);font-size:10px}
+  .stat b{display:block;font-family:Unbounded,sans-serif;font-weight:500;font-size:22px;margin-top:6px}
+  .stat b small{font-size:12px;font-weight:300;color:var(--muted);margin-left:4px}
+  .seats{margin-top:18px}
+  .bar{height:4px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:8px}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--mag));transition:width 1.2s var(--ease)}
+
+  .coords{position:absolute;top:110px;right:clamp(16px,4vw,56px);text-align:right;color:var(--muted);line-height:2;opacity:0;animation:fade 1s 2s forwards}
+  .coords b{color:var(--text);font-weight:500}
+  @keyframes fade{to{opacity:1}}
+
+  .flash{position:fixed;inset:0;z-index:70;background:#fff;opacity:0;pointer-events:none}
+  .modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(4,3,10,.55);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .5s}
+  .modal.open{opacity:1;pointer-events:auto}
+  .pass{width:min(520px,calc(100vw - 32px));border-radius:26px;background:linear-gradient(135deg,rgba(78,240,216,.16),rgba(255,79,216,.14)),#0b0a16;border:1px solid var(--line);overflow:hidden;transform:translateY(30px) scale(.96);transition:transform .7s var(--ease)}
+  .modal.open .pass{transform:none}
+  .pass-top{padding:26px 28px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px dashed var(--line)}
+  .pass-top h3{font-family:Unbounded,sans-serif;font-weight:800;font-size:44px;letter-spacing:-.03em}
+  .pass-top .mono{color:var(--muted)}
+  .pass-body{padding:22px 28px 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .pass-body .mono{color:var(--muted);font-size:10px}
+  .pass-body b{display:block;margin-top:6px;font-weight:500}
+  .pass-foot{padding:0 28px 26px;display:flex;justify-content:space-between;align-items:center}
+  .barcode{height:38px;flex:1;margin-right:20px;background:repeating-linear-gradient(90deg,var(--text) 0 2px,transparent 2px 4px,var(--text) 4px 5px,transparent 5px 9px,var(--text) 9px 12px,transparent 12px 14px);opacity:.8}
+
+  @media (max-width:980px){
+    .nav ul,.coords{display:none}
+    .left{bottom:auto;top:96px}
+    .left p{display:none}
+    .dest{left:16px;right:16px;width:auto;bottom:18px}
+    .astro{height:54vh;margin:4vh 0 0}
+    .title h1{margin-top:-2vh;font-size:13.4vw}
+    .actions{margin-top:16px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="logo" href="#">
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="16" cy="16" r="6"/><ellipse cx="16" cy="16" rx="15" ry="5" transform="rotate(-25 16 16)"/></svg>
+    ODYSSEY
+  </a>
+  <ul>
+    <li><a class="on" href="#">Voyages</a></li>
+    <li><a href="#">Training</a></li>
+    <li><a href="#">Fleet</a></li>
+    <li><a href="#">Stories</a></li>
+  </ul>
+  <a class="login" href="#">Crew login</a>
+</nav>
+
+<section class="hero">
+  <div class="layer bg" data-depth="12"></div>
+  <canvas id="stars"></canvas>
+
+  <div class="layer title" data-depth="24"><h1>ODYSSEY</h1></div>
+  <div class="layer astro-wrap" data-depth="55">
+    <div class="astro" id="astro"><img src="images/odyssey/subject.webp" alt="Astronaut floating in space"></div>
+  </div>
+  <div class="layer title echo" data-depth="24" aria-hidden="true"><h1>ODYSSEY</h1></div>
+
+  <div class="layer ui">
+    <div class="coords mono">
+      <div>RA <b id="ra">14h 29m 43s</b></div>
+      <div>DEC <b id="dec">−62° 40′ 46″</b></div>
+      <div>VEL <b id="vel">27,580</b> KM/H</div>
+    </div>
+
+    <div class="left">
+      <div class="mono">Boarding now · Season 07</div>
+      <h2>Leave the planet.<br><em>Keep the view.</em></h2>
+      <p>Private orbital voyages for the curious. Six days of training, one seat by the window, and a horizon you will never unsee.</p>
+      <div class="actions">
+        <button class="launch" id="launch">Reserve a seat
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="ghost" id="warpOnly">Engage warp</button>
+      </div>
+    </div>
+
+    <div class="dest">
+      <div class="tabs" role="tablist" id="tabs">
+        <span class="pill" id="pill"></span>
+        <button class="tab" role="tab" aria-selected="true" data-i="0">Luna</button>
+        <button class="tab" role="tab" aria-selected="false" data-i="1">Mars</button>
+        <button class="tab" role="tab" aria-selected="false" data-i="2">Europa</button>
+      </div>
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><span class="mono">Distance</span><b><span id="sDist">384</span><small id="sDistU">k km</small></b></div>
+          <div class="stat"><span class="mono">Travel time</span><b><span id="sTime">3</span><small>days</small></b></div>
+          <div class="stat"><span class="mono">Gravity</span><b><span id="sGrav">0.17</span><small>g</small></b></div>
+          <div class="stat"><span class="mono">From</span><b>$<span id="sPrice">1.2</span><small>M</small></b></div>
+        </div>
+        <div class="seats">
+          <div class="mono" style="display:flex;justify-content:space-between;color:var(--muted);font-size:10px"><span>Seats claimed</span><span id="sSeats">14 / 20</span></div>
+          <div class="bar"><i id="sBar"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="flash" id="flash"></div>
+<div class="modal" id="modal">
+  <div class="pass">
+    <div class="pass-top">
+      <div><div class="mono">Boarding pass · Odyssey</div><h3 id="pDest">LUNA</h3></div>
+      <div class="mono" style="text-align:right">Seat<br><b style="font-family:Unbounded;font-size:26px;color:var(--text)" id="pSeat">07A</b></div>
+    </div>
+    <div class="pass-body">
+      <div><span class="mono">Departure</span><b id="pDate">—</b></div>
+      <div><span class="mono">Pad</span><b>LC-39X</b></div>
+      <div><span class="mono">Class</span><b>Window</b></div>
+    </div>
+    <div class="pass-foot"><div class="barcode"></div><button class="ghost" id="closeModal">Close</button></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const root = document.documentElement;
+
+  /* ---------- Starfield with warp ---------- */
+  const c = document.getElementById('stars'), x = c.getContext('2d');
+  let W, H, stars = [], speed = 0.6, targetSpeed = 0.6, mx = 0, my = 0;
+  function size(){ W = c.width = innerWidth * devicePixelRatio; H = c.height = innerHeight * devicePixelRatio; }
+  size(); addEventListener('resize', size);
+  for (let i = 0; i < 500; i++) stars.push({x:(Math.random()-.5)*2, y:(Math.random()-.5)*2, z:Math.random()});
+  function draw(){
+    speed += (targetSpeed - speed) * .04;
+    x.clearRect(0,0,W,H);
+    const cx = W/2 + mx*40, cy = H/2 + my*40;
+    for (const s of stars){
+      const pz = s.z;
+      s.z -= .0016 * speed;
+      if (s.z <= .01){ s.x=(Math.random()-.5)*2; s.y=(Math.random()-.5)*2; s.z=1; continue; }
+      const k = W * .5;
+      const sx = cx + s.x / s.z * k, sy = cy + s.y / s.z * k;
+      const px = cx + s.x / pz * k, py = cy + s.y / pz * k;
+      const a = Math.min(1, (1 - s.z) * 1.4);
+      x.strokeStyle = `rgba(${200+55*(1-s.z)|0},${220},255,${a})`;
+      x.lineWidth = (1 - s.z) * 2.2 * devicePixelRatio;
+      x.beginPath(); x.moveTo(px, py); x.lineTo(sx, sy); x.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+  if (!reduce) draw();
+
+  /* ---------- Parallax ---------- */
+  const layers = [...document.querySelectorAll('[data-depth]')];
+  let tx=0, ty=0, cx2=0, cy2=0;
+  addEventListener('pointermove', e => { tx = e.clientX/innerWidth - .5; ty = e.clientY/innerHeight - .5; });
+  (function loop(){
+    cx2 += (tx-cx2)*.05; cy2 += (ty-cy2)*.05; mx = cx2; my = cy2;
+    if (!reduce) layers.forEach(l => { const d = +l.dataset.depth; l.style.transform = `translate3d(${-cx2*d*2}px,${-cy2*d*1.2}px,0)`; });
+    requestAnimationFrame(loop);
+  })();
+
+  /* ---------- Destinations ---------- */
+  const data = [
+    {name:'LUNA',   dist:384, unit:'k km', time:3,   grav:.17, price:1.2, seats:14, hue:0},
+    {name:'MARS',   dist:225, unit:'M km', time:186, grav:.38, price:8.4, seats:6,  hue:130},
+    {name:'EUROPA', dist:628, unit:'M km', time:740, grav:.13, price:42,  seats:2,  hue:-60},
+  ];
+  let cur = 0;
+  const tabs = [...document.querySelectorAll('.tab')], pill = document.getElementById('pill');
+  function placePill(){ const t = tabs[cur]; pill.style.width = t.offsetWidth + 'px'; pill.style.transform = `translateX(${t.offsetLeft - 4}px)`; }
+  function tween(el, to, dec){
+    const from = parseFloat(el.textContent) || 0, t0 = performance.now();
+    (function f(t){ const p = Math.min(1,(t-t0)/900), e = 1 - Math.pow(1-p,3);
+      el.textContent = (from + (to-from)*e).toFixed(dec); if (p<1) requestAnimationFrame(f); })(t0);
+  }
+  function setDest(i){
+    cur = i; const d = data[i];
+    tabs.forEach((t,j) => t.setAttribute('aria-selected', j===i));
+    placePill();
+    tween(sDist, d.dist, 0); sDistU.textContent = d.unit;
+    tween(sTime, d.time, 0); tween(sGrav, d.grav, 2); tween(sPrice, d.price, d.price<10?1:0);
+    sSeats.textContent = `${20-d.seats} / 20`; sBar.style.width = ((20-d.seats)/20*100) + '%';
+    root.style.setProperty('--planet-hue', d.hue + 'deg');
+  }
+  tabs.forEach(t => t.addEventListener('click', () => { setDest(+t.dataset.i); warp(900); }));
+  addEventListener('resize', placePill);
+  document.fonts.ready.then(() => setDest(0));
+
+  /* ---------- Warp + boarding pass ---------- */
+  const astro = document.getElementById('astro');
+  function warp(ms){
+    targetSpeed = 28;
+    astro.animate([{scale:1, filter:'blur(0)'},{scale:.92, filter:'blur(1.5px)'},{scale:1, filter:'blur(0)'}],{duration:ms+600, easing:'ease-in-out'});
+    setTimeout(() => targetSpeed = .6, ms);
+  }
+  document.getElementById('warpOnly').addEventListener('click', () => warp(1800));
+  const modal = document.getElementById('modal'), flash = document.getElementById('flash');
+  document.getElementById('launch').addEventListener('click', () => {
+    warp(1600);
+    setTimeout(() => {
+      flash.animate([{opacity:0},{opacity:.9},{opacity:0}],{duration:700});
+      const d = data[cur], dep = new Date(Date.now() + 1000*60*60*24*(40 + cur*30));
+      pDest.textContent = d.name;
+      pSeat.textContent = String(Math.ceil(Math.random()*20)).padStart(2,'0') + 'ABCD'[Math.random()*4|0];
+      pDate.textContent = dep.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});
+      modal.classList.add('open');
+    }, 1500);
+  });
+  document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+
+  /* ---------- Live telemetry ---------- */
+  setInterval(() => { vel.textContent = (27560 + Math.random()*40|0).toLocaleString(); }, 900);
+})();
+</script>
+</body>
+</html>

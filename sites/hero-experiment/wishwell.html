@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>wishwell — Make a wish. Then let it go.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..700&display=swap" rel="stylesheet">
+<style>
+  :root{--text:#fbf4ee;--muted:rgba(251,244,238,.66);--line:rgba(251,244,238,.24);--ease:cubic-bezier(.22,1,.36,1)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#151022;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  a{color:inherit;text-decoration:none}
+  button,input{font:inherit;color:inherit;background:none;border:0}
+  button{cursor:pointer}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:24px clamp(16px,4vw,48px);font-size:13px}
+  .logo{font-weight:600;font-size:17px;letter-spacing:-.02em}
+  .nav ul{display:flex;gap:30px;list-style:none;color:var(--muted)}
+
+  .left{position:fixed;left:clamp(16px,5vw,72px);top:50%;translate:0 -50%;z-index:5;width:min(470px,calc(100vw - 32px))}
+  .left h1{font-weight:200;font-size:clamp(44px,4.6vw,76px);letter-spacing:-.045em;line-height:.95}
+  .left h1 em{font-style:normal;font-weight:600}
+  .left p{color:var(--muted);font-size:15px;line-height:1.6;margin:18px 0 24px;max-width:340px}
+  .wishbox{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 18px;border-radius:99px;background:rgba(21,16,34,.35);backdrop-filter:blur(14px);border:1px solid var(--line);max-width:380px}
+  .wishbox input{flex:1;min-width:0;outline:none;font-size:15px;padding:10px 0}
+  .wishbox input::placeholder{color:var(--muted)}
+  .wishbox button{height:40px;padding:0 16px;border-radius:99px;background:var(--text);color:#151022;font-size:13px;font-weight:600;white-space:nowrap}
+  .mywish{min-height:30px;margin-top:16px;font-size:19px;font-weight:300;letter-spacing:-.01em;position:relative}
+  .mywish span{display:inline-block;white-space:pre;will-change:transform}
+  .ways{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .way{height:42px;padding:0 16px;border-radius:99px;border:1px solid var(--line);font-size:13px;display:flex;align-items:center;gap:8px;transition:all .3s var(--ease);user-select:none;-webkit-user-select:none}
+  .way:hover{background:rgba(251,244,238,.08)}
+  .way.on{background:var(--text);color:#151022;border-color:var(--text)}
+  .meter{width:44px;height:4px;border-radius:4px;background:var(--line);overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:#ffd28a;transition:width .08s}
+
+  .stats{position:fixed;right:clamp(16px,4vw,48px);bottom:clamp(24px,6vh,56px);z-index:5;text-align:right;font-variant-numeric:tabular-nums}
+  .stats b{display:block;font-weight:200;font-size:clamp(28px,3vw,40px);letter-spacing:-.03em}
+  .stats span{font-size:12px;color:var(--muted)}
+  .done{position:fixed;left:50%;top:18%;translate:-50% 0;z-index:5;text-align:center;opacity:0;transition:opacity 1s;pointer-events:none}
+  .done.show{opacity:1;pointer-events:auto}
+  .done h2{font-weight:300;font-size:22px;letter-spacing:-.02em;margin-bottom:14px}
+  .done button{height:42px;padding:0 20px;border-radius:99px;border:1px solid var(--line);font-size:13px;background:rgba(21,16,34,.35);backdrop-filter:blur(10px)}
+  .hint{position:fixed;z-index:4;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);pointer-events:none;translate:-50% 0;transition:opacity .6s;white-space:nowrap}
+
+  @media (max-width:760px){
+    .nav ul,.stats,.hint{display:none}
+    .left{top:auto;bottom:20px;translate:0;left:16px;right:16px;width:auto}
+    .left h1{font-size:40px}
+    .left p{display:none}
+    .done{top:12%}
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<nav class="nav">
+  <a class="logo" href="#">wishwell</a>
+  <ul><li><a href="#">The app</a></li><li><a href="#">Rituals</a></li><li><a href="#">Journal</a></li></ul>
+  <a href="#">Download</a>
+</nav>
+
+<div class="left">
+  <h1>Make a wish.<br><em>Then let it go.</em></h1>
+  <p>A tiny journal for big intentions. Write one down, give it your breath, and watch it leave.</p>
+  <form class="wishbox" id="form" autocomplete="off">
+    <input id="wish" maxlength="48" placeholder="I wish…" aria-label="Your wish">
+    <button type="submit">Hold it</button>
+  </form>
+  <div class="mywish" id="mywish"></div>
+  <div class="ways">
+    <button class="way" id="mic"><span>🎙</span><span id="micLabel">Blow with your breath</span><span class="meter"><i id="lvl"></i></span></button>
+    <button class="way" id="hold">Hold to blow</button>
+  </div>
+</div>
+
+<div class="hint" id="hint">swipe across the flower</div>
+
+<div class="done" id="done">
+  <h2 id="doneText">It's on its way.</h2>
+  <button id="regrow">Grow another</button>
+</div>
+
+<div class="stats"><b id="count">48,212</b><span>wishes released this week</span></div>
+
+<script>
+(() => {
+  const cv=document.getElementById('c'), cx=cv.getContext('2d');
+  const F=document.createElement('canvas'), fx=F.getContext('2d');
+  const M=document.createElement('canvas'), mx=M.getContext('2d');
+  let W,H,dpr, img={};
+  const IMG_W=1536, IMG_H=1024, HEAD={x:.616,y:.34,r:.212};   // head centre & radius in image space (r relative to height)
+
+  /* cover transform with a focal point so the flower stays in frame on phones */
+  let T={s:1,ox:0,oy:0};
+  function layout(){
+    const s=Math.max(W/IMG_W, H/IMG_H), iw=IMG_W*s, ih=IMG_H*s;
+    const focusX = W/H < 1.2 ? HEAD.x : .5;
+    let ox = W/2 - focusX*iw; ox=Math.min(0,Math.max(W-iw,ox));
+    T={s, ox, oy:(H-ih)/2};
+  }
+  const toScreen=(u,v)=>[T.ox+u*IMG_W*T.s, T.oy+v*IMG_H*T.s];
+
+  /* ---------- seeds ---------- */
+  let seeds=[], flying=[], R=0, C=[0,0];
+  function makeSeeds(){
+    seeds=[]; flying=[];
+    C=toScreen(HEAD.x,HEAD.y); R=HEAD.r*IMG_H*T.s;
+    const N=190, golden=Math.PI*(3-Math.sqrt(5));
+    for (let i=0;i<N;i++){
+      const rr=Math.sqrt((i+.5)/N), a=i*golden;
+      const dx=Math.cos(a), dy=Math.sin(a);
+      seeds.push({ax:C[0]+dx*rr*R*.92, ay:C[1]+dy*rr*R*.92, dir:[dx,dy], rr, a, attach:1, gone:false, thr:.25+Math.random()*.9, grow:1});
+    }
+  }
+
+  /* ---------- wind ---------- */
+  let wind=0, wdir=[1,-.25], micLevel=0, holding=false;
+  let ac=null, analyser=null, buf=null, whoosh=null, whooshGain=null;
+  function audioCtx(){ if(!ac) try{ ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} return ac; }
+  function startWhoosh(){
+    const a=audioCtx(); if(!a||whoosh) return;
+    const b=a.createBuffer(1,a.sampleRate*2,a.sampleRate), d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    whoosh=a.createBufferSource(); whoosh.buffer=b; whoosh.loop=true;
+    const f=a.createBiquadFilter(); f.type='bandpass'; f.frequency.value=700; f.Q.value=.6;
+    whooshGain=a.createGain(); whooshGain.gain.value=0;
+    whoosh.connect(f).connect(whooshGain).connect(a.destination); whoosh.start();
+  }
+
+  // microphone: breath shows up as loud broadband noise
+  const micBtn=document.getElementById('mic'), micLabel=document.getElementById('micLabel'), lvl=document.getElementById('lvl');
+  micBtn.addEventListener('click', async () => {
+    if (analyser){ return; }
+    try{
+      const a=audioCtx(); await a.resume();
+      const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+      const src=a.createMediaStreamSource(stream); analyser=a.createAnalyser(); analyser.fftSize=1024; buf=new Float32Array(analyser.fftSize);
+      src.connect(analyser); micBtn.classList.add('on'); micLabel.textContent='Listening — blow gently';
+    }catch(e){ micLabel.textContent='Mic unavailable — swipe instead'; }
+  });
+  function readMic(){
+    if (!analyser) return 0;
+    analyser.getFloatTimeDomainData(buf);
+    let s=0; for (let i=0;i<buf.length;i++) s+=buf[i]*buf[i];
+    const rms=Math.sqrt(s/buf.length);
+    micLevel += (rms-micLevel)*.3;
+    lvl.style.width=Math.min(100,micLevel*600)+'%';
+    return Math.max(0,(micLevel-.035)*9);
+  }
+  const hold=document.getElementById('hold');
+  const setHold=v=>{ holding=v; hold.classList.toggle('on',v); if(v){ audioCtx()?.resume(); startWhoosh(); } };
+  hold.addEventListener('pointerdown', e=>{ e.preventDefault(); setHold(true); });
+  addEventListener('pointerup', ()=>setHold(false));
+  addEventListener('keydown', e=>{ if(e.code==='Space' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); setHold(true); } });
+  addEventListener('keyup', e=>{ if(e.code==='Space') setHold(false); });
+
+  // swipe: a gust in the direction of the gesture, strongest near the flower
+  let lx=null, ly=null, lt=0, swipeWind=0;
+  cv.addEventListener('pointermove', e=>{
+    const x=e.clientX*dpr, y=e.clientY*dpr, now=performance.now();
+    if (lx!==null){
+      const dx=x-lx, dy=y-ly, dt=Math.max(8,now-lt), sp=Math.hypot(dx,dy)/dt/dpr;
+      const near=Math.max(0,1-Math.hypot(x-C[0],y-C[1])/(R*2.6));
+      if (sp>.25 && near>0){
+        swipeWind=Math.max(swipeWind, Math.min(1.6, (sp-.25)*1.1*near));
+        const l=Math.hypot(dx,dy)||1; wdir=[dx/l, dy/l*.7 - .15];
+        audioCtx(); startWhoosh();
+      }
+    }
+    lx=x; ly=y; lt=now;
+  });
+  cv.addEventListener('pointerleave', ()=>{ lx=ly=null; });
+
+  /* ---------- the wish itself flies away with the seeds ---------- */
+  const mywish=document.getElementById('mywish'); let letters=[];
+  document.getElementById('form').addEventListener('submit', e=>{
+    e.preventDefault();
+    const v=document.getElementById('wish').value.trim(); if(!v) return;
+    mywish.innerHTML=[...('“'+v+'”')].map(ch=>`<span>${ch.replace(/[<&]/g,c=>c==='<'?'&lt;':'&amp;')}</span>`).join('');
+    letters=[...mywish.querySelectorAll('span')].map(el=>({el,x:0,y:0,vx:0,vy:0,r:0,o:1,free:false}));
+    document.getElementById('wish').value=''; document.getElementById('wish').blur();
+  });
+
+  /* ---------- completion ---------- */
+  const done=document.getElementById('done'), countEl=document.getElementById('count');
+  let count=48212, finished=false;
+  document.getElementById('regrow').addEventListener('click', ()=>{
+    finished=false; done.classList.remove('show');
+    seeds.forEach((s,i)=>{ s.gone=false; s.attach=0; s.grow=0; s.delay=s.rr*1.2+Math.random()*.3; s.thr=.25+Math.random()*.9; });
+    letters=[]; mywish.innerHTML='';
+  });
+
+  /* ---------- render ---------- */
+  function resize(){
+    dpr=Math.min(2,devicePixelRatio);
+    W=cv.width=F.width=M.width=Math.round(innerWidth*dpr); H=cv.height=F.height=M.height=Math.round(innerHeight*dpr);
+    layout(); makeSeeds();
+  }
+  function noise(x,y,t){ return Math.sin(x*.004+t*.9)*Math.cos(y*.005-t*.7)+Math.sin((x+y)*.002+t*1.3)*.5; }
+  const hint=document.getElementById('hint');
+
+  let last=performance.now();
+  function frame(now){
+    if (cv.width!==Math.round(innerWidth*Math.min(2,devicePixelRatio))) resize();
+    const dt=Math.min(.05,(now-last)/1000), k=dt*60; last=now; const t=now/1000;
+
+    // combine wind sources
+    const mw=readMic();
+    swipeWind*=Math.pow(.9,k);
+    const target=Math.max(mw, holding?1.1:0, swipeWind);
+    if (mw>.05 || holding) wdir=[.92,-.38];
+    wind+=(target-wind)*(target>wind?.25:.08);
+    if (whooshGain) whooshGain.gain.value=Math.min(.18,wind*.12);
+
+    // detach seeds
+    if (wind>.08){
+      for (const s of seeds){
+        if (s.gone || s.attach<1) continue;
+        const facing=-(s.dir[0]*wdir[0]+s.dir[1]*wdir[1]);
+        const score=wind*(.55+.45*facing)*(.6+.4*s.rr);
+        if (score>s.thr*.55 && Math.random()<.035*wind*k){
+          s.gone=true;
+          const L=R*.78*(.6+.4*s.rr);
+          flying.push({x:s.ax+s.dir[0]*L*.25, y:s.ay+s.dir[1]*L*.25, vx:wdir[0]*2*dpr+s.dir[0]*dpr, vy:wdir[1]*2*dpr+s.dir[1]*dpr, rot:s.a+Math.PI/2, vr:(Math.random()-.5)*.03, L, z:1, spin:Math.random()*6});
+        }
+      }
+    }
+
+    // draw: bald flower, then the fluffy flower through the seed mask
+    cx.clearRect(0,0,W,H);
+    const iw=IMG_W*T.s, ih=IMG_H*T.s;
+    if (img.bald) cx.drawImage(img.bald,T.ox,T.oy,iw,ih);
+    mx.clearRect(0,0,W,H);
+    let attached=0;
+    for (const s of seeds){
+      if (s.gone) s.attach=Math.max(0,s.attach-dt*5);
+      else if (s.attach<1){ if (s.delay>0) s.delay-=dt; else s.attach=Math.min(1,s.attach+dt*1.6); }
+      if (!s.gone) attached++;
+      if (s.attach<=0) continue;
+      const rad=R*(.2+.08*s.rr)*(s.gone?1:.6+.4*s.attach);
+      const g=mx.createRadialGradient(s.ax,s.ay,0,s.ax,s.ay,rad);
+      g.addColorStop(0,`rgba(0,0,0,${s.attach})`); g.addColorStop(.55,`rgba(0,0,0,${s.attach*.85})`); g.addColorStop(1,'rgba(0,0,0,0)');
+      mx.fillStyle=g; mx.fillRect(s.ax-rad,s.ay-rad,rad*2,rad*2);
+    }
+    if (img.full){
+      fx.globalCompositeOperation='source-over'; fx.clearRect(0,0,W,H);
+      fx.drawImage(img.full,T.ox,T.oy,iw,ih);
+      fx.globalCompositeOperation='destination-in'; fx.drawImage(M,0,0);
+      cx.drawImage(F,0,0);
+    }
+
+    // flying seeds: drift on turbulent wind, turn parachute-up, recede into the dusk
+    const sw=img.seed;
+    for (let i=flying.length-1;i>=0;i--){
+      const f=flying[i];
+      const n=noise(f.x,f.y,t);
+      f.vx+= (wdir[0]*wind*.35 + .03 + Math.cos(n*3)*.06)*dpr*k;
+      f.vy+= (wdir[1]*wind*.25 - .035 + Math.sin(n*3)*.06)*dpr*k;
+      f.vx*=Math.pow(.975,k); f.vy*=Math.pow(.975,k);
+      f.x+=f.vx*k; f.y+=f.vy*k;
+      let d=-f.rot; d=Math.atan2(Math.sin(d),Math.cos(d)); f.rot+=d*.03*k + Math.sin(t*2+f.spin)*.01;
+      f.z=Math.max(.32, f.z-.0016*k);
+      if (f.x>W+200 || f.y<-200 || f.x<-200 || f.y>H+200){ flying.splice(i,1); continue; }
+      if (!sw) continue;
+      const h=f.L*f.z, w=h*sw.width/sw.height;
+      cx.save(); cx.translate(f.x,f.y); cx.rotate(f.rot); cx.globalAlpha=Math.min(.85,f.z*1.2);
+      cx.drawImage(sw,-w/2,-h*.55,w,h); cx.restore();
+    }
+    cx.globalAlpha=1;
+
+    // letters of the wish leave with the wind
+    if (letters.length && wind>.15){
+      letters.forEach((L,i)=>{ if(!L.free && Math.random()<.04*wind*k){ L.free=true; L.vx=(1+Math.random()*2); L.vy=-(1+Math.random()*2); L.vr=(Math.random()-.5)*4; } });
+    }
+    letters.forEach(L=>{
+      if(!L.free) return;
+      L.vx+=wdir[0]*wind*.25+.05; L.vy+=wdir[1]*wind*.2-.04; L.vx*=.97; L.vy*=.97;
+      L.x+=L.vx; L.y+=L.vy; L.r+=L.vr; L.o=Math.max(0,L.o-.006);
+      L.el.style.transform=`translate(${L.x}px,${L.y}px) rotate(${L.r}deg)`; L.el.style.opacity=L.o;
+    });
+
+    // hint follows the flower; completion
+    hint.style.left=(C[0]/dpr)+'px'; hint.style.top=((C[1]+R*1.25)/dpr)+'px';
+    hint.style.opacity = attached>seeds.length*.9 && !holding && wind<.1 ? 1 : 0;
+    if (!finished && attached===0 && flying.length<6){
+      finished=true; count++; countEl.textContent=count.toLocaleString();
+      document.getElementById('doneText').textContent = letters.length ? 'Your wish is on its way.' : 'Every seed is on its way.';
+      done.classList.add('show');
+    }
+    requestAnimationFrame(frame);
+  }
+
+  const load=s=>new Promise(r=>{const i=new Image(); i.onload=()=>r(i); i.onerror=()=>r(null); i.src=s;});
+  Promise.all(['full','bald','seed'].map(n=>load(`images/wish/${n}.webp`))).then(([full,bald,seed])=>{ img={full,bald,seed}; });
+  resize(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

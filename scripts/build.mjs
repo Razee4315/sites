@@ -1,4 +1,5 @@
 // Builds every site in sites/ into dist/<name>/, adds the designer credit to each, and puts the gallery at dist/.
+// Sites with a package.json are Vite projects; sites without one are plain HTML and are copied over unchanged.
 // BASE_PATH is the URL prefix the whole thing is served from ("/" locally, "/<repo>/" on GitHub Pages).
 // Pass site names as arguments to build only those: node scripts/build.mjs pronk quire
 import { execSync } from 'node:child_process'
@@ -23,8 +24,14 @@ for (const name of only.length ? only : all) {
   const cwd = join(root, 'sites', name)
   const run = (cmd) => execSync(cmd, { cwd, stdio: 'inherit' })
   console.log(`\n── ${name}`)
-  if (!existsSync(join(cwd, 'node_modules'))) run('npm ci')
-  run(`npx vite build --base=${base}${name}/ --outDir="${join(dist, name)}" --emptyOutDir`)
+  if (existsSync(join(cwd, 'package.json'))) {
+    if (!existsSync(join(cwd, 'node_modules'))) run('npm ci')
+    run(`npx vite build --base=${base}${name}/ --outDir="${join(dist, name)}" --emptyOutDir`)
+  } else {
+    // A plain HTML site with relative paths: copied as it is, minus its README.
+    rmSync(join(dist, name), { recursive: true, force: true })
+    cpSync(cwd, join(dist, name), { recursive: true, filter: (src) => !/README\.md$|[\\/]readme([\\/]|$)/.test(src) })
+  }
 
   const page = join(dist, name, 'index.html')
   const html = readFileSync(page, 'utf8')

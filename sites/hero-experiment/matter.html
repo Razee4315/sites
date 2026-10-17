@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATTER — Everything is made of the same light</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap" rel="stylesheet">
+<style>
+  :root{--text:#f2f2f4;--muted:rgba(242,242,244,.5);--line:rgba(242,242,244,.14);--ease:cubic-bezier(.22,1,.36,1)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #gl{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:none}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:24px clamp(16px,4vw,48px);font-size:13px;pointer-events:none}
+  .nav > *{pointer-events:auto}
+  .logo{font-weight:800;letter-spacing:.3em}
+  .nav ul{display:flex;gap:30px;list-style:none;color:var(--muted)}
+  .nav ul a:hover{color:var(--text)}
+
+  .copy{position:fixed;left:clamp(16px,4vw,48px);bottom:clamp(24px,6vh,56px);z-index:5;max-width:300px;pointer-events:none;opacity:0;animation:fade 1.4s 1.2s forwards}
+  .copy h1{font-weight:300;font-size:clamp(22px,2vw,28px);letter-spacing:-.02em;line-height:1.2}
+  .copy p{color:var(--muted);font-size:13px;line-height:1.6;margin-top:10px}
+
+  .states{position:fixed;left:50%;bottom:clamp(24px,6vh,56px);translate:-50% 0;z-index:5;display:flex;gap:6px;opacity:0;animation:fade 1.4s 1.4s forwards}
+  .st{position:relative;padding:10px 14px 14px;font-size:12px;color:var(--muted);transition:color .4s;min-width:70px;text-align:left}
+  .st::before,.st::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:1px;background:var(--line)}
+  .st::after{background:var(--text);transform:scaleX(0);transform-origin:left}
+  .st[aria-current="true"]{color:var(--text)}
+  .st[aria-current="true"]::after{transform:scaleX(var(--p,0))}
+
+  .hint{position:fixed;right:clamp(16px,4vw,48px);bottom:clamp(24px,6vh,56px);z-index:5;text-align:right;font-size:12px;line-height:1.8;color:var(--muted);pointer-events:none;opacity:0;animation:fade 1.4s 1.6s forwards}
+  .hint b{color:var(--text);font-weight:500}
+  .count{position:fixed;right:clamp(16px,4vw,48px);top:50%;translate:0 -50%;z-index:5;writing-mode:vertical-rl;font-size:11px;letter-spacing:.24em;color:var(--muted);font-variant-numeric:tabular-nums;pointer-events:none}
+  @keyframes fade{to{opacity:1}}
+
+  .loading{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:#000;font-size:12px;letter-spacing:.3em;color:var(--muted);transition:opacity 1s}
+  .loading.done{opacity:0;pointer-events:none}
+
+  @media (max-width:760px){
+    .nav ul,.hint,.count{display:none}
+    .copy{bottom:96px}
+    .copy p{display:none}
+    .states{left:16px;right:16px;translate:0;justify-content:space-between}
+    .st{min-width:0;padding:10px 6px 14px}
+    .st::before,.st::after{left:6px;right:6px}
+  }
+</style>
+</head>
+<body>
+<div class="loading" id="loading">GATHERING LIGHT</div>
+<canvas id="gl"></canvas>
+
+<nav class="nav">
+  <a class="logo" href="#">MATTER</a>
+  <ul><li><a href="#">Work</a></li><li><a href="#">Studio</a></li><li><a href="#">Contact</a></li></ul>
+  <a href="#">Start a project</a>
+</nav>
+
+<div class="copy">
+  <h1>Everything is made<br>of the same light.</h1>
+  <p>A generative studio for brands that move. Every frame here is built from the same <span id="pc">16,000</span> particles.</p>
+</div>
+
+<div class="states" id="states">
+  <button class="st" aria-current="true" data-i="0">Matter</button>
+  <button class="st" aria-current="false" data-i="1">Medusa</button>
+  <button class="st" aria-current="false" data-i="2">Iris</button>
+  <button class="st" aria-current="false" data-i="3">Bloom</button>
+  <button class="st" aria-current="false" data-i="4">Galaxy</button>
+</div>
+
+<div class="hint"><b>Move</b> to disturb<br><b>Hold</b> to pull them in<br><b>Click</b> to transform</div>
+<div class="count" id="fps">16000 PARTICLES</div>
+
+<script>
+(() => {
+  const mobile = innerWidth < 760;
+  const N = mobile ? 8000 : 16000;
+  document.getElementById('pc').textContent = N.toLocaleString();
+  document.getElementById('fps').textContent = N + ' PARTICLES';
+  const SRC = ['images/matter/1-jellyfish.webp','images/matter/2-eye.webp','images/matter/3-bloom.webp','images/matter/4-galaxy.webp'];
+  const DUR = 7000;
+
+  /* ---------- sampling ---------- */
+  const S = 360;
+  const off = document.createElement('canvas'); off.width = off.height = S;
+  const ox = off.getContext('2d', {willReadFrequently:true});
+
+  function sampleCanvas(colorize){
+    const d = ox.getImageData(0,0,S,S).data;
+    const px = [];
+    for (let y=0;y<S;y++) for (let x=0;x<S;x++){
+      const i=(y*S+x)*4, b=(d[i]*.3+d[i+1]*.59+d[i+2]*.11)/255;
+      if (b>.06) px.push(x,y,d[i]/255,d[i+1]/255,d[i+2]/255,b);
+    }
+    const pos = new Float32Array(N*2), col = new Float32Array(N*3), siz = new Float32Array(N);
+    const cnt = px.length/6;
+    for (let k=0;k<N;k++){
+      let j, tries=0;
+      do { j = (Math.random()*cnt|0)*6; tries++; } while (Math.random() > Math.pow(px[j+5],.7) && tries<20);
+      pos[k*2]   = (px[j]   + Math.random() - S/2)/S;
+      pos[k*2+1] = (px[j+1] + Math.random() - S/2)/S;
+      const c = colorize ? colorize(px[j]/S, px[j+1]/S) : [px[j+2],px[j+3],px[j+4]];
+      const boost = 1.15;
+      col[k*3]=Math.min(1,c[0]*boost); col[k*3+1]=Math.min(1,c[1]*boost); col[k*3+2]=Math.min(1,c[2]*boost);
+      siz[k] = .7 + px[j+5]*1.1;
+    }
+    return {pos,col,siz};
+  }
+  function textState(){
+    ox.clearRect(0,0,S,S); ox.fillStyle='#000'; ox.fillRect(0,0,S,S);
+    ox.fillStyle='#fff'; ox.textAlign='center'; ox.textBaseline='middle';
+    ox.font = `900 ${S*.2}px Inter, sans-serif`;
+    ox.fillText('MATTER', S/2, S/2);
+    return sampleCanvas((u,v) => [.85+.15*u, .88, .95+.05*v]);
+  }
+  function imageState(img){
+    ox.clearRect(0,0,S,S); ox.drawImage(img,0,0,S,S);
+    return sampleCanvas();
+  }
+
+  /* ---------- particles ---------- */
+  const P = new Float32Array(N*2), V = new Float32Array(N*2), T = new Float32Array(N*2);
+  const C = new Float32Array(N*3), TC = new Float32Array(N*3), Z = new Float32Array(N), TZ = new Float32Array(N), DL = new Float32Array(N);
+  for (let k=0;k<N;k++){ const a=Math.random()*6.283, r=Math.random()*1.2+.4; P[k*2]=Math.cos(a)*r; P[k*2+1]=Math.sin(a)*r; Z[k]=1; C[k*3]=C[k*3+1]=C[k*3+2]=.6; }
+
+  let states = [], cur = -1, simT = 0;
+  function go(i){
+    if (!states[i]) return;
+    cur = i; simT = 0;
+    const s = states[i], perm = new Uint32Array(N);
+    for (let k=0;k<N;k++) perm[k]=k;
+    for (let k=N-1;k>0;k--){ const j=Math.random()*(k+1)|0; [perm[k],perm[j]]=[perm[j],perm[k]]; }
+    for (let k=0;k<N;k++){
+      const j = perm[k];
+      T[k*2]=s.pos[j*2]; T[k*2+1]=s.pos[j*2+1];
+      TC[k*3]=s.col[j*3]; TC[k*3+1]=s.col[j*3+1]; TC[k*3+2]=s.col[j*3+2]; TZ[k]=s.siz[j];
+      DL[k] = Math.random()*.7;
+      // kick: swirl outward
+      const x=P[k*2], y=P[k*2+1];
+      V[k*2] += -y*.012 + x*.01; V[k*2+1] += x*.012 + y*.01;
+    }
+    document.querySelectorAll('.st').forEach(b => b.setAttribute('aria-current', +b.dataset.i===i));
+  }
+
+  /* ---------- WebGL ---------- */
+  const cv = document.getElementById('gl');
+  const gl = cv.getContext('webgl', {antialias:false, premultipliedAlpha:false, alpha:false});
+  let dpr = Math.min(2, devicePixelRatio);
+  let W, H, scale;
+  function resize(){ dpr=Math.min(2,devicePixelRatio); W=cv.width=Math.round(innerWidth*dpr); H=cv.height=Math.round(innerHeight*dpr); gl.viewport(0,0,W,H); scale = Math.min(W,H)*(mobile?.95:.8); }
+  resize(); addEventListener('resize', resize);
+
+  const vs = `attribute vec2 p;attribute vec3 c;attribute float s;uniform vec2 res;uniform float sc;uniform float ps;varying vec3 vc;
+    void main(){vec2 q=p*sc/res*2.;gl_Position=vec4(q.x,-q.y,0.,1.);gl_PointSize=s*ps;vc=c;}`;
+  const fs = `precision mediump float;varying vec3 vc;void main(){vec2 d=gl_PointCoord-.5;float r=length(d);float a=smoothstep(.5,0.,r);gl_FragColor=vec4(vc*a*.8,a);}`;
+  function sh(t,src){const s=gl.createShader(t);gl.shaderSource(s,src);gl.compileShader(s);return s;}
+  const pr = gl.createProgram(); gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(pr); gl.useProgram(pr);
+  const bP=gl.createBuffer(), bC=gl.createBuffer(), bS=gl.createBuffer();
+  const aP=gl.getAttribLocation(pr,'p'), aC=gl.getAttribLocation(pr,'c'), aS=gl.getAttribLocation(pr,'s');
+  const uRes=gl.getUniformLocation(pr,'res'), uSc=gl.getUniformLocation(pr,'sc'), uPs=gl.getUniformLocation(pr,'ps');
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+  function bind(b,a,data,n){ gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,data,gl.DYNAMIC_DRAW); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a,n,gl.FLOAT,false,0,0); }
+
+  /* ---------- input ---------- */
+  let mx=9, my=9, down=false, downAt=0, moved=0;
+  const toWorld = (cx,cy) => [((cx*dpr) - W/2)/scale, ((cy*dpr) - H/2)/scale];
+  cv.addEventListener('pointermove', e => { const w=toWorld(e.clientX,e.clientY); moved += Math.hypot(w[0]-mx,w[1]-my); mx=w[0]; my=w[1]; });
+  cv.addEventListener('pointerleave', () => { mx=my=9; down=false; });
+  cv.addEventListener('pointerdown', e => { down=true; downAt=performance.now(); moved=0; const w=toWorld(e.clientX,e.clientY); mx=w[0]; my=w[1]; });
+  addEventListener('pointerup', () => {
+    if (!down) return; down=false;
+    const held = performance.now()-downAt;
+    if (held > 350){
+      // release: explode back into the form
+      for (let k=0;k<N;k++){ const dx=P[k*2]-mx, dy=P[k*2+1]-my, d=Math.hypot(dx,dy)+.02; V[k*2]+=dx/d*.05*Math.random(); V[k*2+1]+=dy/d*.05*Math.random(); }
+      simT = Math.min(simT, DUR/1000*.4);
+    } else if (moved < .05) {
+      go((cur+1)%states.length);
+    }
+  });
+  document.getElementById('states').addEventListener('click', e => { const b=e.target.closest('.st'); if (b) go(+b.dataset.i); });
+  addEventListener('keydown', e => { if (e.key==='ArrowRight'||e.key===' ') go((cur+1)%states.length); if (e.key==='ArrowLeft') go((cur-1+states.length)%states.length); });
+
+  /* ---------- loop: fixed 60 Hz physics steps, frame-rate independent ---------- */
+  let lastNow = performance.now(), acc = 0, tSec = 0;
+  function step(){
+    const dt = 1/60; tSec += dt; if (!down) simT += dt;
+    const t = tSec;
+    for (let k=0;k<N;k++){
+      const i=k*2;
+      let fx=0, fy=0;
+      if (simT > DL[k]){ fx=(T[i]-P[i])*.012; fy=(T[i+1]-P[i+1])*.012; }
+      fx += Math.sin(t*1.3 + k*.37)*.00006; fy += Math.cos(t*1.1 + k*.53)*.00006;
+      const dx=P[i]-mx, dy=P[i+1]-my, d2=dx*dx+dy*dy;
+      if (down){ const d=Math.sqrt(d2)+.03; fx -= dx/d*.0035 + -dy/d*.0025; fy -= dy/d*.0035 + dx/d*.0025; }
+      else if (d2 < .012){ const d=Math.sqrt(d2)+.001, f=(.11-d)*.04; fx += dx/d*f; fy += dy/d*f; }
+      V[i]=(V[i]+fx)*.9; V[i+1]=(V[i+1]+fy)*.9;
+      P[i]+=V[i]; P[i+1]+=V[i+1];
+      const j=k*3;
+      C[j]+=(TC[j]-C[j])*.04; C[j+1]+=(TC[j+1]-C[j+1])*.04; C[j+2]+=(TC[j+2]-C[j+2])*.04;
+      Z[k]+=(TZ[k]-Z[k])*.05;
+    }
+  }
+  function frame(now){
+    if (cv.width !== Math.round(innerWidth*Math.min(2,devicePixelRatio))) resize();
+    acc += Math.min(.25, (now-lastNow)/1000); lastNow = now;
+    let n = 0; while (acc >= 1/60 && n < 4){ step(); acc -= 1/60; n++; }
+    if (n === 4) acc = 0;            // very slow device: drop time rather than spiral
+    if (cur>=0 && !down && simT*1000 > DUR) go((cur+1)%states.length);
+    const bar = document.querySelector('.st[aria-current="true"]');
+    if (bar) bar.style.setProperty('--p', Math.min(1, simT*1000/DUR).toFixed(3));
+    gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(uRes,W,H); gl.uniform1f(uSc,scale); gl.uniform1f(uPs,(mobile?1.5:1.7)*dpr*Math.sqrt(scale/(720*dpr)));
+    bind(bP,aP,P,2); bind(bC,aC,C,3); bind(bS,aS,Z,1);
+    gl.drawArrays(gl.POINTS,0,N);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ---------- load ---------- */
+  const load = src => new Promise(r => { const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null); im.src=src; });
+  document.fonts.load('900 40px Inter').finally(async () => {
+    states[0] = textState();
+    go(0);
+    document.getElementById('loading').classList.add('done');
+    const imgs = await Promise.all(SRC.map(load));
+    imgs.forEach((im,i) => { if (im) states[i+1] = imageState(im); });
+  });
+})();
+</script>
+</body>
+</html>

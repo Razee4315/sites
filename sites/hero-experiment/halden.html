@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halden — The Quiet Season, AW26</title>
+<meta name="description" content="Halden Autumn/Winter 2026: wool cut for the Norwegian coast in November.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="images/halden/look-01.webp" fetchpriority="high">
+<style>
+  :root{
+    --paper:#EFEBE4; --ink:#161412; --ox:#6B1E1E;
+    --muted:rgba(22,20,18,.56); --hair:rgba(22,20,18,.16);
+    --edge:clamp(18px,3.4vw,56px); --gut:clamp(12px,1.6vw,24px);
+    --ease-out:cubic-bezier(.16,1,.3,1); --ease-inout:cubic-bezier(.77,0,.175,1);
+    --serif:"Bodoni Moda",Didot,"Times New Roman",serif;
+    --sans:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper)}
+  body{color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;border-radius:0;cursor:pointer}
+  :focus-visible{outline:1px solid var(--ox);outline-offset:3px}
+  .cap{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+  .grain{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.05;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .ulink{position:relative}
+  .ulink::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .6s var(--ease-out)}
+  .ulink:hover::after{transform:scaleX(1);transform-origin:left}
+
+  /* ── spread ────────────────────────────────────────── */
+  .spread{min-height:100dvh;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:auto 1fr auto;column-gap:var(--gut);padding:0 var(--edge)}
+  header{grid-column:1/-1;display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gut);align-items:center;padding:22px 0;border-bottom:1px solid var(--hair)}
+  .mast{grid-column:1/4;font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:.34em}
+  header nav{grid-column:5/9;display:flex;gap:26px}
+  header .r{grid-column:9/13;justify-self:end;display:flex;gap:24px}
+
+  .text{grid-column:1/6;grid-row:2;display:flex;flex-direction:column;padding:clamp(28px,5vh,56px) 0 24px}
+  .issue{display:flex;justify-content:space-between;color:var(--muted);border-bottom:1px solid var(--hair);padding-bottom:12px;margin-bottom:clamp(20px,4vh,44px)}
+  h1{font-family:var(--serif);font-weight:500;font-size:clamp(58px,8.6vw,168px);line-height:.86;letter-spacing:-.045em;margin-left:-.04em}
+  h1 em{font-style:italic;font-weight:400;color:var(--ox)}
+  .stand{font-family:var(--serif);font-size:clamp(16px,1.25vw,19px);line-height:1.5;max-width:34ch;margin-top:clamp(18px,3.5vh,36px)}
+  .stand::first-letter{font-size:2.8em;float:left;line-height:.8;margin:.06em .08em 0 0;font-weight:500}
+
+  /* look strip: draggable */
+  .strip-wrap{margin-top:auto;padding-top:24px}
+  .strip-head{display:flex;justify-content:space-between;color:var(--muted);margin-bottom:12px}
+  .strip{display:flex;gap:10px;overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+  .strip.drag{cursor:grabbing}
+  .track{display:flex;gap:10px;will-change:transform}
+  .thumb{position:relative;flex:0 0 auto;width:clamp(78px,6.6vw,112px);aspect-ratio:3/4;overflow:hidden;background:#ddd6cb}
+  .thumb img{width:100%;height:100%;object-fit:cover;pointer-events:none;transition:transform .9s var(--ease-out),filter .6s}
+  .thumb span{position:absolute;left:6px;top:5px;color:#fff;mix-blend-mode:difference;font-size:10px}
+  .thumb::after{content:"";position:absolute;inset:0;border:1px solid var(--ink);opacity:0;transition:opacity .4s}
+  .thumb[aria-current="true"]::after{opacity:1}
+  .thumb:not([aria-current="true"]) img{filter:grayscale(.65) brightness(1.04)}
+  .thumb:hover img{transform:scale(1.06);filter:none}
+
+  /* cover image with shutter */
+  .cover{grid-column:7/12;grid-row:2;position:relative;margin:clamp(20px,3.5vh,40px) 0 18px;align-self:stretch;min-height:520px}
+  .frame{position:absolute;inset:0;overflow:hidden;background:#d9d2c6}
+  .frame > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+  .slat{position:absolute;top:0;bottom:0;background-repeat:no-repeat;transform:scaleY(0)}
+  .caption{position:absolute;left:0;right:0;top:100%;display:flex;justify-content:space-between;gap:20px;padding-top:12px}
+  .caption .t{font-family:var(--serif);font-size:15px;font-style:italic}
+  .caption .p{font-variant-numeric:tabular-nums}
+
+  /* next-look preview: breaks the grid on purpose */
+  .next{position:absolute;left:-26%;bottom:9%;width:34%;aspect-ratio:3/4;z-index:3;overflow:hidden;box-shadow:0 0 0 10px var(--paper)}
+  .next img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease-out)}
+  .next:hover img{transform:scale(1.07)}
+  .next span{position:absolute;left:8px;bottom:6px;color:#fff;mix-blend-mode:difference}
+
+  .side{grid-column:12/13;grid-row:2;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;padding:clamp(20px,3.5vh,40px) 0 18px}
+  .vert{writing-mode:vertical-rl;transform:rotate(180deg);color:var(--muted)}
+  .counter{font-family:var(--serif);font-size:clamp(44px,4.4vw,80px);font-weight:400;line-height:.8;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .counter small{display:block;font-family:var(--sans);font-size:11px;letter-spacing:.12em;color:var(--muted);text-align:right;margin-top:8px}
+
+  footer{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gut);align-items:center;border-top:1px solid var(--hair);padding:14px 0 18px}
+  .sizes{grid-column:7/10;display:flex;gap:4px}
+  .size{min-width:38px;height:34px;border:1px solid var(--hair);font-size:12px;transition:background .3s,color .3s,border-color .3s}
+  .size[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .size:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+  .buy{grid-column:10/13;justify-self:end;height:44px;padding:0 22px;background:var(--ink);color:var(--paper);font-size:13px;font-weight:500;letter-spacing:.02em;position:relative;overflow:hidden}
+  .buy::before{content:"";position:absolute;inset:0;background:var(--ox);transform:translateY(101%);transition:transform .55s var(--ease-out)}
+  .buy:hover::before{transform:none}
+  .buy span{position:relative}
+  .buy:active{transform:translateY(1px)}
+  .foot-l{grid-column:1/6;color:var(--muted);display:flex;gap:22px}
+  .shake{animation:shake .4s var(--ease-out)}
+  @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+  @media (max-width:900px){
+    .spread{grid-template-columns:1fr;grid-template-rows:auto;padding:0 18px}
+    header{grid-template-columns:1fr auto}
+    header nav{display:none}
+    .mast{grid-column:1}
+    header .r{grid-column:2}
+    .text,.cover,.side,footer{grid-column:1;grid-row:auto}
+    .cover{min-height:auto;aspect-ratio:4/5;margin:8px 0 44px}
+    .next{left:auto;right:-6px;bottom:-30px;width:30%;box-shadow:0 0 0 6px var(--paper)}
+    .side{display:none}
+    footer{grid-template-columns:1fr 1fr;row-gap:12px}
+    .foot-l{grid-column:1/3}
+    .sizes{grid-column:1}
+    .buy{grid-column:2}
+    .text{display:contents}
+    .issue{order:1;margin-top:18px}
+    h1{order:2}
+    .stand{order:3;margin-bottom:22px}
+    .cover{order:4}
+    .strip-wrap{order:5;padding-top:0}
+    footer{order:6}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition-duration:.01ms!important;animation:none!important} }
+
+  /* SplitText line masks: leave room for descenders at tight line-heights */
+  h1 > div, h2 > div{padding-bottom:.14em;margin-bottom:-.14em}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="spread">
+  <header>
+    <a class="mast" href="#">HALDEN</a>
+    <nav class="cap" aria-label="Primary"><a class="ulink" href="#">Women</a><a class="ulink" href="#">Men</a><a class="ulink" href="#">Objects</a><a class="ulink" href="#">Journal</a></nav>
+    <div class="r cap"><a class="ulink" href="#">Search</a><a class="ulink" href="#">Bag (<span id="bag">0</span>)</a></div>
+  </header>
+
+  <section class="text">
+    <div class="issue cap"><span>Issue 07</span><span>Autumn — Winter 2026</span></div>
+    <h1 id="headline" aria-label="The Quiet Season">The <em>Quiet</em><br>Season</h1>
+    <p class="stand">Wool cut for the Norwegian coast in November: heavy, soft, and made to outlast every trend we will see this year. Photographed on Lista beach over three grey days.</p>
+    <div class="strip-wrap">
+      <div class="strip-head cap"><span>The looks</span><span>Drag ⟷</span></div>
+      <div class="strip" id="strip"><div class="track" id="track"></div></div>
+    </div>
+  </section>
+
+  <figure class="cover" id="cover">
+    <div class="frame" id="frame"><img id="base" alt="" width="1024" height="1536"></div>
+    <button class="next" id="next" aria-label="Next look"><img id="nextImg" alt=""><span class="cap">Next →</span></button>
+    <figcaption class="caption"><span class="t" id="capT"></span><span class="p cap" id="capP"></span></figcaption>
+  </figure>
+
+  <aside class="side" aria-hidden="true">
+    <span class="vert cap">Lista, Norway — 58°N</span>
+    <div class="counter"><span id="num">01</span><small>/ 05</small></div>
+  </aside>
+
+  <footer>
+    <div class="foot-l cap"><a class="ulink" href="#">Read the issue</a><a class="ulink" href="#">Book a private fitting</a></div>
+    <div class="sizes" id="sizes" role="group" aria-label="Size"></div>
+    <button class="buy" id="buy"><span id="buyLbl">Add this look</span></button>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script>
+(() => {
+  const L = [
+    {src:'images/halden/look-01.webp', t:'Sculpted coat, double-faced charcoal wool', p:'€1,890', sold:['XS']},
+    {src:'images/halden/look-02.webp', t:'Rib sweater in rust merino, oat coat', p:'€540', sold:[]},
+    {src:'images/halden/look-03.webp', t:'Long trench in oat cotton gabardine', p:'€1,450', sold:['L']},
+    {src:'images/halden/look-04.webp', t:'Two-piece suit in rust wool flannel', p:'€1,620', sold:[]},
+    {src:'images/halden/look-05.webp', t:'Ankle boot in espresso calf, charcoal scarf', p:'€690', sold:['M']},
+  ];
+  const SIZES = ['XS','S','M','L'];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s);
+  let cur = 0, busy = false, size = null, bag = 0;
+
+  /* thumbnails */
+  const track = $('#track');
+  L.forEach((l,i) => {
+    const b = document.createElement('button'); b.className = 'thumb'; b.setAttribute('aria-label', `Look ${i+1}: ${l.t}`); b.setAttribute('aria-current', i===0);
+    b.innerHTML = `<img src="${l.src}" alt="" loading="lazy" draggable="false"><span class="cap">${String(i+1).padStart(2,'0')}</span>`;
+    b.addEventListener('click', e => { if (dragged) { e.preventDefault(); return; } show(i); });
+    track.appendChild(b);
+  });
+  const thumbs = [...track.children];
+
+  /* captions, sizes */
+  function setInfo(i){
+    $('#capT').textContent = `Look ${String(i+1).padStart(2,'0')} — ${L[i].t}`;
+    $('#capP').textContent = L[i].p;
+    $('#num').textContent = String(i+1).padStart(2,'0');
+    $('#nextImg').src = L[(i+1)%L.length].src;
+    thumbs.forEach((t,k) => t.setAttribute('aria-current', k===i));
+    size = null;
+    $('#sizes').innerHTML = SIZES.map(s => `<button class="size cap" aria-pressed="false" ${L[i].sold.includes(s)?'disabled aria-label="'+s+' sold out"':''}>${s}</button>`).join('');
+    $('#buyLbl').textContent = 'Add this look';
+  }
+  $('#sizes').addEventListener('click', e => {
+    const b = e.target.closest('.size'); if (!b || b.disabled) return;
+    size = b.textContent; document.querySelectorAll('.size').forEach(o => o.setAttribute('aria-pressed', o===b));
+  });
+  $('#buy').addEventListener('click', () => {
+    if (!size){ const s = $('#sizes'); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); $('#buyLbl').textContent = 'Choose a size first'; return; }
+    bag++; $('#bag').textContent = bag; $('#buyLbl').textContent = `Added — size ${size}`;
+  });
+
+  /* the shutter: six slats close over the frame, carrying the next photograph */
+  const frame = $('#frame'), base = $('#base');
+  function show(i){
+    if (i === cur || busy) return;
+    busy = true; const prev = cur; cur = i; setInfo(i);
+    if (reduce){ base.src = L[i].src; busy = false; return; }
+    const N = 6, w = frame.clientWidth, h = frame.clientHeight;
+    // cover-fit maths so each slat shows its slice of the same image
+    const ir = 1024/1536, fr = w/h; let bw, bh;
+    if (fr > ir){ bw = w; bh = w/ir; } else { bh = h; bw = h*ir; }
+    const ox = (w-bw)/2, oy = (h-bh)*.3;
+    const slats = [];
+    for (let k=0;k<N;k++){
+      const s = document.createElement('div'); s.className = 'slat';
+      const x0 = Math.floor(k*w/N), x1 = Math.ceil((k+1)*w/N);
+      Object.assign(s.style, {left:x0+'px', width:(x1-x0+1)+'px', backgroundImage:`url(${L[i].src})`, backgroundSize:`${bw}px ${bh}px`, backgroundPosition:`${ox-x0}px ${oy}px`, transformOrigin: k%2 ? 'bottom' : 'top'});
+      frame.appendChild(s); slats.push(s);
+    }
+    gsap.timeline({onComplete:() => { base.src = L[i].src; base.onload = () => { slats.forEach(s => s.remove()); }; if (base.complete) slats.forEach(s => s.remove()); busy = false; }})
+      .to(base, {scale:1.06, duration:1.1, ease:'power3.inOut'}, 0)
+      .to(slats, {scaleY:1, duration:1, ease:'power4.inOut', stagger:{each:.07, from: i > prev ? 'start' : 'end'}}, 0)
+      .set(base, {scale:1});
+    gsap.fromTo('#capT, #capP', {opacity:0, y:6}, {opacity:1, y:0, duration:.8, ease:'expo.out', delay:.5});
+    gsap.fromTo('#num', {yPercent:60, opacity:0}, {yPercent:0, opacity:1, duration:.9, ease:'expo.out', delay:.35});
+  }
+  $('#next').addEventListener('click', () => show((cur+1)%L.length));
+  addEventListener('keydown', e => { if (e.key==='ArrowRight') show((cur+1)%L.length); if (e.key==='ArrowLeft') show((cur-1+L.length)%L.length); });
+
+  /* drag strip with inertia and velocity skew */
+  const strip = $('#strip'); let x = 0, tx = 0, v = 0, down = false, sx = 0, startX = 0, dragged = false;
+  const bounds = () => Math.min(0, strip.clientWidth - track.scrollWidth);
+  strip.addEventListener('pointerdown', e => { down = true; dragged = false; sx = e.clientX; startX = tx; strip.classList.add('drag'); });
+  strip.addEventListener('pointermove', e => { if (!down) return; const d = e.clientX - sx; if (!dragged && Math.abs(d) > 5){ dragged = true; strip.setPointerCapture(e.pointerId); } if (dragged) tx = startX + d; });
+  const up = () => { if (!down) return; down = false; strip.classList.remove('drag'); if (dragged) tx += v*8; setTimeout(() => dragged = false, 0); };
+  strip.addEventListener('pointerleave', () => { if (down && !dragged){ down = false; strip.classList.remove('drag'); } });
+  strip.addEventListener('pointerup', up); strip.addEventListener('pointercancel', up);
+  gsap.ticker.add(() => {
+    const b = bounds();
+    if (!down) tx = Math.max(b, Math.min(0, tx));
+    const px = x; x += (tx - x) * .14; v = x - px;
+    const sk = reduce ? 0 : Math.max(-8, Math.min(8, v*.5));
+    track.style.transform = `translate3d(${x}px,0,0)`;
+    thumbs.forEach(t => t.style.transform = `skewX(${-sk}deg)`);
+  });
+
+  /* intro */
+  setInfo(0); base.src = L[0].src; base.alt = 'Halden Autumn Winter 2026 campaign';
+  document.fonts.ready.then(() => {
+    if (reduce) return;
+    const split = SplitText.create('#headline', {type:'lines', mask:'lines'});
+    gsap.timeline({defaults:{ease:'expo.out'}})
+      .from('header', {opacity:0, duration:.9, clearProps:'opacity'}, 0)
+      .fromTo('#frame', {clipPath:'inset(100% 0 0 0)'}, {clipPath:'inset(0% 0 0 0)', duration:1.5, ease:'power4.inOut'}, .1)
+      .fromTo('#base', {scale:1.25}, {scale:1, duration:2.2}, .1)
+      .from(split.lines, {yPercent:110, duration:1.3, stagger:.1}, .35)
+      .from('.issue, .stand', {opacity:0, y:10, duration:1, stagger:.08, clearProps:'all'}, .6)
+      .fromTo('#next', {clipPath:'inset(0 0 100% 0)'}, {clipPath:'inset(0 0 0% 0)', duration:1.2, ease:'power4.inOut'}, .9)
+      .fromTo('.thumb', {opacity:0, x:30}, {opacity:1, x:0, duration:1, stagger:.06, clearProps:'opacity,transform'}, .9)
+      .fromTo('.side, footer, .caption', {opacity:0}, {opacity:1, duration:1, clearProps:'opacity'}, 1.1);
+  });
+})();
+</script>
+</body>
+</html>

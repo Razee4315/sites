@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PENUMBRA — Light on Marble</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200..800&display=swap" rel="stylesheet">
+<style>
+  :root{--text:#efe9e1;--muted:rgba(239,233,225,.5);--line:rgba(239,233,225,.16);--ease:cubic-bezier(.22,1,.36,1)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  #gl,#dust{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #gl{cursor:none}
+  #dust{pointer-events:none;mix-blend-mode:screen}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:24px clamp(16px,4vw,48px);font-size:13px;color:var(--muted)}
+  .logo{color:var(--text);font-weight:500;letter-spacing:.3em}
+  .nav ul{display:flex;gap:30px;list-style:none}
+  .nav a:hover{color:var(--text)}
+
+  .copy{position:fixed;left:clamp(16px,4vw,48px);bottom:clamp(24px,6vh,56px);z-index:5;max-width:300px;opacity:0;animation:fade 2s 1.5s forwards}
+  .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .copy h2{font-weight:300;font-size:clamp(22px,2vw,28px);letter-spacing:-.02em;line-height:1.25;margin:10px 0 8px}
+  .copy p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+  .cta{height:46px;padding:0 22px;border-radius:99px;border:1px solid var(--text);font-size:13px;transition:all .4s var(--ease)}
+  .cta:hover{background:var(--text);color:#000}
+
+  .lights{position:fixed;right:clamp(16px,4vw,48px);bottom:clamp(24px,6vh,56px);z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:12px;opacity:0;animation:fade 2s 1.8s forwards}
+  .lights .eyebrow{margin-bottom:2px}
+  .temps{display:flex;gap:6px}
+  .temp{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:99px;border:1px solid var(--line);font-size:12px;color:var(--muted);transition:all .3s}
+  .temp i{width:8px;height:8px;border-radius:50%}
+  .temp[aria-pressed="true"]{color:var(--text);border-color:var(--text)}
+  .pin{font-size:12px;color:var(--muted)}
+  @keyframes fade{to{opacity:1}}
+
+  .sheet{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .5s}
+  .sheet.open{opacity:1;pointer-events:auto}
+  .card{width:min(420px,calc(100vw - 32px));padding:28px;border:1px solid var(--line);border-radius:20px;background:#0a0908}
+  .card h3{font-weight:400;font-size:22px;letter-spacing:-.02em;margin:8px 0 18px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
+  .grid button{padding:12px 0;border:1px solid var(--line);border-radius:10px;font-size:12px;line-height:1.4;transition:all .25s}
+  .grid button b{display:block;font-size:16px;font-weight:400}
+  .grid button[aria-pressed="true"]{background:var(--text);color:#000;border-color:var(--text)}
+  .slots{grid-template-columns:repeat(3,1fr)}
+  .card .cta{width:100%;margin-top:6px}
+  .card .cta.ok{background:var(--text);color:#000}
+
+  @media (max-width:760px){
+    .nav ul{display:none}
+    .copy p{display:none}
+    .copy{bottom:120px}
+    .lights{left:16px;right:16px;align-items:flex-start}
+    .lights .eyebrow,.pin{display:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="dust"></canvas>
+
+<nav class="nav">
+  <a class="logo" href="#">PENUMBRA</a>
+  <ul><li><a href="#">Exhibition</a></li><li><a href="#">Collection</a></li><li><a href="#">Visit</a></li></ul>
+  <a href="#">Members</a>
+</nav>
+
+<div class="copy">
+  <div class="eyebrow">12 Nov — 3 Mar · Hall IV</div>
+  <h2>Marble only exists<br>where the light falls.</h2>
+  <p>Forty sculptures shown in total darkness. Each visitor carries a single lamp. You are holding it now.</p>
+  <button class="cta" id="book">Book a timed visit</button>
+</div>
+
+<div class="lights">
+  <div class="eyebrow">Your lamp</div>
+  <div class="temps" id="temps">
+    <button class="temp" aria-pressed="true" data-c="1,.6,.28" data-f="1"><i style="background:#ffa04a"></i>Candle</button>
+    <button class="temp" aria-pressed="false" data-c="1,.88,.74" data-f="0"><i style="background:#ffe2c2"></i>Gallery</button>
+    <button class="temp" aria-pressed="false" data-c=".55,.72,1" data-f="0"><i style="background:#8cb6ff"></i>Moon</button>
+  </div>
+  <div class="pin" id="pinHint">Click to set the lamp down</div>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="card">
+    <div class="eyebrow">Timed entry · €18</div>
+    <h3>Choose your darkness</h3>
+    <div class="grid" id="days"></div>
+    <div class="grid slots" id="slots">
+      <button aria-pressed="false">17:00</button><button aria-pressed="true">19:30</button><button aria-pressed="false">22:00</button>
+    </div>
+    <button class="cta" id="confirm">Confirm visit</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById('gl');
+  const gl = cv.getContext('webgl', {antialias:false});
+  let dpr = Math.min(2, devicePixelRatio);
+  let W, H;
+
+  const vs = `attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}`;
+  const fs = `
+  precision highp float;
+  varying vec2 v;
+  uniform sampler2D albedo, depth, title;
+  uniform vec2 res, light;      // light in image uv (y down)
+  uniform vec3 lcol;
+  uniform float imgAspect, t, power, intro;
+  const float DS = .32;         // depth scale relative to image height
+  float D(vec2 p){ return texture2D(depth,p).r; }
+  vec2 cover(vec2 uv){
+    float sa=res.x/res.y; vec2 s=sa>imgAspect?vec2(1.,imgAspect/sa):vec2(sa/imgAspect,1.);
+    return (uv-.5)*s+.5;
+  }
+  void main(){
+    vec2 uv = cover(v); uv.y = 1.-uv.y;
+    float A = imgAspect;
+    vec3 alb = texture2D(albedo,uv).rgb;
+    float d = D(uv);
+    float mask = smoothstep(.02,.07,d) * smoothstep(.015,.06,dot(alb,vec3(.333)));
+
+    // normal from the depth field: two-scale Sobel, smooths out map noise
+    vec2 g = vec2(0.);
+    for (int k=0;k<2;k++){
+      vec2 e = (k==0 ? 3. : 7.) * vec2(1./1536., 1./1024.);
+      float tl=D(uv+vec2(-e.x,-e.y)), tc=D(uv+vec2(0.,-e.y)), tr=D(uv+vec2(e.x,-e.y));
+      float ml=D(uv+vec2(-e.x,0.)),                          mr=D(uv+vec2(e.x,0.));
+      float bl=D(uv+vec2(-e.x, e.y)), bc=D(uv+vec2(0., e.y)), br=D(uv+vec2(e.x, e.y));
+      vec2 sob = vec2((tr+2.*mr+br)-(tl+2.*ml+bl), (bl+2.*bc+br)-(tl+2.*tc+tr)) / 8.;
+      g += sob / vec2(2.*e.x*A, 2.*e.y) * .5;
+    }
+    vec3 n = normalize(vec3(-g*DS, 1.));
+
+    vec3 P = vec3(uv.x*A, uv.y, d*DS);
+    vec3 Lp = vec3(light.x*A, light.y, .3);
+    vec3 Lv = Lp - P; float dist = length(Lv); vec3 L = Lv/dist;
+    float att = power * 1.6 / (1. + dist*dist*26.);
+
+    // soft ray-marched shadow across the depth field
+    float sh = 1.;
+    for (int i=1;i<28;i++){
+      vec3 q = P + L * (float(i)*.012);
+      if (q.z > DS) break;
+      float hq = D(vec2(q.x/A, q.y))*DS;
+      sh = min(sh, clamp(1. - (hq - q.z - .002)*90., 0., 1.));
+    }
+    sh = .12 + .88*sh;
+
+    float wrap = max(0., (dot(n,L)+.3)/1.3);
+    vec3 H = normalize(L + vec3(0.,0.,1.));
+    float spec = pow(max(dot(n,H),0.), 26.) * .3;
+    float sss = pow(max(0., dot(-n.xy, normalize(Lv.xy+1e-4))), 2.) * .08;   // translucency at rims
+
+    vec3 col = alb * lcol * (wrap*att*sh + sss*att) + lcol*spec*att*sh;
+    col += alb * .012;                                // the faintest ambient
+    col *= mask;
+
+    // title on the wall behind, only visible in the lamp's reach
+    float ta = texture2D(title, uv).a * (1.-mask);
+    vec3 Pt = vec3(uv.x*A, uv.y, -.05);
+    float dt = length(Lp - Pt);
+    float tl = power * 1.4 / (1. + dt*dt*22.) * ((Lp.z-Pt.z)/dt);
+    col += ta * lcol * (tl*.55 + .012) * intro;
+
+    // air: lamp glow and haze
+    vec2 sl = vec2((uv.x-light.x)*A, uv.y-light.y);
+    float r = length(sl);
+    col += lcol * (exp(-r*55.)*.9 + exp(-r*7.)*.05) * power;
+
+    col = 1. - exp(-col*1.6);                         // tone map
+    col = pow(col, vec3(.95));
+    gl_FragColor = vec4(col,1.);
+  }`;
+  function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));return s;}
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pr);gl.useProgram(pr);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const aL=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(aL);gl.vertexAttribPointer(aL,2,gl.FLOAT,false,0,0);
+  const U=n=>gl.getUniformLocation(pr,n);
+  const u={albedo:U('albedo'),depth:U('depth'),title:U('title'),res:U('res'),light:U('light'),lcol:U('lcol'),imgAspect:U('imgAspect'),t:U('t'),power:U('power'),intro:U('intro')};
+
+  function mkTex(unit){
+    const tx=gl.createTexture(); gl.activeTexture(gl.TEXTURE0+unit); gl.bindTexture(gl.TEXTURE_2D,tx);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([0,0,0,0]));
+    return tx;
+  }
+  function loadTex(unit, src){
+    const tx=mkTex(unit), im=new Image();
+    im.onload=()=>{gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tx);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);};
+    im.src=src;
+  }
+  loadTex(0,'images/penumbra/albedo.webp'); loadTex(1,'images/penumbra/depth.webp');
+  const titleTex = mkTex(2);
+  gl.uniform1i(u.albedo,0); gl.uniform1i(u.depth,1); gl.uniform1i(u.title,2);
+
+  function drawTitle(){
+    const c=document.createElement('canvas'); c.width=2048; c.height=1365; const x=c.getContext('2d');
+    x.fillStyle='#fff'; x.textAlign='center'; x.textBaseline='middle';
+    const size = 300; x.font=`200 ${size}px Inter, sans-serif`;
+    if ('letterSpacing' in x) x.letterSpacing = `${size*.06}px`;
+    x.fillText('PENUMBRA', 1024, 640);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D,titleTex);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,c);
+  }
+  drawTitle(); document.fonts.load('200 100px Inter').finally(drawTitle);
+
+  /* dust motes caught in the lamp */
+  const dc = document.getElementById('dust'), dx = dc.getContext('2d');
+  const motes = Array.from({length:140}, () => ({x:Math.random(), y:Math.random(), vx:(Math.random()-.5)*.0003, vy:(Math.random()-.5)*.0002-.00008, r:Math.random()*1.3+.3}));
+
+  function resize(){ dpr=Math.min(2,devicePixelRatio); W=cv.width=dc.width=Math.round(innerWidth*dpr); H=cv.height=dc.height=Math.round(innerHeight*dpr); gl.viewport(0,0,W,H); }
+  resize(); addEventListener('resize', resize);
+
+  // screen <-> image uv
+  function toImg(sx, sy){
+    const sa=W/H, A=1.5; const s = sa>A ? [1, A/sa] : [sa/A, 1];
+    const vx = sx/innerWidth, vy = 1 - sy/innerHeight;
+    return [ (vx-.5)*s[0]+.5, 1-((vy-.5)*s[1]+.5) ];
+  }
+  function toScreen(ix, iy){
+    const sa=W/H, A=1.5; const s = sa>A ? [1, A/sa] : [sa/A, 1];
+    const vx = (ix-.5)/s[0]+.5, vy = ((1-iy)-.5)/s[1]+.5;
+    return [vx*W, (1-vy)*H];
+  }
+
+  let target=[.6,.38], lp=[.6,.38], last=0, pinned=false;
+  cv.addEventListener('pointermove', e => { if (!pinned){ target = toImg(e.clientX, e.clientY); last = performance.now(); } });
+  cv.addEventListener('pointerdown', e => {
+    pinned = !pinned;
+    if (!pinned) target = toImg(e.clientX, e.clientY);
+    document.getElementById('pinHint').textContent = pinned ? 'Lamp set down — click to pick it up' : 'Click to set the lamp down';
+    last = performance.now();
+  });
+
+  let lcol=[1,.6,.28], tcol=[1,.6,.28], flicker=1;
+  document.getElementById('temps').addEventListener('click', e => {
+    const b=e.target.closest('.temp'); if(!b) return;
+    document.querySelectorAll('.temp').forEach(o=>o.setAttribute('aria-pressed',o===b));
+    tcol=b.dataset.c.split(',').map(Number); flicker=+b.dataset.f;
+  });
+
+  const start=performance.now();
+  function frame(now){
+    if (cv.width !== Math.round(innerWidth*Math.min(2,devicePixelRatio))) resize();
+    const t=(now-start)/1000;
+    if (!pinned && now-last > 3000){ target=[.6+Math.cos(t*.4)*.16, .4+Math.sin(t*.55)*.18]; }
+    lp[0]+=(target[0]-lp[0])*.08; lp[1]+=(target[1]-lp[1])*.08;
+    for (let i=0;i<3;i++) lcol[i]+=(tcol[i]-lcol[i])*.06;
+    const intro = Math.min(1, t/2.5);
+    let power = (1.05 + (flicker ? (Math.sin(t*13)*.04 + Math.sin(t*7.3)*.05 + (Math.random()-.5)*.06) : 0)) * (1-Math.pow(1-intro,3));
+    gl.uniform2f(u.res,W,H); gl.uniform2f(u.light,lp[0],lp[1]); gl.uniform3f(u.lcol,lcol[0],lcol[1],lcol[2]);
+    gl.uniform1f(u.imgAspect,1.5); gl.uniform1f(u.t,t); gl.uniform1f(u.power,power); gl.uniform1f(u.intro,intro);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+
+    // motes
+    dx.clearRect(0,0,W,H);
+    const [lx,ly] = toScreen(lp[0],lp[1]);
+    for (const m of motes){
+      m.x+=m.vx+Math.sin(t+m.r*9)*.00008; m.y+=m.vy; if(m.y<0) m.y=1; if(m.x<0) m.x=1; if(m.x>1) m.x=0;
+      const px=m.x*W, py=m.y*H, dd=Math.hypot(px-lx,py-ly)/(H*.35);
+      const a = Math.max(0, 1-dd) * .9 * power;
+      if (a<.02) continue;
+      dx.fillStyle=`rgba(${255*lcol[0]|0},${255*lcol[1]|0},${255*lcol[2]|0},${a})`;
+      dx.beginPath(); dx.arc(px,py,m.r*dpr,0,6.283); dx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* booking */
+  const days=document.getElementById('days'), d0=new Date();
+  days.innerHTML = Array.from({length:4},(_,i)=>{ const d=new Date(d0); d.setDate(d0.getDate()+i+1);
+    return `<button aria-pressed="${i===0}">${d.toLocaleDateString(undefined,{weekday:'short'})}<b>${d.getDate()}</b></button>`; }).join('');
+  const pick = g => g.addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; g.querySelectorAll('button').forEach(o=>o.setAttribute('aria-pressed',o===b)); });
+  pick(days); pick(document.getElementById('slots'));
+  const sheet=document.getElementById('sheet'), confirm=document.getElementById('confirm');
+  document.getElementById('book').addEventListener('click', () => { confirm.textContent='Confirm visit'; confirm.classList.remove('ok'); sheet.classList.add('open'); });
+  sheet.addEventListener('click', e => { if (e.target===sheet) sheet.classList.remove('open'); });
+  confirm.addEventListener('click', () => {
+    const d=days.querySelector('[aria-pressed="true"]').textContent.replace(/(\D+)(\d+)/,'$1 $2'), s=document.querySelector('#slots [aria-pressed="true"]').textContent;
+    confirm.textContent = `See you ${d} at ${s}. Bring nothing.`; confirm.classList.add('ok');
+    setTimeout(()=>sheet.classList.remove('open'), 2400);
+  });
+  addEventListener('keydown', e => e.key==='Escape' && sheet.classList.remove('open'));
+})();
+</script>
+</body>
+</html>
