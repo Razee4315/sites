@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northbound — Plan the company offsite in an afternoon</title>
+<meta name="description" content="Northbound finds the venue, books flights and rooms, and builds the agenda for team retreats of 10 to 200 people, on one invoice.">
+<link rel="icon" href="logo/favicon.svg" type="image/svg+xml">
+<style>
+  @font-face{font-family:"General Sans";src:url(fonts/GeneralSans-400.woff2) format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"General Sans";src:url(fonts/GeneralSans-500.woff2) format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"General Sans";src:url(fonts/GeneralSans-600.woff2) format("woff2");font-weight:600;font-display:swap}
+  /* ── tokens: linen, pine, sage, marigold ──────────────────── */
+  :root{
+    --ln:#F6F2EA; --pn:#1F2A24; --sg:#7A8077; --mg:#F2B33D;
+    --soft:rgba(31,42,36,.7); --line:rgba(31,42,36,.12); --tint:rgba(31,42,36,.05); --l-soft:rgba(246,242,234,.78); --l-line:rgba(246,242,234,.2);
+    --r:22px; --edge:clamp(16px,4vw,60px); --max:1400px;
+    --ease:cubic-bezier(.16,1,.3,1); --wipe:cubic-bezier(.77,0,.175,1);
+    --sans:"General Sans",ui-sans-serif,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--ln);-webkit-text-size-adjust:100%}
+  html.lenis,html.lenis body{height:auto}
+  .lenis.lenis-smooth{scroll-behavior:auto!important}
+  .lenis.lenis-stopped{overflow:hidden}
+  body{background:var(--ln);color:var(--pn);font-family:var(--sans);font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;font-variant-numeric:tabular-nums}
+  a{color:inherit;text-decoration:none}
+  img{display:block}
+  button,input,select{font:inherit;color:inherit;background:none;border:0}
+  button{cursor:pointer;text-transform:inherit;letter-spacing:inherit}
+  :focus-visible{outline:2px solid var(--pn);outline-offset:3px;border-radius:8px}
+  ::selection{background:var(--mg);color:var(--pn)}
+  .wrap{max-width:var(--max);margin:0 auto;padding-left:var(--edge);padding-right:var(--edge)}
+  .kicker{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--sg)}
+  .grain{position:fixed;inset:0;z-index:95;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  h1 > div,h2 > div{padding-bottom:.14em;margin-bottom:-.14em} /* SplitText masks keep descenders */
+
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:56px;padding:0 26px;border-radius:999px;font-size:16px;font-weight:600;white-space:nowrap;transition:background .45s var(--ease),color .45s var(--ease),box-shadow .45s var(--ease)}
+  .btn:active{transform:translateY(1px)}
+  .btn-pn{background:var(--pn);color:var(--ln)}
+  .btn-pn:hover{background:var(--mg);color:var(--pn)}
+  .btn-mg{background:var(--mg);color:var(--pn)}
+  .btn-mg:hover{background:var(--ln)}
+  .btn-ol{box-shadow:inset 0 0 0 1.5px var(--line)}
+  .btn-ol:hover{box-shadow:inset 0 0 0 1.5px var(--pn)}
+  .btn .lbl{position:relative;display:grid;overflow:hidden;height:1.3em;line-height:1.3em}
+  .btn .lbl span{grid-area:1/1;transition:transform .6s var(--ease)}
+  .btn .lbl span+span{transform:translateY(105%)}
+  .btn:hover .lbl span:first-child{transform:translateY(-105%)}
+  .btn:hover .lbl span+span{transform:none}
+  .btn .ar{display:inline-block;transition:transform .6s var(--ease)}
+  .btn:hover .ar{transform:translateX(4px)}
+
+  /* header */
+  .top{position:fixed;inset:0 0 auto;z-index:60;transition:background .5s var(--ease),box-shadow .5s var(--ease),color .5s var(--ease)}
+  .top.solid{background:rgba(246,242,234,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line)}
+  .top.onphoto{color:var(--ln)}
+  .top .wrap{height:76px;display:flex;align-items:center;gap:44px}
+  .brand svg{height:24px;width:auto;display:block}
+  .nav{display:flex;gap:30px;font-size:16px;font-weight:500}
+  .nav a{position:relative;opacity:.8;transition:opacity .3s}
+  .nav a:hover{opacity:1}
+  .nav a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .55s var(--ease)}
+  .nav a:hover::after{transform:scaleX(1);transform-origin:left}
+  .top-r{margin-left:auto;display:flex;gap:10px;align-items:center}
+  .top .btn{height:46px;font-size:15px;padding:0 20px}
+  .top.onphoto .btn-pn{background:var(--ln);color:var(--pn)}
+  .top.solid.onphoto{color:var(--pn)}
+  .top.solid.onphoto .btn-pn{background:var(--pn);color:var(--ln)}
+  .menu-btn{display:none;height:46px;padding:0 18px;border-radius:999px;box-shadow:inset 0 0 0 1.5px currentColor;font-weight:600;font-size:15px}
+  .sheet{position:fixed;inset:76px 10px auto;z-index:59;background:var(--pn);color:var(--ln);border-radius:var(--r);padding:12px 22px 22px;display:none;flex-direction:column}
+  .sheet.open{display:flex}
+  .sheet a{font-size:30px;font-weight:600;letter-spacing:-.03em;padding:12px 0;border-bottom:1px solid var(--l-line)}
+  .sheet .btn{font-size:16px;margin-top:18px;border:0;letter-spacing:0}
+
+  /* ── hero + signature: the trip assembles ─────────────── */
+  .trip{position:relative;height:360vh}
+  .tstage{position:sticky;top:0;height:100vh;height:100dvh;overflow:hidden}
+  .photo{position:absolute;inset:0;z-index:1;will-change:clip-path}
+  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 60%;transform-origin:62% 55%}
+  .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(18,26,22,.7) 0%,rgba(18,26,22,.18) 42%,rgba(18,26,22,0) 62%);opacity:var(--dark,0)}
+  .chip{position:absolute;z-index:3;display:flex;align-items:center;gap:12px;padding:10px 16px 10px 10px;border-radius:999px;background:rgba(246,242,234,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:14.5px;font-weight:500;white-space:nowrap}
+  .chip i{width:34px;height:34px;border-radius:50%;background:var(--mg);display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:600}
+  .chip small{display:block;font-size:12.5px;color:var(--soft);font-weight:400}
+  .hcopy{position:absolute;z-index:2;inset:0;display:flex;align-items:center;pointer-events:none}
+  .hcopy .wrap{width:100%}
+  .hcopy .in{max-width:min(46vw,640px);pointer-events:auto;padding-top:40px}
+  h1{font-weight:600;font-size:clamp(52px,6.6vw,118px);line-height:.94;letter-spacing:-.045em}
+  .hcopy p{font-size:clamp(17px,1.35vw,20px);color:var(--soft);max-width:40ch;margin-top:26px}
+  .ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+  .finder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:4px;margin-top:30px;padding:6px;border-radius:999px;background:#fff8;box-shadow:0 0 0 1px var(--line);max-width:620px}
+  .finder label{display:flex;flex-direction:column;padding:6px 16px;border-radius:999px;transition:background .3s;min-width:0}
+  .finder label:hover{background:var(--tint)}
+  .finder span{font-size:11.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--sg)}
+  .finder input,.finder select{font-size:16px;font-weight:500;outline:none;width:100%;appearance:none;-webkit-appearance:none}
+  .finder button{height:56px;padding:0 22px;border-radius:999px;background:var(--pn);color:var(--ln);font-weight:600;font-size:15px;transition:background .3s,color .3s}
+  .finder button:hover{background:var(--mg);color:var(--pn)}
+  .ferr{font-size:13.5px;font-weight:500;color:#9a3b12;min-height:20px;margin-top:8px;padding-left:16px}
+  .over{position:absolute;z-index:4;left:0;right:0;bottom:clamp(36px,7vh,72px);color:var(--ln);pointer-events:none}
+  .over .wrap{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:end}
+  .over h2{grid-column:1/8;font-weight:600;font-size:clamp(46px,6.4vw,112px);line-height:.94;letter-spacing:-.045em}
+  .over h2 span{display:block}
+  .sum{grid-column:9/13;justify-self:end;width:min(100%,380px);border-radius:var(--r);background:rgba(246,242,234,.94);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);color:var(--pn);padding:20px 20px 18px;pointer-events:auto}
+  .sum .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .sum .h b{font-weight:600;font-size:17px}
+  .sum .h span{font-size:12.5px;color:var(--sg)}
+  .row{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:15.5px}
+  .row i{width:28px;height:28px;border-radius:50%;background:var(--tint);display:grid;place-items:center;font-style:normal;font-size:12px;transition:background .5s var(--ease)}
+  .row.on i{background:var(--mg)}
+  .row b{font-weight:600}
+  .row small{display:block;font-size:12.5px;color:var(--sg)}
+  .tot{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 12px}
+  .tot b{font-size:34px;font-weight:600;letter-spacing:-.035em}
+  .tot small{font-size:13px;color:var(--sg);text-align:right}
+  .sum .btn{width:100%;height:50px}
+
+  /* ── sections ───────────────────────────────────────── */
+  .sec{padding-top:clamp(110px,13vw,190px);padding-bottom:clamp(110px,13vw,190px)}
+  .head{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:end;margin-bottom:clamp(40px,5vw,72px)}
+  .head .kicker{grid-column:1/4;padding-bottom:14px}
+  .head-r{grid-column:4/13}
+  h2.big{grid-column:4/13;font-weight:600;font-size:clamp(44px,5.8vw,104px);line-height:.95;letter-spacing:-.045em;max-width:15ch}
+  h2.big em{font-style:normal;color:var(--sg)}
+  .head p{grid-column:4/10;color:var(--soft);max-width:52ch}
+
+  /* steps strip */
+  .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  .step{border-radius:var(--r);background:var(--tint);padding:26px 24px 28px;display:flex;flex-direction:column;gap:12px;min-height:250px;transition:background .5s var(--ease),color .5s var(--ease)}
+  .step:hover{background:var(--pn);color:var(--ln)}
+  .step:hover p{color:var(--l-soft)}
+  .step .n{width:40px;height:40px;border-radius:50%;background:var(--mg);display:grid;place-items:center;font-weight:600;font-size:15px;color:var(--pn)}
+  .step h3{font-size:24px;font-weight:600;letter-spacing:-.025em;line-height:1.1;margin-top:auto}
+  .step p{color:var(--soft);font-size:16px;transition:color .5s}
+
+  /* venues */
+  .filters{display:flex;gap:8px;flex-wrap:wrap}
+  .filters button{height:42px;padding:0 18px;border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--line);font-size:15px;font-weight:500;transition:background .3s,color .3s,box-shadow .3s}
+  .filters button:hover{box-shadow:inset 0 0 0 1.5px var(--pn)}
+  .filters button[aria-pressed="true"]{background:var(--pn);color:var(--ln);box-shadow:none}
+  .vgal{position:relative;overflow:hidden;cursor:grab;user-select:none;touch-action:pan-y;margin-top:30px}
+  .vgal.drag{cursor:grabbing}
+  .vtrack{display:flex;gap:18px;padding:0 var(--edge);width:max-content}
+  .venue{flex:none;width:clamp(290px,31vw,470px);display:flex;flex-direction:column;gap:14px;transition:opacity .5s var(--ease)}
+  .venue.hide{display:none}
+  .venue .pic{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5}
+  .venue .pic img{width:100%;height:100%;object-fit:cover;pointer-events:none;transition:transform 1.4s var(--ease)}
+  .venue:hover .pic img{transform:scale(1.05)}
+  .venue .pic span{position:absolute;left:14px;top:14px;padding:6px 12px;border-radius:999px;background:rgba(246,242,234,.92);font-size:13px;font-weight:600}
+  .venue .meta{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+  .venue h3{font-size:22px;font-weight:600;letter-spacing:-.02em}
+  .venue .meta p{color:var(--sg);font-size:15px}
+  .venue .pp{text-align:right;font-weight:600;white-space:nowrap}
+  .venue .pp small{display:block;font-weight:400;color:var(--sg);font-size:13px}
+  .vnote{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:26px;color:var(--sg);font-size:15px}
+
+  /* itinerary */
+  .itin{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:stretch}
+  .ipic{grid-column:1/7;position:relative;border-radius:var(--r);overflow:hidden;min-height:clamp(380px,44vw,660px)}
+  .ipic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .ipic .cover{position:absolute;inset:0;background:var(--ln);transform:scaleY(0);transform-origin:bottom;z-index:2}
+  .ipic .badge{position:absolute;z-index:3;left:16px;bottom:16px;padding:10px 16px;border-radius:999px;background:rgba(246,242,234,.94);font-weight:600;font-size:15px}
+  .iside{grid-column:7/13;display:flex;flex-direction:column}
+  .days{display:flex;gap:6px;padding:6px;border-radius:999px;background:var(--tint);width:fit-content}
+  .days button{height:44px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;color:var(--soft);transition:background .35s,color .35s}
+  .days button[aria-selected="true"]{background:var(--pn);color:var(--ln)}
+  .slots{margin-top:22px;border-top:1px solid var(--line)}
+  .slot{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line);transition:background .3s,padding .5s var(--ease);border-radius:12px}
+  .slot:hover{background:var(--tint);padding-left:12px}
+  .slot time{font-weight:600}
+  .slot b{font-weight:600;display:block}
+  .slot small{color:var(--sg);font-size:14.5px}
+  .slot span.tag{font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--tint)}
+  .slot span.tag.mg{background:var(--mg)}
+
+  /* cost calculator */
+  .cost{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}
+  .cbox{grid-column:1/8;border-radius:var(--r);background:var(--pn);color:var(--ln);padding:clamp(24px,3vw,40px)}
+  .cbox .h{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+  .cbox .h b{font-size:clamp(46px,5vw,80px);font-weight:600;letter-spacing:-.045em;line-height:1}
+  .cbox .h span{color:var(--l-soft)}
+  .stack{display:flex;height:18px;border-radius:999px;overflow:hidden;margin:26px 0 22px;gap:3px}
+  .stack i{height:100%;transition:flex-grow .9s var(--ease)}
+  .legend{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+  .legend div{font-size:14px;color:var(--l-soft)}
+  .legend div b{display:block;color:var(--ln);font-size:17px;font-weight:600}
+  .legend div i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+  .rng{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+  .rng .lr{display:flex;justify-content:space-between;align-items:baseline}
+  .rng output{font-size:22px;font-weight:600}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
+  input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:var(--l-line)}
+  input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:var(--l-line)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--mg);box-shadow:0 0 0 6px rgba(242,179,61,.25)}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:var(--mg)}
+  .incl{grid-column:8/13;display:flex;flex-direction:column;gap:12px}
+  .incl li{list-style:none;display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:16px;background:var(--tint);font-size:16px}
+  .incl li b{display:block;font-weight:600}
+  .incl li span{color:var(--soft);font-size:15px}
+  .incl li::before{content:"";flex:none;width:22px;height:22px;border-radius:50%;margin-top:2px;background:var(--mg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M6.5 11.3 9.6 14.3 15.6 8' fill='none' stroke='%231F2A24' stroke-width='2'/%3E%3C/svg%3E") center/22px}
+
+  /* photo band (promise) */
+  .band{position:relative;height:clamp(520px,80vh,860px);overflow:hidden;color:var(--ln);display:flex;align-items:flex-end}
+  .band img{position:absolute;inset:-12% 0;width:100%;height:124%;object-fit:cover}
+  .band::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(18,26,22,.72),rgba(18,26,22,0) 60%)}
+  .band .wrap{position:relative;z-index:2;width:100%;padding-bottom:clamp(40px,6vw,80px);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:end}
+  .band h2{grid-column:1/9;font-weight:600;font-size:clamp(40px,5.4vw,96px);line-height:.95;letter-spacing:-.045em}
+  .band p{grid-column:9/13;color:var(--l-soft);font-size:17px}
+  .band p b{color:var(--ln);font-weight:600}
+
+  /* pricing */
+  .bill{display:inline-flex;padding:5px;border-radius:999px;background:var(--tint);position:relative}
+  .bill button{position:relative;z-index:1;height:44px;padding:0 20px;border-radius:999px;font-size:15px;font-weight:600;color:var(--soft);transition:color .4s var(--ease)}
+  .bill button[aria-pressed="true"]{color:var(--ln)}
+  .bill .pill{position:absolute;top:5px;bottom:5px;left:0;border-radius:999px;background:var(--pn);transition:transform .6s var(--ease),width .6s var(--ease)}
+  .bill small{font-size:11.5px;font-weight:600;margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--mg);color:var(--pn)}
+  .tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:36px}
+  .tier{border-radius:var(--r);background:var(--tint);padding:30px 28px;display:flex;flex-direction:column;gap:16px}
+  .tier.pick{background:var(--pn);color:var(--ln)}
+  .tier h3{font-size:26px;font-weight:600;letter-spacing:-.025em;display:flex;justify-content:space-between;align-items:center}
+  .tier h3 span{font-size:12px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:999px;background:var(--mg);color:var(--pn)}
+  .amt{display:flex;align-items:flex-end;gap:10px;min-height:76px}
+  .amt b{font-size:clamp(52px,4.8vw,72px);font-weight:600;letter-spacing:-.05em;line-height:1;height:1em;display:inline-flex;position:relative;overflow:hidden}
+  .amt small{font-size:14px;line-height:1.35;color:var(--sg);padding-bottom:.45em}
+  .tier.pick .amt small,.tier.pick p{color:var(--l-soft)}
+  .tier p{color:var(--soft);font-size:16px;min-height:3em}
+  .tier ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .tier li{display:flex;gap:10px;font-size:16px}
+  .tier li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--mg);margin-top:.6em}
+  .tier .btn{margin-top:auto;width:100%}
+  .tier.pick .btn-mg:hover{background:var(--ln)}
+  .fine{margin-top:18px;font-size:15px;color:var(--sg)}
+
+  /* final CTA */
+  .final{position:relative;border-radius:var(--r);overflow:hidden;color:var(--ln);margin:0 var(--edge);min-height:min(92vh,880px);display:flex;align-items:center}
+  .final>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .final::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(18,26,22,.82) 0%,rgba(18,26,22,.5) 50%,rgba(18,26,22,.1) 100%)}
+  .final .in{position:relative;z-index:2;padding:clamp(28px,5vw,80px);max-width:760px}
+  .final h2{font-weight:600;font-size:clamp(44px,5.8vw,104px);line-height:.95;letter-spacing:-.045em}
+  .final p.l{color:var(--l-soft);margin-top:20px;max-width:44ch}
+  .join{margin-top:34px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:10px}
+  .fld{display:flex;flex-direction:column;gap:6px}
+  .fld label,.fld .lb{font-size:12.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--l-soft)}
+  .fld input,.fld select{height:56px;padding:0 18px;border-radius:16px;background:rgba(246,242,234,.12);box-shadow:inset 0 0 0 1.5px var(--l-line);font-size:16px;outline:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:box-shadow .3s}
+  .fld select{appearance:none;-webkit-appearance:none}
+  .fld select option{color:var(--pn)}
+  .fld input:focus,.fld select:focus{box-shadow:inset 0 0 0 1.5px var(--ln)}
+  .fld.bad input{box-shadow:inset 0 0 0 2px var(--mg)}
+  .fld input::placeholder{color:rgba(246,242,234,.5)}
+  .stepper{display:grid;grid-template-columns:48px 1fr 48px;height:56px;border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--l-line);background:rgba(246,242,234,.12);align-items:center;text-align:center;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .stepper button{height:100%;font-size:22px;border-radius:16px;transition:background .3s}
+  .stepper button:hover{background:rgba(246,242,234,.12)}
+  .stepper output{font-weight:600;font-size:17px}
+  .join .btn{grid-column:1/-1;margin-top:6px}
+  .err{grid-column:1/-1;min-height:20px;font-size:14.5px;font-weight:600;color:var(--mg)}
+  .done{display:none;margin-top:34px;border-radius:var(--r);background:var(--ln);color:var(--pn);padding:26px 26px 28px;max-width:560px}
+  .done.show{display:block}
+  .done .kicker{color:var(--sg)}
+  .done h3{font-size:34px;font-weight:600;letter-spacing:-.035em;line-height:1.05;margin:8px 0 10px}
+  .done p{color:var(--soft)}
+
+  /* curtain footer */
+  main{position:relative;z-index:2;background:var(--ln);padding-bottom:clamp(40px,6vw,80px)}
+  footer{position:sticky;bottom:0;z-index:1;background:var(--pn);color:var(--ln);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:space-between;padding-top:clamp(56px,7vw,100px);overflow:hidden}
+  .board{border-radius:var(--r);background:rgba(246,242,234,.05);box-shadow:inset 0 0 0 1px var(--l-line);padding:8px 22px}
+  .board .bh{display:grid;grid-template-columns:1.4fr 1fr 1fr 110px;gap:16px;padding:12px 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--l-soft);border-bottom:1px solid var(--l-line)}
+  .brow{display:grid;grid-template-columns:1.4fr 1fr 1fr 110px;gap:16px;padding:14px 0;border-bottom:1px solid var(--l-line);font-size:17px;align-items:center}
+  .brow:last-child{border-bottom:0}
+  .brow .st{justify-self:start;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--mg);color:var(--pn)}
+  .brow .st.b{background:rgba(246,242,234,.14);color:var(--ln)}
+  .flap{display:inline-block;font-variant-numeric:tabular-nums}
+  .fcols{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;margin-top:clamp(40px,5vw,70px)}
+  .fcols .b{grid-column:1/5;color:var(--l-soft);max-width:36ch}
+  .fcols .b b{display:block;color:var(--ln);font-size:clamp(26px,2.4vw,36px);font-weight:600;letter-spacing:-.03em;line-height:1.08;margin-bottom:12px}
+  .fcols .c{grid-column:span 2;display:flex;flex-direction:column;gap:8px;font-size:16px}
+  .fcols .c .kicker{color:var(--l-soft);margin-bottom:6px;font-size:12px}
+  .fcols .c a{width:fit-content;opacity:.85;transition:opacity .3s}
+  .fcols .c a:hover{opacity:1}
+  .bigword{display:block;width:100%;height:auto;color:var(--mg);margin-top:clamp(40px,5vw,70px);position:relative;z-index:0}
+  .fbot{position:relative;z-index:1}
+  .fbot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0 28px;color:var(--l-soft);font-size:14px}
+  .toast{position:fixed;left:50%;bottom:24px;z-index:90;transform:translate(-50%,20px);opacity:0;padding:12px 18px;border-radius:999px;background:var(--pn);color:var(--ln);font-size:15px;font-weight:500;transition:opacity .3s var(--ease),transform .6s var(--ease);pointer-events:none;max-width:calc(100vw - 32px)}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:1100px){
+    .nav{display:none}
+    .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .finder{grid-template-columns:repeat(3,minmax(0,1fr));border-radius:24px}
+    .finder button{grid-column:1/-1}
+  }
+  @media (max-width:900px){
+    .hcopy{align-items:flex-start}
+    .hcopy .in{max-width:none;padding-top:104px}
+    .finder{display:none}
+    .head .kicker,.head-r,h2.big,.head p{grid-column:1/-1}
+    .head .kicker{padding:0}
+    .over h2,.sum{grid-column:1/-1}
+    .sum{justify-self:stretch;width:auto}
+    .ipic,.iside{grid-column:1/-1}
+    .cbox,.incl{grid-column:1/-1}
+    .legend{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .band h2,.band p{grid-column:1/-1}
+    .tiers{grid-template-columns:1fr}
+    .join{grid-template-columns:1fr}
+    .fcols .b{grid-column:1/-1}
+    .fcols .c{grid-column:span 4}
+    .board .bh,.brow{grid-template-columns:1.3fr 1fr 96px}
+    .board .bh>:nth-child(3),.brow>:nth-child(3){display:none}
+  }
+  @media (max-width:640px){
+    .top .btn{display:none}
+    .menu-btn{display:block}
+    .ctas .btn{flex:1 1 100%}
+    .steps{grid-template-columns:1fr}
+    .step{min-height:0}
+    .over{bottom:16px}
+    .over h2{font-size:40px;margin-bottom:6px}
+    .sum{padding:14px 14px 12px}
+    .sum .row{padding:6px 0;font-size:14px}
+    .sum .row small{display:none}
+    .tot{padding:8px 0 8px}.tot b{font-size:26px}
+    .sum .btn{height:46px}
+    .legend{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .slot{grid-template-columns:62px minmax(0,1fr)}
+    .slot span.tag{display:none}
+    .fcols .c{grid-column:span 6}
+  }
+  /* reduced motion: finished state, copy over the photo */
+  .tstage.rm{color:var(--ln)}
+  .tstage.rm .photo::after{opacity:1;background:linear-gradient(90deg,rgba(18,26,22,.78) 0%,rgba(18,26,22,.5) 45%,rgba(18,26,22,.15) 80%)}
+  @media (max-width:900px){.tstage.rm .photo::after{background:rgba(18,26,22,.62)}}
+  .tstage.rm .hcopy .kicker,.tstage.rm .hcopy p{color:var(--l-soft)}
+  .tstage.rm .finder{background:rgba(246,242,234,.9);color:var(--pn)}
+  .tstage.rm .ferr{color:var(--mg)}
+  .tstage.rm #overH{display:none}
+  .tstage.rm .over{top:0;display:flex;align-items:center}
+  @media (max-width:900px){
+    .tstage.rm{height:auto;position:relative}
+    .tstage.rm .photo{position:absolute}
+    .tstage.rm .hcopy,.tstage.rm .over{position:relative;inset:auto}
+    .tstage.rm .over{padding:24px 0 32px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition-duration:.01ms!important;animation:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Northbound home"><svg viewBox="0 0 146.21 24" aria-hidden="true"><path d="M12 1.5 17.2 12H6.8z" fill="#F2B33D"/><path d="M6.8 12h10.4L12 22.5z" fill="currentColor"/><path fill="currentColor" d="M35.78 19.4 28.63 8.51V19.4H25.61V3.8H29.17L35.97 14.14V3.8H39.01V19.4ZM50.87 17.88Q49.18 19.62 46.66 19.62Q44.14 19.62 42.46 17.88Q40.77 16.14 40.77 13.6Q40.77 11.06 42.46 9.32Q44.14 7.58 46.66 7.58Q49.18 7.58 50.87 9.32Q52.55 11.06 52.55 13.6Q52.55 16.14 50.87 17.88ZM49.44 13.6Q49.44 12.06 48.64 11.17Q47.83 10.27 46.66 10.27Q45.49 10.27 44.68 11.17Q43.88 12.06 43.88 13.6Q43.88 15.16 44.68 16.05Q45.49 16.94 46.66 16.94Q47.83 16.94 48.64 16.05Q49.44 15.16 49.44 13.6ZM57.07 13.77V19.4H54.05V7.8H56.83V10.04Q57.46 8.95 58.7 8.31Q59.94 7.67 61.35 7.67V10.8Q59.26 10.64 58.17 11.3Q57.07 11.95 57.07 13.77ZM69.69 16.47V19.1Q68.65 19.62 67.37 19.62Q65.54 19.62 64.51 18.6Q63.48 17.57 63.48 15.64V10.38H61.13V7.8H63.48V4.36H66.48V7.8H69.8V10.38H66.48V14.95Q66.48 16.84 68.17 16.84Q69.02 16.84 69.69 16.47ZM74.23 13.08V19.4H71.21V3.8H74.23V9.32Q75.54 7.58 77.56 7.58Q79.34 7.58 80.41 8.71Q81.49 9.84 81.49 11.9V19.4H78.49V12.93Q78.49 10.25 76.45 10.25Q75.49 10.25 74.86 10.99Q74.23 11.73 74.23 13.08ZM95.24 13.6Q95.24 16.18 93.82 17.9Q92.4 19.62 90.09 19.62Q87.83 19.62 86.44 17.73V19.4H83.66V3.8H86.68V9.3Q87.96 7.58 90.09 7.58Q92.4 7.58 93.82 9.29Q95.24 10.99 95.24 13.6ZM92.14 13.6Q92.14 12.01 91.36 11.13Q90.59 10.25 89.42 10.25Q88.27 10.25 87.49 11.12Q86.7 11.99 86.7 13.56Q86.7 15.14 87.48 16.03Q88.25 16.92 89.42 16.92Q90.59 16.92 91.36 16.04Q92.14 15.16 92.14 13.6ZM106.07 17.88Q104.39 19.62 101.87 19.62Q99.35 19.62 97.67 17.88Q95.98 16.14 95.98 13.6Q95.98 11.06 97.67 9.32Q99.35 7.58 101.87 7.58Q104.39 7.58 106.07 9.32Q107.76 11.06 107.76 13.6Q107.76 16.14 106.07 17.88ZM104.65 13.6Q104.65 12.06 103.85 11.17Q103.04 10.27 101.87 10.27Q100.7 10.27 99.89 11.17Q99.09 12.06 99.09 13.6Q99.09 15.16 99.89 16.05Q100.7 16.94 101.87 16.94Q103.04 16.94 103.85 16.05Q104.65 15.16 104.65 13.6ZM116.32 14.51V7.8H119.32V19.4H116.56V17.88Q116.08 18.66 115.17 19.14Q114.25 19.62 113.17 19.62Q111.34 19.62 110.25 18.5Q109.15 17.38 109.15 15.18V7.8H112.17V14.6Q112.17 16.94 114.19 16.94Q115.06 16.94 115.69 16.29Q116.32 15.64 116.32 14.51ZM124.62 13.08V19.4H121.6V7.8H124.38V9.45Q125.75 7.58 127.94 7.58Q129.72 7.58 130.8 8.71Q131.87 9.84 131.87 11.9V19.4H128.88V12.93Q128.88 10.25 126.83 10.25Q125.88 10.25 125.25 10.99Q124.62 11.73 124.62 13.08ZM133.29 13.6Q133.29 10.99 134.71 9.29Q136.13 7.58 138.44 7.58Q140.52 7.58 141.87 9.3V3.8H144.87V19.4H142.11V17.73Q140.7 19.62 138.44 19.62Q136.13 19.62 134.71 17.9Q133.29 16.18 133.29 13.6ZM136.39 13.6Q136.39 15.16 137.17 16.04Q137.94 16.92 139.11 16.92Q140.28 16.92 141.07 16.03Q141.85 15.14 141.85 13.56Q141.85 11.97 141.07 11.11Q140.28 10.25 139.11 10.25Q137.94 10.25 137.17 11.13Q136.39 12.01 136.39 13.6Z"/></svg></a>
+    <nav class="nav" aria-label="Primary"><a href="#how">How it works</a><a href="#venues">Venues</a><a href="#itinerary">Itinerary</a><a href="#pricing">Pricing</a></nav>
+    <div class="top-r">
+      <a class="btn btn-pn" href="#start" data-magnetic><span class="lbl"><span>Get 3 venue options</span><span>Free, in 48 hours</span></span></a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="sheet">Menu</button>
+    </div>
+  </div>
+</header>
+<nav class="sheet" id="sheet" aria-label="Mobile"><a href="#how">How it works</a><a href="#venues">Venues</a><a href="#itinerary">Itinerary</a><a href="#pricing">Pricing</a><a class="btn btn-mg" href="#start">Get 3 venue options</a></nav>
+
+<main>
+  <!-- ── hero + signature: the trip assembles ── -->
+  <section class="trip" id="trip" aria-labelledby="h1">
+    <div class="tstage" id="tstage">
+      <div class="photo" id="photo"><img src="images/lodge.webp" alt="A timber lodge on a misty fjord with a long table set outside for twenty" width="1672" height="941" fetchpriority="high"></div>
+      <div class="chip" id="chip"><i>★</i><div>Fjordhus Lodge<small>Sogn, Norway · sleeps 48</small></div></div>
+      <div class="hcopy" id="hcopy">
+        <div class="wrap"><div class="in">
+          <span class="kicker">Team retreats for 10 to 200 people</span>
+          <h1 id="h1" aria-label="Plan the company offsite in an afternoon." style="margin-top:18px">Plan the company offsite in an afternoon.</h1>
+          <p>Northbound finds the venue, books every flight and room, and builds the agenda. You get one invoice at the end.</p>
+          <form class="finder" id="finder" novalidate>
+            <label><span>Team size</span><input id="fSize" inputmode="numeric" value="42" aria-describedby="ferr"></label>
+            <label><span>When</span><select id="fWhen"><option>May 2027</option><option>June 2027</option><option>Sept 2027</option></select></label>
+            <label><span>Where</span><select id="fWhere"><option value="all">Anywhere</option><option value="nordics">Nordics</option><option value="med">Mediterranean</option><option value="uk">UK countryside</option><option value="alps">Alps</option></select></label>
+            <button type="submit">Find venues</button>
+          </form>
+          <div class="ferr" id="ferr" role="alert"></div>
+        </div></div>
+      </div>
+      <div class="over" id="over">
+        <div class="wrap">
+          <h2 id="overH" aria-label="42 people. 3 nights. One invoice."><span>42 people.</span><span>3 nights.</span><span>One invoice.</span></h2>
+          <div class="sum" id="sum">
+            <div class="h"><b>Product summit, May 2027</b><span>Draft · 2 min</span></div>
+            <div class="row"><i>⌂</i><div><b>Fjordhus Lodge</b><small>3 nights · May 12–15</small></div><span class="num">Held</span></div>
+            <div class="row"><i>☺</i><div><b>Travellers</b><small>from 6 cities</small></div><span class="num" id="cP">0</span></div>
+            <div class="row"><i>✈</i><div><b>Flights booked</b><small>4 people driving</small></div><span class="num" id="cF">0</span></div>
+            <div class="row"><i>▭</i><div><b>Rooms</b><small>18 shared, 6 single</small></div><span class="num" id="cR">0</span></div>
+            <div class="row"><i>☰</i><div><b>Agenda</b><small>3 days, 11 sessions</small></div><span class="num" id="cA">0</span></div>
+            <div class="tot"><b id="cT">$0</b><small>all in<br><span id="cPP">$0</span> per person</small></div>
+            <button class="btn btn-pn" id="holdBtn" type="button"><span class="lbl"><span>Hold these dates</span><span>Free for 7 days</span></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── how it works ── -->
+  <section class="sec wrap" id="how" aria-labelledby="hw">
+    <div class="head"><span class="kicker">How it works</span><h2 class="big" id="hw" aria-label="You set the brief. We do the logistics.">You set the brief. <em>We do the logistics.</em></h2></div>
+    <div class="steps">
+      <article class="step reveal"><span class="n">1</span><h3>Tell us who, when and roughly where</h3><p>Team size, budget per person and the kind of week you want. Five minutes.</p></article>
+      <article class="step reveal"><span class="n">2</span><h3>Pick from three venues</h3><p>Real availability for your dates, with rooms, meeting space and a full cost.</p></article>
+      <article class="step reveal"><span class="n">3</span><h3>Everyone books in one link</h3><p>People choose their flights inside your budget. Dietary needs and rooms are collected for you.</p></article>
+      <article class="step reveal"><span class="n">4</span><h3>Go. We’re on call</h3><p>A trip lead handles delays, swaps and the 6am airport question.</p></article>
+    </div>
+  </section>
+
+  <!-- ── venues ── -->
+  <section class="sec" id="venues" aria-labelledby="vh" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><span class="kicker">Venues</span>
+        <div class="head-r" style="display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap">
+          <h2 class="big" id="vh" style="flex:1 1 520px" aria-label="Places built for a whole team.">Places built for <em>a whole team.</em></h2>
+          <div class="filters" id="filters" role="group" aria-label="Region"><button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="nordics">Nordics</button><button aria-pressed="false" data-f="med">Mediterranean</button><button aria-pressed="false" data-f="uk">UK</button><button aria-pressed="false" data-f="alps">Alps</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="vgal" id="vgal" tabindex="0" aria-label="Venues, draggable">
+      <div class="vtrack" id="vtrack">
+        <article class="venue" data-r="nordics"><div class="pic"><img src="images/lodge.webp" alt="Fjordhus Lodge on the fjord" loading="lazy"><span>Sleeps 48</span></div><div class="meta"><div><h3>Fjordhus Lodge</h3><p>Sogn, Norway · 2h from Bergen</p></div><div class="pp">$1,180<small>per person, 3 nights</small></div></div></article>
+        <article class="venue" data-r="med"><div class="pic"><img src="images/terrace.webp" alt="Casa Brava terrace over the bay" loading="lazy"><span>Sleeps 64</span></div><div class="meta"><div><h3>Casa Brava</h3><p>Menorca, Spain · 25 min from airport</p></div><div class="pp">$1,340<small>per person, 3 nights</small></div></div></article>
+        <article class="venue" data-r="uk"><div class="pic"><img src="images/barn.webp" alt="Old Mill Barn meeting room" loading="lazy"><span>Sleeps 36</span></div><div class="meta"><div><h3>Old Mill Barn</h3><p>Cotswolds, England · 90 min from London</p></div><div class="pp">$890<small>per person, 2 nights</small></div></div></article>
+        <article class="venue" data-r="nordics"><div class="pic"><img src="images/kayaks.webp" alt="Kayaks by the jetty at Sjöhytte" loading="lazy"><span>Sleeps 30</span></div><div class="meta"><div><h3>Sjöhytte</h3><p>Värmland, Sweden · lake and forest</p></div><div class="pp">$960<small>per person, 3 nights</small></div></div></article>
+        <article class="venue" data-r="alps"><div class="pic"><img src="images/trail.webp" alt="A ridge trail above the valley at Ridge House" loading="lazy"><span>Sleeps 52</span></div><div class="meta"><div><h3>Ridge House</h3><p>Dolomites, Italy · trails from the door</p></div><div class="pp">$1,420<small>per person, 3 nights</small></div></div></article>
+        <article class="venue" data-r="nordics"><div class="pic"><img src="images/room.webp" alt="A forest-view bedroom" loading="lazy"><span>Sleeps 40</span></div><div class="meta"><div><h3>Skog Hotel</h3><p>Lapland, Finland · sauna on site</p></div><div class="pp">$1,060<small>per person, 3 nights</small></div></div></article>
+      </div>
+    </div>
+    <div class="wrap vnote"><span id="vCount">6 venues shown. Venues and prices are examples for this demo.</span><span>Drag to browse, or use the arrow keys</span></div>
+  </section>
+
+  <!-- ── itinerary ── -->
+  <section class="sec wrap" id="itinerary" aria-labelledby="ih" style="padding-top:0">
+    <div class="head"><span class="kicker">Itinerary</span><h2 class="big" id="ih" aria-label="Three days, planned to the hour.">Three days, <em>planned to the hour.</em></h2></div>
+    <div class="itin">
+      <div class="ipic reveal-img" id="ipic"><img src="images/room.webp" alt="Day one: arrival" id="iImg" loading="lazy"><div class="cover" id="iCover"></div><span class="badge" id="iBadge">Day 1 · Arrive and settle</span></div>
+      <div class="iside">
+        <div class="days" role="tablist" aria-label="Day" id="days"><button role="tab" aria-selected="true" data-d="0">Day 1</button><button role="tab" aria-selected="false" data-d="1">Day 2</button><button role="tab" aria-selected="false" data-d="2">Day 3</button></div>
+        <div class="slots" id="slots" role="tabpanel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── cost ── -->
+  <section class="sec wrap" id="cost" aria-labelledby="ch" style="padding-top:0">
+    <div class="head"><span class="kicker">One invoice</span><h2 class="big" id="ch" aria-label="Every cost, before anyone books.">Every cost, <em>before anyone books.</em></h2></div>
+    <div class="cost">
+      <div class="cbox reveal">
+        <div class="h"><b id="cTotal">$61,840</b><span id="cPer">$1,472 per person · 3 nights</span></div>
+        <div class="stack" id="stack"></div>
+        <div class="legend" id="legend"></div>
+        <div class="rng"><div class="lr"><label for="ppl">Team size</label><output id="pplOut">42 people</output></div><input type="range" id="ppl" min="10" max="200" value="42"></div>
+      </div>
+      <ul class="incl">
+        <li><div><b>Flights inside a budget you set</b><span>People choose; we cap and book.</span></div></li>
+        <li><div><b>Dietary needs and access, collected</b><span>One form per traveller, sent to the venue.</span></div></li>
+        <li><div><b>A trip lead on call</b><span>Phone and chat, from the first flight to the last.</span></div></li>
+        <li><div><b>Free changes up to 21 days out</b><span>Swap travellers or dates without fees from us.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── promise band ── -->
+  <section class="band" aria-labelledby="bh">
+    <img src="images/dinner.webp" alt="Colleagues passing a bowl of grilled vegetables at a candlelit dinner" loading="lazy" id="bandImg">
+    <div class="wrap"><h2 id="bh" aria-label="Three venue options in 48 hours, or planning is free.">Three venue options in 48 hours, or planning is free.</h2><p><b>Our promise, not a testimonial.</b> If your shortlist is late, we waive the planning fee for that trip. No forms to fill in.</p></div>
+  </section>
+
+  <!-- ── pricing ── -->
+  <section class="sec wrap" id="pricing" aria-labelledby="ph">
+    <div class="head" style="margin-bottom:0"><span class="kicker">Pricing</span>
+      <div class="head-r" style="display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap">
+        <h2 class="big" id="ph" style="flex:1 1 520px" aria-label="Free to plan. Pay when you book.">Free to plan. <em>Pay when you book.</em></h2>
+        <div class="bill" role="group" aria-label="Billing period"><span class="pill" id="pill"></span><button aria-pressed="true" data-bill="m">Monthly</button><button aria-pressed="false" data-bill="y">Yearly<small>−20%</small></button></div>
+      </div>
+    </div>
+    <div class="tiers">
+      <div class="tier"><h3>One trip</h3><div class="amt"><b>6%</b><small>of the booking<br>no subscription</small></div><p>For the yearly offsite, planned properly.</p><ul><li>Three venue options in 48h</li><li>Flights, rooms and agenda</li><li>A trip lead on call</li></ul><a class="btn btn-ol" href="#start" data-plan="One trip">Plan one trip</a></div>
+      <div class="tier pick"><h3>Team <span>MOST TEAMS</span></h3><div class="amt"><b id="pT" data-m="390" data-y="312"><span>$390</span></b><small>per month<br><span id="bT">billed monthly</span></small></div><p>For companies meeting in person every quarter.</p><ul><li>Booking fee drops to 3%</li><li>Up to 6 trips a year</li><li>Saved travel policies</li><li>Spend reports per team</li></ul><a class="btn btn-mg" href="#start" data-plan="Team" data-magnetic><span class="lbl"><span>Start with Team</span><span>Cancel any month</span></span></a></div>
+      <div class="tier"><h3>Company</h3><div class="amt"><b id="pC" data-m="990" data-y="792"><span>$990</span></b><small>per month<br><span id="bC">billed monthly</span></small></div><p>For groups of 200+ with many teams on the move.</p><ul><li>Booking fee 2%</li><li>Unlimited trips</li><li>SSO and finance exports</li></ul><a class="btn btn-ol" href="#start" data-plan="Company">Talk to us</a></div>
+    </div>
+    <p class="fine">Venue, flight and room costs are passed through at cost. Prices in USD.</p>
+  </section>
+
+  <!-- ── final CTA ── -->
+  <section class="final" id="start" aria-labelledby="fh">
+    <img src="images/terrace.webp" alt="" loading="lazy">
+    <div class="in">
+      <span class="kicker" style="color:var(--l-soft)">Start</span>
+      <h2 id="fh" style="margin-top:16px" aria-label="Get three venues for your team by Friday.">Get three venues for your team by Friday.</h2>
+      <p class="l">Tell us the basics. A trip lead replies with three options, real availability and a full cost.</p>
+      <form class="join" id="join" novalidate>
+        <div class="fld" id="fMail"><label for="mail">Work email</label><input id="mail" type="email" autocomplete="email" placeholder="you@company.com"></div>
+        <div class="fld"><span class="lb" id="tsl">Team size</span><div class="stepper" role="group" aria-labelledby="tsl"><button type="button" id="minus" aria-label="Fewer people">−</button><output id="ts">42</output><button type="button" id="plus" aria-label="More people">+</button></div></div>
+        <div class="fld"><label for="month">Month</label><select id="month"><option>May 2027</option><option>June 2027</option><option>Sept 2027</option><option>Not sure yet</option></select></div>
+        <div class="err" id="err" role="alert"></div>
+        <button class="btn btn-mg" type="submit" data-magnetic><span class="lbl"><span id="subTxt">Get my 3 venue options</span><span>Free, no commitment</span></span><span class="ar">→</span></button>
+      </form>
+      <div class="done" id="done" tabindex="-1" role="status"><span class="kicker" id="doneRef"></span><h3 id="doneH">Your trip lead is on it.</h3><p id="doneP"></p></div>
+    </div>
+  </section>
+</main>
+
+<footer aria-label="Footer">
+  <div class="wrap">
+    <div class="board reveal-b" aria-label="Example departures board">
+      <div class="bh"><span>Team</span><span>Route</span><span>Leaves</span><span>Status</span></div>
+      <div class="brow"><span class="flap" data-t="Design · 18 people">Design · 18 people</span><span class="flap" data-t="Lisbon → Fjordhus">Lisbon → Fjordhus</span><span class="flap" data-t="May 12 · 07:40">May 12 · 07:40</span><span class="st">Boarding</span></div>
+      <div class="brow"><span class="flap" data-t="Sales · 44 people">Sales · 44 people</span><span class="flap" data-t="Berlin → Casa Brava">Berlin → Casa Brava</span><span class="flap" data-t="May 14 · 09:15">May 14 · 09:15</span><span class="st b">On time</span></div>
+      <div class="brow"><span class="flap" data-t="Platform · 26 people">Platform · 26 people</span><span class="flap" data-t="London → Old Mill">London → Old Mill</span><span class="flap" data-t="May 19 · by train">May 19 · by train</span><span class="st b">Booked</span></div>
+    </div>
+    <div class="fcols">
+      <div class="b"><b>Get the whole team in one place.</b>Northbound Trips, Oslo and Lisbon. An invented company; the board above is example data.</div>
+      <div class="c"><span class="kicker">Product</span><a href="#how">How it works</a><a href="#venues">Venues</a><a href="#itinerary">Itinerary</a></div>
+      <div class="c"><span class="kicker">Plans</span><a href="#pricing">Pricing</a><a href="#start">Get options</a></div>
+      <div class="c"><span class="kicker">Contact</span><a href="mailto:trips@northbound.travel">trips@northbound.travel</a><a href="#top">Back to top ↑</a></div>
+      <div class="c"><span class="kicker">Trip line</span><span style="opacity:.85">24/7 while you travel</span></div>
+    </div>
+    <svg class="bigword" viewBox="-2 -2 774.9 106" aria-hidden="true"><path fill="currentColor" d="M75.49 100 29.67 30.22V100H10.31V0H33.15L76.74 66.3V0H96.24V100ZM170.82 90.25Q160.03 101.39 143.87 101.39Q127.72 101.39 116.92 90.25Q106.13 79.11 106.13 62.81Q106.13 46.52 116.92 35.38Q127.72 24.23 143.87 24.23Q160.03 24.23 170.82 35.38Q181.62 46.52 181.62 62.81Q181.62 79.11 170.82 90.25ZM161.7 62.81Q161.7 52.92 156.55 47.21Q151.39 41.5 143.87 41.5Q136.35 41.5 131.2 47.21Q126.04 52.92 126.04 62.81Q126.04 72.84 131.2 78.55Q136.35 84.26 143.87 84.26Q151.39 84.26 156.55 78.55Q161.7 72.84 161.7 62.81ZM209.19 63.93V100H189.83V25.63H207.66V39.97Q211.7 33.01 219.64 28.9Q227.58 24.79 236.63 24.79V44.85Q223.26 43.87 216.23 48.05Q209.19 52.23 209.19 63.93ZM288.72 81.2V98.05Q282.03 101.39 273.82 101.39Q262.12 101.39 255.5 94.85Q248.89 88.3 248.89 75.91V42.2H233.84V25.63H248.89V3.62H268.11V25.63H289.42V42.2H268.11V71.45Q268.11 83.57 278.97 83.57Q284.4 83.57 288.72 81.2ZM316.43 59.47V100H297.08V0H316.43V35.38Q324.79 24.23 337.74 24.23Q349.16 24.23 356.06 31.48Q362.95 38.72 362.95 51.95V100H343.73V58.5Q343.73 41.36 330.64 41.36Q324.51 41.36 320.47 46.1Q316.43 50.84 316.43 59.47ZM449.72 62.81Q449.72 79.39 440.6 90.39Q431.48 101.39 416.71 101.39Q402.23 101.39 393.31 89.28V100H375.49V0H394.85V35.24Q403.06 24.23 416.71 24.23Q431.48 24.23 440.6 35.17Q449.72 46.1 449.72 62.81ZM429.81 62.81Q429.81 52.65 424.86 47.01Q419.92 41.36 412.4 41.36Q405.01 41.36 400 46.94Q394.99 52.51 394.99 62.53Q394.99 72.7 399.93 78.41Q404.87 84.12 412.4 84.12Q419.92 84.12 424.86 78.48Q429.81 72.84 429.81 62.81ZM517.76 90.25Q506.96 101.39 490.81 101.39Q474.65 101.39 463.86 90.25Q453.06 79.11 453.06 62.81Q453.06 46.52 463.86 35.38Q474.65 24.23 490.81 24.23Q506.96 24.23 517.76 35.38Q528.55 46.52 528.55 62.81Q528.55 79.11 517.76 90.25ZM508.64 62.81Q508.64 52.92 503.48 47.21Q498.33 41.5 490.81 41.5Q483.29 41.5 478.13 47.21Q472.98 52.92 472.98 62.81Q472.98 72.84 478.13 78.55Q483.29 84.26 490.81 84.26Q498.33 84.26 503.48 78.55Q508.64 72.84 508.64 62.81ZM582.03 68.66V25.63H601.25V100H583.57V90.25Q580.5 95.26 574.65 98.33Q568.8 101.39 561.84 101.39Q550.14 101.39 543.11 94.22Q536.07 87.05 536.07 72.98V25.63H555.43V69.22Q555.43 84.26 568.38 84.26Q573.96 84.26 577.99 80.08Q582.03 75.91 582.03 68.66ZM633.84 59.47V100H614.48V25.63H632.31V36.21Q641.09 24.23 655.15 24.23Q666.57 24.23 673.47 31.48Q680.36 38.72 680.36 51.95V100H661.14V58.5Q661.14 41.36 648.05 41.36Q641.92 41.36 637.88 46.1Q633.84 50.84 633.84 59.47ZM688.02 62.81Q688.02 46.1 697.14 35.17Q706.27 24.23 721.03 24.23Q734.4 24.23 743.04 35.24V0H762.26V100H744.57V89.28Q735.52 101.39 721.03 101.39Q706.27 101.39 697.14 90.39Q688.02 79.39 688.02 62.81ZM707.94 62.81Q707.94 72.84 712.88 78.48Q717.83 84.12 725.35 84.12Q732.87 84.12 737.88 78.41Q742.9 72.7 742.9 62.53Q742.9 52.37 737.88 46.87Q732.87 41.36 725.35 41.36Q717.83 41.36 712.88 47.01Q707.94 52.65 707.94 62.81Z"/></svg>
+    <div class="fbot"><span>© 2026 Northbound Trips AS</span><span>Venue names and prices are examples.</span></div>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+(() => {
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+
+  let lenis = null;
+  if (!reduce) { lenis = new Lenis({ lerp: .085, smoothWheel: true }); lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
+  const go = h => { const el = h === '#top' ? document.body : $(h); if (!el) return; lenis ? lenis.scrollTo(el, { offset: -76, duration: 1.5, easing: t => 1 - Math.pow(2, -10 * t) }) : el.scrollIntoView(); };
+  const sheet = $('#sheet'), menuBtn = $('#menuBtn');
+  const closeSheet = () => { sheet.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.textContent = 'Menu'; };
+  menuBtn.addEventListener('click', () => { const o = !sheet.classList.contains('open'); sheet.classList.toggle('open', o); menuBtn.setAttribute('aria-expanded', o); menuBtn.textContent = o ? 'Close' : 'Menu'; });
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const h = a.getAttribute('href'); if (h === '#') return; e.preventDefault(); closeSheet(); go(h); if (a.dataset.plan) pickPlan(a.dataset.plan); }));
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+  let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2600); };
+
+  /* ── the trip assembles ── */
+  const stage = $('#tstage'), photo = $('#photo'), pimg = photo.querySelector('img'), chip = $('#chip');
+  const mobile = () => innerWidth < 900;
+  const cardBox = () => {           // the venue card's rectangle, in px insets from the stage edges
+    const W = stage.clientWidth, H = stage.clientHeight, e = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--edge')) || 24;
+    const ed = Math.min(Math.max(16, innerWidth * .04), 60);
+    if (mobile()) return { t: H * .6, r: ed, b: 18, l: ed };
+    return { t: 104, r: ed, b: H * .08, l: W * .56 };
+  };
+  const ins = (b, rad) => `inset(${b.t}px ${b.r}px ${b.b}px ${b.l}px round ${rad}px)`;
+  const placeChip = () => { const b = cardBox(); chip.style.left = (b.l + 16) + 'px'; chip.style.top = (stage.clientHeight - b.b - 16 - chip.offsetHeight) + 'px'; };
+  const C = { p: 0, f: 0, r: 0, a: 0, t: 0 };
+  const paintC = () => { $('#cP').textContent = Math.round(C.p); $('#cF').textContent = Math.round(C.f); $('#cR').textContent = Math.round(C.r); $('#cA').textContent = Math.round(C.a); $('#cT').textContent = usd(C.t); $('#cPP').textContent = usd(C.p ? C.t / 42 : 0); };
+  const rows = $$('#sum .row');
+  const setTop = onPhoto => $('#top').classList.toggle('onphoto', onPhoto);
+  function buildTrip(){
+    const tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
+    tl.fromTo(photo, { clipPath: () => ins(cardBox(), 22) }, { clipPath: 'inset(0px 0px 0px 0px round 0px)', duration: 1, ease: 'power3.inOut' }, .35)
+      .fromTo(pimg, { scale: 1.32 }, { scale: 1, duration: 1.2, ease: 'power2.out' }, .35)
+      .to('#hcopy', { opacity: 0, y: -60, duration: .5, ease: 'power2.in' }, .3)
+      .to(chip, { opacity: 0, y: 20, duration: .3 }, .35)
+      .fromTo(photo, { '--dark': 0 }, { '--dark': 1, duration: .6 }, 1)
+      .fromTo('#overH span', { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: .5, stagger: .14, ease: 'expo.out' }, 1.15)
+      .fromTo('#sum', { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: .45, ease: 'expo.out' }, 1.35)
+      .fromTo(rows, { opacity: 0, x: 18 }, { opacity: 1, x: 0, duration: .3, stagger: .12, ease: 'expo.out' }, 1.5)
+      .to(C, { p: 42, f: 38, r: 24, a: 11, t: 61824, duration: .9, ease: 'power2.out', onUpdate: paintC }, 1.6)
+      .call(() => rows.forEach(r => r.classList.add('on')), null, 2.4)
+      .to({}, { duration: .5 }, 2.6);
+    tl.eventCallback('onUpdate', () => setTop(tl.time() > .9));
+    return tl;
+  }
+  if (reduce) {
+    photo.style.clipPath = 'none'; stage.classList.add('rm'); chip.style.display = 'none';
+    photo.style.setProperty('--dark', 1); C.p = 42; C.f = 38; C.r = 24; C.a = 11; C.t = 61824; paintC(); rows.forEach(r => r.classList.add('on')); setTop(true);
+    $('#trip').style.height = 'auto';
+  } else {
+    gsap.set(['#overH span', '#sum'], { opacity: 0 });
+    const tl = buildTrip();
+    ScrollTrigger.create({ trigger: '#trip', start: 'top top', end: 'bottom bottom', scrub: .9, animation: tl, invalidateOnRefresh: true });
+    placeChip(); addEventListener('resize', placeChip);
+  }
+  const solid = () => $('#top').classList.toggle('solid', scrollY > $('#trip').offsetHeight - innerHeight); addEventListener('scroll', solid, { passive: true }); solid();
+  $('#holdBtn').addEventListener('click', () => toast('Held: Fjordhus Lodge, May 12–15, free for 7 days.'));
+
+  /* hero finder */
+  $('#finder').addEventListener('submit', e => {
+    e.preventDefault(); const n = parseInt($('#fSize').value, 10), ferr = $('#ferr');
+    if (!(n >= 10 && n <= 200)) { ferr.textContent = 'Northbound plans trips for 10 to 200 people.'; $('#fSize').focus(); return; }
+    ferr.textContent = ''; const r = $('#fWhere').value; filterV(r); go('#venues'); toast(`${n} people, ${$('#fWhen').value}: showing venues that fit.`);
+  });
+  $('#fSize').addEventListener('input', () => $('#ferr').textContent = '');
+
+  /* ── venues: filters + drag ── */
+  const vgal = $('#vgal'), vtrack = $('#vtrack');
+  let vx = 0, vt = 0, vDown = false, v0 = 0, vS = 0, vel = 0, lx = 0;
+  const vMax = () => Math.min(0, vgal.clientWidth - vtrack.scrollWidth);
+  function filterV(r){
+    $$('#filters button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === r));
+    let n = 0; $$('.venue').forEach(v => { const on = r === 'all' || v.dataset.r === r; v.classList.toggle('hide', !on); if (on) n++; });
+    vt = 0; $('#vCount').textContent = `${n} venue${n === 1 ? '' : 's'} shown. Venues and prices are examples for this demo.`;
+    if (!reduce) gsap.fromTo('.venue:not(.hide)', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .9, stagger: .07, ease: 'expo.out', clearProps: 'opacity,transform' });
+  }
+  $('#filters').addEventListener('click', e => { const b = e.target.closest('button'); if (b) filterV(b.dataset.f); });
+  vgal.addEventListener('pointerdown', e => { vDown = true; v0 = e.clientX; vS = vt; lx = e.clientX; });
+  addEventListener('pointermove', e => { if (!vDown) return; const d = e.clientX - v0; if (Math.abs(d) > 4) vgal.classList.add('drag'); vel = e.clientX - lx; lx = e.clientX; vt = Math.max(vMax() - 80, Math.min(80, vS + d)); });
+  addEventListener('pointerup', () => { if (!vDown) return; vDown = false; vgal.classList.remove('drag'); vt = Math.max(vMax(), Math.min(0, vt + vel * 12)); });
+  vgal.addEventListener('keydown', e => { if (e.key === 'ArrowRight') vt = Math.max(vMax(), vt - 360); if (e.key === 'ArrowLeft') vt = Math.min(0, vt + 360); });
+  gsap.ticker.add(() => { vx += (vt - vx) * .1; vtrack.style.transform = `translate3d(${vx}px,0,0)`; });
+
+  /* ── itinerary ── */
+  const DAYS = [
+    ['images/room.webp', 'Day 1 · Arrive and settle', [['14:00', 'Arrivals and room keys', 'Transfers from Bergen every 40 min', 'Travel'], ['16:30', 'Fjord walk', 'Optional, 5 km, flat', 'Outdoors'], ['19:30', 'Welcome dinner', 'Long table on the deck', 'Food']]],
+    ['images/barn.webp', 'Day 2 · Work sessions', [['09:00', 'Strategy kickoff', 'Main room, 42 seats in the round', 'Work'], ['11:00', 'Team breakouts', 'Four rooms booked', 'Work'], ['15:00', 'Kayaks on the lake', 'Guides and gear included', 'Outdoors'], ['20:00', 'Dinner and fire pit', 'Vegetarian menu by default', 'Food']]],
+    ['images/trail.webp', 'Day 3 · Outside, then home', [['08:30', 'Ridge hike', 'Two routes: 6 km or 11 km', 'Outdoors'], ['13:00', 'Wrap-up and lunch', 'Decisions written down before anyone leaves', 'Work'], ['16:00', 'Departures', 'Coaches timed to each flight', 'Travel']]]
+  ];
+  const slots = $('#slots'), iImg = $('#iImg'), iCover = $('#iCover');
+  const renderDay = d => { slots.innerHTML = DAYS[d][2].map(([t, b, s, g]) => `<div class="slot"><time>${t}</time><div><b>${b}</b><small>${s}</small></div><span class="tag ${g === 'Outdoors' ? 'mg' : ''}">${g}</span></div>`).join(''); $('#iBadge').textContent = DAYS[d][1]; };
+  let dCur = 0; renderDay(0);
+  const pickDay = d => {
+    if (d === dCur) return; dCur = d;
+    $$('#days button').forEach(b => b.setAttribute('aria-selected', +b.dataset.d === d));
+    if (reduce) { iImg.src = DAYS[d][0]; renderDay(d); return; }
+    gsap.timeline()
+      .set(iCover, { transformOrigin: 'bottom' }).to(iCover, { scaleY: 1, duration: .5, ease: 'power4.inOut' })
+      .call(() => { iImg.src = DAYS[d][0]; iImg.alt = DAYS[d][1]; renderDay(d); gsap.set(iImg, { scale: 1.15 }); gsap.fromTo('.slot', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .7, stagger: .06, ease: 'expo.out', clearProps: 'opacity,transform' }); })
+      .set(iCover, { transformOrigin: 'top' }).to(iCover, { scaleY: 0, duration: .6, ease: 'power4.inOut' })
+      .to(iImg, { scale: 1, duration: 1.4, ease: 'expo.out', clearProps: 'transform' }, '<');
+  };
+  $$('#days button').forEach(b => b.addEventListener('click', () => pickDay(+b.dataset.d)));
+  $('#days').addEventListener('keydown', e => { if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return; const n = (dCur + (e.key === 'ArrowRight' ? 1 : 2)) % 3; pickDay(n); $$('#days button')[n].focus(); });
+
+  /* ── cost calculator ── */
+  const PARTS = [['Venue', '#F2B33D', 520], ['Flights', '#F6F2EA', 410], ['Rooms', '#7A8077', 300], ['Food', 'rgba(246,242,234,.45)', 170], ['Activities', 'rgba(242,179,61,.45)', 72]];
+  const stack = $('#stack'), legend = $('#legend');
+  stack.innerHTML = PARTS.map(([, c]) => `<i style="background:${c};flex-grow:1"></i>`).join('');
+  legend.innerHTML = PARTS.map(([n, c]) => `<div><i style="background:${c}"></i>${n}<b>$0</b></div>`).join('');
+  const calc = () => {
+    const n = +$('#ppl').value, scale = n < 30 ? 1.08 : n > 120 ? .9 : 1, per = PARTS.reduce((a, p) => a + p[2], 0) * scale;
+    $('#pplOut').textContent = n + ' people'; $('#cTotal').textContent = usd(per * n); $('#cPer').textContent = `${usd(per)} per person · 3 nights`;
+    PARTS.forEach(([, , v], i) => { stack.children[i].style.flexGrow = v; legend.children[i].querySelector('b').textContent = usd(v * scale * n); });
+    const r = $('#ppl'); r.style.setProperty('--f', (n - 10) / 190);
+  };
+  $('#ppl').addEventListener('input', calc); calc();
+
+  /* ── pricing ── */
+  const pill = $('#pill'), bills = $$('[data-bill]');
+  const place = () => { const on = bills.find(b => b.getAttribute('aria-pressed') === 'true'); pill.style.width = on.offsetWidth + 'px'; pill.style.transform = `translateX(${on.offsetLeft}px)`; };
+  let yearly = false;
+  bills.forEach(b => b.addEventListener('click', () => {
+    const y = b.dataset.bill === 'y'; if (y === yearly) return; yearly = y;
+    bills.forEach(o => o.setAttribute('aria-pressed', o === b)); place();
+    [['#pT', '#bT'], ['#pC', '#bC']].forEach(([id, bid]) => {
+      const el = $(id), old = el.querySelector('span'), nu = document.createElement('span');
+      nu.textContent = '$' + (y ? el.dataset.y : el.dataset.m);
+      $(bid).textContent = y ? `billed yearly, ${usd(el.dataset.y * 12)}` : 'billed monthly';
+      if (reduce) { old.replaceWith(nu); return; }
+      nu.style.position = 'absolute'; nu.style.left = 0; el.appendChild(nu);
+      gsap.timeline({ onComplete: () => { old.remove(); nu.style.position = ''; } }).to(old, { yPercent: y ? -105 : 105, duration: .7, ease: 'expo.out' }, 0).fromTo(nu, { yPercent: y ? 105 : -105 }, { yPercent: 0, duration: .7, ease: 'expo.out' }, 0);
+    });
+  }));
+  document.fonts.ready.then(place); addEventListener('resize', place);
+
+  /* ── form ── */
+  let plan = 'One trip', size = 42;
+  function pickPlan(p){ plan = p; $('#subTxt').textContent = p === 'Company' ? 'Book a call with us' : 'Get my 3 venue options'; }
+  const setSize = n => { size = Math.max(10, Math.min(200, n)); $('#ts').textContent = size; };
+  $('#minus').addEventListener('click', () => setSize(size - (size > 50 ? 5 : 1)));
+  $('#plus').addEventListener('click', () => setSize(size + (size >= 50 ? 5 : 1)));
+  const mail = $('#mail'), err = $('#err'), ok = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  mail.addEventListener('blur', () => { if (mail.value && !ok(mail.value.trim())) { $('#fMail').classList.add('bad'); err.textContent = 'That email is missing something after the @.'; } });
+  mail.addEventListener('input', () => { $('#fMail').classList.remove('bad'); err.textContent = ''; });
+  $('#join').addEventListener('submit', e => {
+    e.preventDefault(); const v = mail.value.trim();
+    if (!ok(v)) { $('#fMail').classList.add('bad'); err.textContent = v ? 'That email is missing something after the @.' : 'We need a work email to send your options to.'; mail.focus(); return; }
+    const safe = v.replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+    const by = new Date(Date.now() + 2 * 864e5).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+    $('#doneRef').textContent = `${plan} · ${size} people · ${$('#month').value}`;
+    $('#doneP').innerHTML = `Three venue options for ${size} people will reach <b>${safe}</b> by <b>${by}</b>, each with real availability and a full cost.`;
+    $('#join').style.display = 'none'; const d = $('#done'); d.classList.add('show'); d.focus({ preventScroll: true });
+    if (!reduce) gsap.fromTo(d, { clipPath: 'inset(0 0 100% 0 round 22px)' }, { clipPath: 'inset(0 0 0% 0 round 22px)', duration: 1, ease: 'power4.inOut', clearProps: 'clipPath' });
+  });
+
+  /* ── footer departures board: letters flip in ── */
+  const CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const flapIn = () => $$('.flap').forEach((el, i) => {
+    const target = el.dataset.t; let f = 0, frames = 14 + i * 2;
+    const id = setInterval(() => { f++; el.textContent = [...target].map((c, k) => (k < (f / frames) * target.length || c === ' ' || c === '·' || c === '→') ? c : CH[Math.floor(Math.random() * CH.length)]).join(''); if (f >= frames) { el.textContent = target; clearInterval(id); } }, 45);
+  });
+  if (!reduce) ScrollTrigger.create({ trigger: 'main', start: 'bottom 85%', once: true, onEnter: flapIn });
+
+  /* ── intro + reveals ── */
+  document.fonts.ready.then(() => {
+    if (reduce) return;
+    placeChip(); ScrollTrigger.refresh();
+    const split = SplitText.create('#h1', { type: 'lines', mask: 'lines' });
+    gsap.timeline({ defaults: { ease: 'expo.out' } })
+      .fromTo('.top', { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 1, clearProps: 'opacity,transform' }, 0)
+      .fromTo(photo, { clipPath: () => { const b = cardBox(); return ins({ ...b, t: stage.clientHeight - b.b - 2 }, 22); } }, { clipPath: () => ins(cardBox(), 22), duration: 1.6, ease: 'power4.inOut' }, .1)
+      .fromTo(pimg, { scale: 1.6 }, { scale: 1.32, duration: 2.2 }, .1)
+      .fromTo('.hcopy .kicker', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1, clearProps: 'opacity,transform' }, .2)
+      .from(split.lines, { yPercent: 112, duration: 1.3, stagger: .1 }, .25)
+      .fromTo('.hcopy p, .finder, .ferr', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.1, stagger: .08, clearProps: 'opacity,transform' }, .7)
+      .fromTo(chip, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, clearProps: 'opacity,transform' }, 1.3);
+    $$('h2.big, .band h2, .final h2').forEach(h => { const s = SplitText.create(h, { type: 'lines', mask: 'lines' }); gsap.from(s.lines, { yPercent: 112, duration: 1.25, stagger: .09, ease: 'expo.out', scrollTrigger: { trigger: h, start: 'top 86%', once: true } }); });
+    $$('.reveal').forEach((p, i) => gsap.fromTo(p, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.2, delay: (i % 4) * .08, ease: 'expo.out', clearProps: 'opacity,transform', scrollTrigger: { trigger: p, start: 'top 88%', once: true } }));
+    $$('.reveal-img, .venue .pic').forEach(f => { const img = f.querySelector('img'); gsap.timeline({ scrollTrigger: { trigger: f, start: 'top 88%', once: true } }).fromTo(f, { clipPath: 'inset(100% 0% 0% 0% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', duration: 1.4, ease: 'power4.inOut', clearProps: 'clipPath' }, 0).fromTo(img, { scale: 1.25 }, { scale: 1, duration: 2, ease: 'expo.out', clearProps: 'transform' }, 0); });
+    gsap.fromTo('#bandImg', { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.band', start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.fromTo('.final > img', { scale: 1.2 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.final', start: 'top bottom', end: 'center center', scrub: true } });
+    gsap.fromTo('.tier', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.2, stagger: .08, ease: 'expo.out', clearProps: 'opacity,transform', scrollTrigger: { trigger: '.tiers', start: 'top 85%', once: true } });
+    gsap.fromTo('.bigword', { yPercent: 30, opacity: 0 }, { yPercent: 0, opacity: 1, ease: 'none', scrollTrigger: { trigger: 'main', start: 'bottom bottom', end: 'bottom 20%', scrub: true } });
+    ScrollTrigger.refresh();
+  });
+
+  if (fine && !reduce) $$('[data-magnetic]').forEach(el => {
+    el.addEventListener('mousemove', e => { const r = el.getBoundingClientRect(); gsap.to(el, { x: (e.clientX - r.left - r.width / 2) * .2, y: (e.clientY - r.top - r.height / 2) * .3, duration: .6, ease: 'expo.out' }); });
+    el.addEventListener('mouseleave', () => gsap.to(el, { x: 0, y: 0, duration: .8, ease: 'expo.out' }));
+  });
+})();
+</script>
+</body>
+</html>

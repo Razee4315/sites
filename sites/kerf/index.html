@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kerf — Set type once. Ship it everywhere.</title>
+<meta name="description" content="Kerf is a browser app for web type systems: a fluid scale that writes the clamp() maths, proofs on your own copy, kerning checks, and tokens for CSS, Tailwind and Figma.">
+<link rel="icon" href="logo/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Instrument+Sans:wght@400..600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── tokens: paper, ink, graphite, proof red ───────────────── */
+  :root{
+    --paper:#F1EDE4; --ink:#1B1A17; --gr:#8C877C; --red:#D23A1E;
+    --soft:rgba(27,26,23,.66); --line:rgba(27,26,23,.14); --line2:rgba(27,26,23,.28); --tint:rgba(27,26,23,.04); --sheet:rgba(255,255,255,.5);
+    --edge:clamp(16px,4vw,64px); --max:1360px;
+    --ease:cubic-bezier(.16,1,.3,1); --wipe:cubic-bezier(.77,0,.175,1);
+    --serif:"Fraunces",ui-serif,Georgia,serif; --sans:"Instrument Sans",ui-sans-serif,system-ui,sans-serif; --mono:"DM Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--paper);-webkit-text-size-adjust:100%}
+  html.lenis,html.lenis body{height:auto}
+  .lenis.lenis-smooth{scroll-behavior:auto!important}
+  .lenis.lenis-stopped{overflow:hidden}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  button,input,textarea{font:inherit;color:inherit;background:none;border:0;border-radius:0}
+  button{cursor:pointer;text-transform:inherit;letter-spacing:inherit}
+  :focus-visible{outline:1px solid var(--red);outline-offset:3px}
+  ::selection{background:var(--ink);color:var(--paper)}
+  .mono{font-family:var(--mono);font-size:12px;letter-spacing:.02em}
+  .label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gr)}
+  .num{font-variant-numeric:tabular-nums}
+  .wrap{max-width:var(--max);margin:0 auto;padding-left:var(--edge);padding-right:var(--edge)}
+  .grain{position:fixed;inset:0;z-index:95;pointer-events:none;opacity:.03;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  h1 > div,h2 > div{padding-bottom:.14em;margin-bottom:-.14em} /* SplitText masks keep descenders */
+  em{font-style:italic}
+
+  /* ── buttons: sharp, ink ─────────────────────────────────── */
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:12px;height:50px;padding:0 22px;font-size:15px;font-weight:500;white-space:nowrap;transition:background .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease)}
+  .btn:active{transform:translateY(1px)}
+  .btn-ink{background:var(--ink);color:var(--paper)}
+  .btn-ink:hover{background:var(--red)}
+  .btn-line{border:1px solid var(--line2)}
+  .btn-line:hover{border-color:var(--ink)}
+  .btn .lbl{position:relative;display:grid;overflow:hidden;height:1.3em;line-height:1.3em}
+  .btn .lbl span{grid-area:1/1;transition:transform .6s var(--ease)}
+  .btn .lbl span+span{transform:translateY(105%)}
+  .btn:hover .lbl span:first-child{transform:translateY(-105%)}
+  .btn:hover .lbl span+span{transform:none}
+  .ulink{position:relative}
+  .ulink::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .55s var(--ease)}
+  .ulink:hover::after{transform:scaleX(1);transform-origin:left}
+
+  /* ── issue rail + header ─────────────────────────────────── */
+  .top{position:fixed;inset:0 0 auto;z-index:60;transition:background .5s var(--ease),border-color .5s var(--ease);border-bottom:1px solid transparent}
+  .top.solid{background:rgba(241,237,228,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-color:var(--line)}
+  .top .wrap{height:66px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px}
+  .brand{display:flex;align-items:center}
+  .brand svg{height:24px;width:auto}
+  .nav{display:flex;gap:30px;font-size:14.5px}
+  .top-r{justify-self:end;display:flex;align-items:center;gap:18px}
+  .top .btn{height:40px;font-size:14px;padding:0 16px}
+  .menu-btn{display:none;height:40px;padding:0 14px;border:1px solid var(--line2);font-size:14px}
+  .sheet-nav{position:fixed;inset:66px 0 auto;z-index:59;background:var(--paper);border-bottom:1px solid var(--line);padding:8px var(--edge) 24px;display:none;flex-direction:column}
+  .sheet-nav.open{display:flex}
+  .sheet-nav a{font-family:var(--serif);font-size:30px;font-weight:300;padding:12px 0;border-bottom:1px solid var(--line)}
+  .sheet-nav .btn{font-family:var(--sans);font-size:15px;margin-top:18px;border:0}
+
+  /* ── hero ───────────────────────────────────────────────── */
+  .hero{padding-top:clamp(108px,15vh,150px);padding-bottom:48px}
+  .rail{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px;padding-bottom:14px;border-bottom:1px solid var(--line2)}
+  .rail span:nth-child(1){grid-column:1/4}
+  .rail span:nth-child(2){grid-column:4/9}
+  .rail span:nth-child(3){grid-column:9/13;text-align:right}
+  h1{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;font-size:clamp(60px,10.4vw,196px);line-height:.88;letter-spacing:-.045em;margin:clamp(28px,5vh,56px) 0 0}
+  h1 em{font-weight:350;letter-spacing:-.035em}
+  h1 .l2{display:block;padding-left:clamp(0px,14vw,240px)}
+  .hero-row{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px;margin-top:clamp(36px,5vh,56px);align-items:end}
+  .hero-row p{grid-column:1/6;font-size:clamp(17px,1.3vw,19px);color:var(--soft);max-width:44ch}
+  .hero-row p b{color:var(--ink);font-weight:500}
+  .hero-row .ctas{grid-column:6/10;display:flex;gap:10px;flex-wrap:wrap}
+  .spec{grid-column:10/13;display:flex;gap:16px;align-items:flex-end;justify-content:flex-end;border-left:1px solid var(--line);padding-left:20px}
+  .spec .aa{font-family:var(--serif);font-weight:300;font-size:64px;line-height:.8;letter-spacing:-.04em}
+  .spec .aa i{font-style:normal;color:var(--red)}
+  .spec dl{display:grid;grid-template-columns:auto auto;gap:2px 12px;font-family:var(--mono);font-size:11px;color:var(--gr)}
+  .spec dd{color:var(--ink);text-align:right}
+
+  /* ── camera: the signature ───────────────────────────────── */
+  .cam{position:relative;height:460vh}
+  .cstage{position:sticky;top:0;height:100vh;height:100dvh;padding:82px var(--edge) 0;display:flex;flex-direction:column;max-width:calc(var(--max) + 120px);margin:0 auto}
+  .vp{position:relative;flex:1;min-height:0;overflow:hidden;border:1px solid var(--line2);background:var(--paper)}
+  .canvas{position:absolute;left:0;top:0;width:1280px;height:780px;transform-origin:0 0}
+  .ccap{flex:none;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:28px;align-items:center;padding:16px 0 20px;border-bottom:1px solid transparent}
+  .ccap .no{font-family:var(--serif);font-weight:300;font-size:44px;line-height:1;letter-spacing:-.04em;min-width:1.6em;font-variant-numeric:tabular-nums}
+  .ccap .say{position:relative;height:2.6em;font-size:clamp(15px,1.25vw,18px);line-height:1.3}
+  .ccap .say span{position:absolute;inset:0;display:block;padding-top:.05em;opacity:0;transform:translateY(-6px);transition:opacity .2s var(--ease),transform .3s var(--ease)}
+  .ccap .say span.on{opacity:1;transform:none;transition:opacity .55s var(--ease) .18s,transform .8s var(--ease) .18s}
+  .ccap .say em{color:var(--red);font-style:normal}
+  .ticks{display:flex;gap:6px}
+  .ticks i{width:28px;height:2px;background:var(--line2);position:relative;overflow:hidden}
+  .ticks i::after{content:"";position:absolute;inset:0;background:var(--ink);transform:scaleX(var(--f,0));transform-origin:left}
+  .cam.static{height:auto}
+  .cam.static .cstage{position:relative;height:auto}
+  .cam.static .vp{aspect-ratio:1280/780;flex:none}
+
+  /* the Kerf app, at design size 1280×780 */
+  .appk{width:1280px;height:780px;display:grid;grid-template-columns:256px minmax(0,1fr) 296px;grid-template-rows:46px minmax(0,1fr) 28px;font-size:12px;line-height:1.45;color:var(--ink);background:var(--paper)}
+  .k-top{grid-column:1/-1;display:grid;grid-template-columns:256px 1fr 296px;align-items:center;border-bottom:1px solid var(--line2)}
+  .k-file{display:flex;align-items:center;gap:10px;padding:0 16px;height:100%;border-right:1px solid var(--line)}
+  .k-file svg{width:16px;height:16px}
+  .k-file b{font-weight:600}
+  .k-file span{color:var(--gr)}
+  .k-file i{font-style:normal;font-family:var(--mono);font-size:10px;border:1px solid var(--line2);padding:0 5px}
+  .k-tabs{display:flex;justify-content:center;gap:4px;height:100%}
+  .k-tabs span{display:flex;align-items:center;padding:0 14px;color:var(--soft);position:relative}
+  .k-tabs span.on{color:var(--ink);font-weight:500}
+  .k-tabs span.on::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--ink)}
+  .k-act{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 14px;height:100%;border-left:1px solid var(--line)}
+  .av{display:flex}
+  .av i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:9.5px;font-weight:600;border:1.5px solid var(--paper);margin-left:-6px;background:var(--ink);color:var(--paper)}
+  .av i:nth-child(2){background:var(--gr)}
+  .av i:nth-child(3){background:var(--paper);color:var(--ink);border-color:var(--line2)}
+  .k-act .b{height:28px;padding:0 12px;display:flex;align-items:center;border:1px solid var(--line2)}
+  .k-act .b.ink{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .k-left{border-right:1px solid var(--line2);padding:14px 0;overflow:hidden}
+  .k-h{display:flex;justify-content:space-between;padding:0 16px 8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gr)}
+  .k-kv{display:grid;grid-template-columns:1fr auto;padding:5px 16px;border-top:1px solid var(--line)}
+  .k-kv span:first-child{color:var(--soft)}
+  .k-kv b{font-family:var(--mono);font-weight:400;font-size:11px}
+  .k-steps{margin-top:14px;border-top:1px solid var(--line2)}
+  .k-step{display:grid;grid-template-columns:22px 1fr auto;align-items:baseline;gap:8px;padding:7px 16px;border-bottom:1px solid var(--line)}
+  .k-step .s{font-family:var(--serif);font-weight:300;line-height:1;letter-spacing:-.02em}
+  .k-step .n{color:var(--soft)}
+  .k-step b{font-family:var(--mono);font-weight:400;font-size:10.5px;color:var(--gr)}
+  .k-step.on{background:var(--ink);color:var(--paper)}
+  .k-step.on .n,.k-step.on b{color:rgba(241,237,228,.7)}
+  .k-faces{margin-top:14px}
+  .k-face{display:flex;justify-content:space-between;padding:6px 16px;border-top:1px solid var(--line)}
+  .k-face span:last-child{color:var(--gr);font-family:var(--mono);font-size:10px}
+  .k-mid{background:var(--tint);position:relative;overflow:hidden;display:flex;justify-content:center;padding-top:26px}
+  .k-ruler{position:absolute;left:0;right:0;top:0;height:18px;border-bottom:1px solid var(--line);background:repeating-linear-gradient(90deg,var(--line2) 0 1px,transparent 1px 8px);background-position:0 12px;background-size:auto 6px;background-repeat:repeat-x}
+  .k-sheet{position:relative;width:580px;height:640px;background:var(--sheet);border:1px solid var(--line);padding:40px 46px 0;overflow:hidden}
+  .k-sheet::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 7px,rgba(210,58,30,.08) 7px 8px);pointer-events:none}
+  .k-kick{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gr);padding-bottom:10px;border-bottom:1px solid var(--ink)}
+  .k-head{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;font-size:76px;line-height:.92;letter-spacing:-.035em;margin:22px 0 16px}
+  .pair{position:relative;display:inline-block;line-height:1;font-kerning:none}
+  .pair .a{display:inline-block;margin-left:0}
+  .pm{position:absolute;pointer-events:none;opacity:0}
+  .pm.h{left:-.35em;right:-.35em;height:.006em;min-height:.4px;background:var(--red)}
+  .pm.v{top:-.06em;height:1.02em;width:.006em;min-width:.4px;background:var(--ink)}
+  .pm.v.r{background:var(--red)}
+  .pm.t{display:block;line-height:0;white-space:nowrap}
+  .pm.t b{display:block;font-family:var(--mono);font-weight:400;font-size:.042em;letter-spacing:.08em;color:var(--red);line-height:1;transform:translateY(-130%)}
+  .pm.t.under b{transform:translateY(40%)}
+  .pm.gap{height:.006em;min-height:.4px;background:var(--red)}
+  .k-stand{font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.35;color:var(--soft);max-width:38ch;margin-bottom:16px}
+  .k-body{columns:2;column-gap:22px;font-size:10px;line-height:16px;color:var(--soft)}
+  .k-body p+p{text-indent:1.4em}
+  .k-body .dc::first-letter{font-family:var(--serif);float:left;font-size:42px;line-height:32px;padding:2px 6px 0 0;color:var(--ink)}
+  .k-mark{position:absolute;right:12px;top:118px;width:22px;height:22px;border:1px solid var(--red);border-radius:50%;color:var(--red);font-family:var(--mono);font-size:8px;display:grid;place-items:center}
+  .k-right{border-left:1px solid var(--line2);overflow:hidden;display:flex;flex-direction:column}
+  .k-sec{padding:14px 16px;border-bottom:1px solid var(--line)}
+  .k-sec .k-h{padding:0 0 10px}
+  .k-pair{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;font-size:84px;line-height:1;letter-spacing:0;display:flex;align-items:flex-end;justify-content:center;height:100px;border:1px solid var(--line);background:var(--sheet);position:relative;font-kerning:none}
+  .k-pair::after{content:"";position:absolute;left:0;right:0;bottom:22px;height:1px;background:rgba(210,58,30,.45)}
+  .k-pair span:last-child{margin-left:-.048em}
+  .k-kern{display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;margin-top:10px}
+  .k-kern b{font-family:var(--mono);font-weight:400;font-size:13px;color:var(--red);min-width:40px;text-align:center}
+  .k-kern i{width:24px;height:24px;border:1px solid var(--line2);display:grid;place-items:center;font-style:normal}
+  .k-check{display:grid;grid-template-columns:16px 1fr auto;gap:8px;padding:5px 0;border-top:1px solid var(--line)}
+  .k-check:first-of-type{border-top:0}
+  .k-check .ok{color:var(--ink)} .k-check .no{color:var(--red)}
+  .k-check b{font-family:var(--mono);font-weight:400;font-size:10.5px;color:var(--gr)}
+  .k-code{font-family:var(--mono);font-size:10px;line-height:1.75;color:var(--soft);white-space:pre;overflow:hidden}
+  .k-code .p{color:var(--ink)} .k-code .v{color:var(--gr)}
+  .k-code .hl{background:rgba(210,58,30,.1);color:var(--red);margin:0 -16px;padding:0 16px;display:block;transition:background .4s}
+  .k-status{grid-column:1/-1;display:flex;gap:22px;align-items:center;padding:0 16px;border-top:1px solid var(--line2);font-family:var(--mono);font-size:10px;color:var(--gr)}
+  .k-status span:last-child{margin-left:auto}
+
+  /* ── sections ───────────────────────────────────────────── */
+  .sec{padding-top:clamp(96px,13vw,190px);padding-bottom:clamp(96px,13vw,190px)}
+  .head{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px;align-items:end;margin-bottom:clamp(48px,7vw,104px)}
+  .head .label{grid-column:1/4;padding-bottom:12px}
+  .head-r{grid-column:4/13}
+  h2{grid-column:4/13;font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;font-size:clamp(44px,6.4vw,118px);line-height:.92;letter-spacing:-.04em}
+  h2 em{font-weight:350}
+  .lede{grid-column:4/10;color:var(--soft);font-size:18px;max-width:52ch;margin-top:-56px;margin-bottom:96px}
+  .spread{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px;border-top:1px solid var(--ink);padding-top:28px;margin-bottom:clamp(80px,10vw,140px)}
+  .spread .txt{grid-column:1/5;display:flex;flex-direction:column;gap:14px}
+  .spread .ui{grid-column:5/13}
+  .big-n{font-family:var(--serif);font-weight:300;font-size:96px;line-height:.8;letter-spacing:-.05em;color:var(--ink)}
+  .big-n sup{font-family:var(--mono);font-size:11px;letter-spacing:.12em;vertical-align:top;margin-left:10px;color:var(--gr)}
+  .spread h3{font-family:var(--serif);font-weight:400;font-size:clamp(28px,2.6vw,40px);line-height:1.02;letter-spacing:-.025em;margin-top:18px}
+  .spread p{color:var(--soft);max-width:40ch}
+  .pane{border:1px solid var(--line2);background:var(--sheet)}
+  .pane-h{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 18px;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+  .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-bottom:clamp(80px,10vw,140px)}
+  .two .spread{grid-template-columns:1fr;margin:0}
+  .two .spread .txt,.two .spread .ui{grid-column:1/-1}
+
+  /* scale generator */
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{height:30px;padding:0 12px;border:1px solid var(--line2);font-family:var(--mono);font-size:11.5px;transition:background .3s,color .3s,border-color .3s}
+  .chip:hover{border-color:var(--ink)}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .gen-rows{display:flex;flex-direction:column}
+  .gen-row{display:grid;grid-template-columns:70px minmax(0,1fr) 110px;gap:18px;align-items:center;padding:0 18px;min-height:52px;border-bottom:1px solid var(--line);transition:background .25s}
+  .gen-row:hover{background:var(--tint)}
+  .gen-row .nm{font-family:var(--mono);font-size:11px;color:var(--gr)}
+  .gen-row .pv{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;letter-spacing:-.025em;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:clip;padding:6px 0}
+  .gen-row .px{font-family:var(--mono);font-size:11.5px;text-align:right}
+  .gen-row .px span{color:var(--gr)}
+  .gen-code{position:relative;font-family:var(--mono);font-size:11.5px;line-height:1.8;padding:14px 18px;white-space:pre;overflow:auto;color:var(--soft);background:var(--tint);max-height:190px}
+  .gen-code b{font-weight:400;color:var(--ink)}
+  .copy{height:30px;padding:0 12px;border:1px solid var(--line2);font-family:var(--mono);font-size:11px;transition:background .3s,color .3s}
+  .copy:hover{background:var(--ink);color:var(--paper)}
+  .rng{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11.5px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:130px;height:20px;background:transparent;cursor:pointer}
+  input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--ink)}
+  input[type=range]::-moz-range-track{height:1px;background:var(--ink)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;margin-top:-5.5px;background:var(--ink);transition:background .2s}
+  input[type=range]::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:0;background:var(--ink)}
+  input[type=range]:hover::-webkit-slider-thumb{background:var(--red)}
+
+  /* proof on your copy */
+  .pf{padding:22px 22px 26px}
+  .pf input{width:100%;height:44px;border-bottom:1px solid var(--line2);font-family:var(--sans);font-size:16px;outline:none;transition:border-color .3s}
+  .pf input:focus{border-color:var(--ink)}
+  .pf-out{margin-top:22px;min-height:230px}
+  .pf-d{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;font-size:clamp(38px,4.2vw,64px);line-height:.94;letter-spacing:-.035em;text-wrap:balance;overflow-wrap:anywhere}
+  .pf-d.nob{text-wrap:wrap}
+  .pf-h{font-family:var(--serif);font-weight:400;font-size:22px;line-height:1.15;letter-spacing:-.015em;margin-top:18px;overflow-wrap:anywhere}
+  .pf-m{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px;padding-top:12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--gr)}
+  .pf-m b{font-weight:400;color:var(--ink)}
+  .pf-m .warn{color:var(--red)}
+  .sw{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;cursor:pointer}
+  .sw i{width:26px;height:14px;border:1px solid var(--ink);position:relative;transition:background .3s}
+  .sw i::after{content:"";position:absolute;top:2px;left:2px;width:8px;height:8px;background:var(--ink);transition:transform .4s var(--ease),background .3s}
+  .sw[aria-checked="true"] i{background:var(--ink)}
+  .sw[aria-checked="true"] i::after{transform:translateX(12px);background:var(--paper)}
+
+  /* kerning checks */
+  .kp{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid var(--line)}
+  .kp:last-child{border-bottom:0}
+  .kp .w{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;font-size:clamp(56px,5.4vw,84px);line-height:1;letter-spacing:0;font-kerning:none;white-space:nowrap}
+  .kp .w span{display:inline-block;transition:margin-left .9s var(--ease)}
+  .kp .w .g{position:relative}
+  .kp .w .g::before{content:"";position:absolute;left:-.02em;top:.15em;bottom:.1em;width:1px;background:var(--red);opacity:1;transition:opacity .5s}
+  .kp.done .w .g::before{opacity:0}
+  .kp .meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .kp .meta span{font-family:var(--mono);font-size:11px;color:var(--red)}
+  .kp.done .meta span{color:var(--gr)}
+
+  /* tokens */
+  .tabs{display:flex;gap:0;border:1px solid var(--line2)}
+  .tabs button{height:30px;padding:0 14px;font-family:var(--mono);font-size:11.5px;color:var(--soft);transition:background .3s,color .3s}
+  .tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+  .tok{font-family:var(--mono);font-size:12px;line-height:1.85;padding:20px 22px 24px;white-space:pre;overflow:auto;color:var(--soft);min-height:280px}
+  .tok b{font-weight:400;color:var(--ink)} .tok i{font-style:normal;color:var(--red)}
+
+  /* colophon: the proof slot */
+  .colo{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px;align-items:start}
+  .colo figure{grid-column:1/7;position:relative;overflow:hidden;aspect-ratio:3/2}
+  .colo figure img{width:100%;height:100%;object-fit:cover;display:block}
+  .colo figcaption{position:absolute;left:14px;bottom:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--paper);mix-blend-mode:difference}
+  .colo .txt{grid-column:8/13;display:flex;flex-direction:column;gap:22px}
+  .colo h3{font-family:var(--serif);font-weight:300;font-size:clamp(34px,3.4vw,56px);line-height:.98;letter-spacing:-.03em}
+  .colo p{color:var(--soft)}
+  .colo dl{display:grid;grid-template-columns:auto 1fr;border-top:1px solid var(--ink)}
+  .colo dt,.colo dd{padding:10px 0;border-bottom:1px solid var(--line)}
+  .colo dt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);padding-right:24px}
+  .colo dd{text-align:right}
+  .colo dd b{font-weight:500}
+
+  /* pricing */
+  .bill{display:inline-flex;border:1px solid var(--ink);position:relative}
+  .bill button{position:relative;z-index:1;height:38px;padding:0 18px;font-size:14px;transition:color .4s var(--ease)}
+  .bill button[aria-pressed="true"]{color:var(--paper)}
+  .bill .pill{position:absolute;top:0;bottom:0;left:0;background:var(--ink);transition:transform .6s var(--ease),width .6s var(--ease)}
+  .bill small{font-family:var(--mono);font-size:10px;margin-left:6px;color:var(--red)}
+  .bill button[aria-pressed="true"] small{color:var(--paper)}
+  .plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--ink);margin-top:36px}
+  .plan{padding:28px 28px 32px;border-right:1px solid var(--line2);display:flex;flex-direction:column;gap:16px}
+  .plan:first-child{padding-left:0}
+  .plan:last-child{border-right:0;padding-right:0}
+  .plan h3{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--serif);font-weight:400;font-size:30px;letter-spacing:-.02em}
+  .plan h3 span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--red);font-weight:400}
+  .amt{display:flex;align-items:flex-end;gap:10px;min-height:84px}
+  .amt b{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144;font-size:84px;line-height:1;height:1em;letter-spacing:-.05em;display:inline-flex;position:relative;overflow:hidden}
+  .amt small{padding-bottom:.6em}
+  .amt small{font-family:var(--mono);font-size:11px;color:var(--gr);line-height:1.5}
+  .plan p{color:var(--soft);font-size:15px;min-height:3em}
+  .plan ul{list-style:none;border-top:1px solid var(--line)}
+  .plan li{padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .plan .btn{margin-top:auto}
+  .plan.pick{background:var(--ink);color:var(--paper);padding-left:28px;padding-right:28px}
+  .plan.pick p,.plan.pick .amt small{color:rgba(241,237,228,.66)}
+  .plan.pick li{border-color:rgba(241,237,228,.16)}
+  .plan.pick ul{border-color:rgba(241,237,228,.16)}
+  .plan.pick .btn-ink{background:var(--paper);color:var(--ink)}
+  .plan.pick .btn-ink:hover{background:var(--red);color:var(--paper)}
+  .note{margin-top:22px;font-size:14px;color:var(--gr)}
+
+  /* final */
+  .final{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px;align-items:end}
+  .final .copy-col{grid-column:1/8}
+  .final h2{font-size:clamp(52px,8vw,150px)}
+  .final figure{grid-column:9/13;aspect-ratio:4/5;overflow:hidden}
+  .final figure img{width:100%;height:100%;object-fit:cover;display:block}
+  .join{margin-top:44px;display:flex;flex-direction:column;gap:22px;max-width:560px}
+  .fld{display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--line2);transition:border-color .3s}
+  .fld:focus-within{border-color:var(--ink)}
+  .fld.bad{border-color:var(--red)}
+  .fld label{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gr)}
+  .fld input{height:44px;font-family:var(--serif);font-size:24px;font-weight:300;outline:none}
+  .fld input::placeholder{color:rgba(27,26,23,.3)}
+  .err{min-height:18px;font-family:var(--mono);font-size:12px;color:var(--red)}
+  .done{display:none;margin-top:44px;max-width:560px;border-top:1px solid var(--ink);padding-top:22px}
+  .done.show{display:block}
+  .done h3{font-family:var(--serif);font-weight:300;font-size:44px;letter-spacing:-.03em;line-height:1;margin:12px 0 12px}
+  .done p{color:var(--soft)}
+
+  footer{margin-top:clamp(40px,6vw,80px);border-top:1px solid var(--ink);overflow:hidden}
+  .fcols{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px;padding-top:32px}
+  .fcols .c{grid-column:span 3;display:flex;flex-direction:column;gap:8px;font-size:15px}
+  .fcols .c .label{margin-bottom:6px}
+  .fcols .c a{width:fit-content}
+  .bigword{display:block;width:100%;height:auto;margin-top:clamp(48px,7vw,96px);color:var(--ink)}
+  .fbot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0 28px}
+
+  .toast{position:fixed;left:50%;bottom:24px;z-index:90;transform:translate(-50%,20px);opacity:0;padding:10px 14px;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:12px;transition:opacity .3s var(--ease),transform .6s var(--ease);pointer-events:none}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  /* ── responsive ─────────────────────────────────────────── */
+  @media (max-width:1000px){
+    .nav{display:none}
+    .top .wrap{grid-template-columns:1fr auto}
+    .hero-row p{grid-column:1/-1}
+    .hero-row .ctas{grid-column:1/8}
+    .spec{grid-column:8/13}
+    .head .label{grid-column:1/-1;padding:0}
+    h2,.head-r{grid-column:1/-1}
+    .lede{grid-column:1/-1;margin-top:-28px}
+    .spread .txt,.spread .ui{grid-column:1/-1}
+    .two{grid-template-columns:1fr}
+    .colo figure,.colo .txt{grid-column:1/-1}
+    .plans{grid-template-columns:1fr}
+    .plan,.plan:first-child,.plan:last-child{padding:28px 0;border-right:0;border-bottom:1px solid var(--line2)}
+    .plan.pick{padding:28px var(--edge);margin:0 calc(var(--edge) * -1)}
+    .final .copy-col,.final figure{grid-column:1/-1}
+    .final figure{aspect-ratio:3/2;order:-1}
+    .fcols .c{grid-column:span 6}
+  }
+  @media (max-width:700px){
+    .top .btn{display:none}
+    .menu-btn{display:block}
+    .rail span:nth-child(2){display:none}
+    .rail span:nth-child(1){grid-column:1/7}
+    .rail span:nth-child(3){grid-column:7/13}
+    h1 .l2{padding-left:0}
+    .hero-row .ctas{grid-column:1/-1}
+    .hero-row .ctas .btn{flex:1 1 100%}
+    .spec{grid-column:1/-1;justify-content:flex-start;border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:16px}
+    .cam{height:400vh}
+    .cstage{padding-top:66px;justify-content:center}
+    .vp{flex:none;aspect-ratio:4/5;max-height:calc(100dvh - 230px)}
+    .ccap{grid-template-columns:auto minmax(0,1fr);gap:16px}
+    .ccap .ticks{grid-column:1/-1}
+    .ccap .ticks i{flex:1}
+    .ccap .say{height:3.9em}
+    .gen-row{grid-template-columns:52px minmax(0,1fr) 84px;gap:10px;padding:0 14px}
+    .pane-h{padding:12px 14px}
+    .kp{grid-template-columns:1fr;padding:16px 14px}
+    .kp .meta{flex-direction:row;justify-content:space-between;align-items:center}
+    .tok{font-size:10.5px;padding:16px 14px}
+    .fcols .c{grid-column:span 6}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition-duration:.01ms!important;animation:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Kerf home"><svg viewBox="0 0 69.83 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" fill="#1B1A17"/><rect x="13" y="2" width="2.4" height="13.6" fill="#D23A1E"/><path fill="#1B1A17" d="M35.31 16.23 42.41 7.59Q42.85 7.13 42.96 6.69Q43.07 6.24 42.88 5.91Q42.7 5.57 42.26 5.46L41.47 5.34Q41.41 5.33 41.39 5.31Q41.37 5.29 41.37 5.26Q41.37 5.24 41.4 5.22Q41.43 5.2 41.45 5.2H45.88Q45.91 5.2 45.93 5.22Q45.95 5.24 45.95 5.26Q45.95 5.29 45.92 5.32Q45.9 5.34 45.87 5.35Q45.51 5.41 45.18 5.56Q44.85 5.7 44.47 5.96Q44.08 6.21 43.63 6.62Q43.18 7.03 42.6 7.64L35.38 16.38ZM38.24 12.7 39.95 10.98 45.26 20.5Q45.51 20.98 45.8 21.18Q46.09 21.39 46.65 21.44Q46.7 21.45 46.72 21.47Q46.74 21.49 46.74 21.52Q46.74 21.56 46.72 21.58Q46.7 21.6 46.64 21.6H41.43Q41.39 21.6 41.37 21.58Q41.34 21.56 41.34 21.52Q41.34 21.48 41.37 21.47Q41.4 21.45 41.45 21.45L42.54 21.31Q42.75 21.28 42.8 21.13Q42.85 20.98 42.67 20.63ZM35.87 20.99Q35.87 21.13 35.97 21.2Q36.07 21.27 36.28 21.3L37.37 21.46Q37.44 21.46 37.47 21.48Q37.49 21.49 37.49 21.53Q37.49 21.55 37.47 21.58Q37.44 21.6 37.4 21.6H31.94Q31.89 21.6 31.87 21.58Q31.84 21.55 31.84 21.53Q31.84 21.47 31.96 21.46L33.05 21.3Q33.26 21.27 33.36 21.2Q33.46 21.13 33.46 20.99V5.81Q33.46 5.67 33.36 5.6Q33.26 5.53 33.05 5.5L31.96 5.34Q31.84 5.33 31.84 5.27Q31.84 5.24 31.87 5.22Q31.89 5.2 31.94 5.2H37.4Q37.44 5.2 37.47 5.22Q37.49 5.24 37.49 5.27Q37.49 5.33 37.37 5.34L36.28 5.5Q36.07 5.53 35.97 5.6Q35.87 5.67 35.87 5.81ZM55.61 15.43Q55.61 15.51 55.55 15.57Q55.49 15.63 55.39 15.63H48.16V15.45H53.35Q53.53 15.45 53.53 15.25Q53.53 13.31 52.91 12.32Q52.28 11.34 51.34 11.34Q50.5 11.34 49.92 11.85Q49.33 12.36 49.02 13.34Q48.7 14.33 48.7 15.73Q48.7 18.14 49.74 19.4Q50.77 20.65 52.41 20.65Q53.59 20.65 54.42 19.97Q55.26 19.29 55.42 18.12Q55.42 18.07 55.44 18.06Q55.46 18.04 55.47 18.04Q55.51 18.04 55.53 18.06Q55.55 18.07 55.54 18.14Q55.45 19.2 54.88 20.04Q54.31 20.87 53.4 21.35Q52.5 21.83 51.37 21.83Q50 21.83 48.96 21.21Q47.93 20.59 47.35 19.44Q46.78 18.3 46.78 16.75Q46.78 15.13 47.38 13.87Q47.97 12.62 49.05 11.89Q50.13 11.17 51.58 11.17Q52.81 11.17 53.71 11.72Q54.62 12.28 55.11 13.24Q55.61 14.2 55.61 15.43ZM59.27 15.99Q59.27 14.41 59.71 13.34Q60.15 12.28 60.83 11.74Q61.52 11.2 62.24 11.2Q63.07 11.2 63.52 11.7Q63.98 12.19 63.98 13.06Q63.98 13.73 63.67 14.07Q63.35 14.41 62.89 14.41Q62.44 14.41 62.21 14.16Q61.98 13.9 61.96 13.39V13.06Q61.95 12.65 61.79 12.45Q61.62 12.25 61.23 12.25Q60.78 12.25 60.36 12.67Q59.93 13.1 59.66 13.94Q59.38 14.78 59.38 16.04ZM59.38 11.42V15.45V20.96Q59.38 21.08 59.46 21.17Q59.54 21.26 59.68 21.3L60.84 21.46Q60.89 21.47 60.92 21.48Q60.94 21.49 60.94 21.53Q60.94 21.56 60.92 21.58Q60.89 21.6 60.84 21.6H56.26Q56.21 21.6 56.18 21.58Q56.15 21.55 56.15 21.53Q56.15 21.49 56.19 21.47Q56.22 21.45 56.29 21.44L57.03 21.34Q57.18 21.31 57.25 21.23Q57.31 21.15 57.31 21.05V12.32Q57.31 12.26 57.28 12.22Q57.25 12.18 57.18 12.18H56.24Q56.21 12.18 56.19 12.16Q56.16 12.13 56.16 12.11Q56.16 12.08 56.19 12.05Q56.21 12.03 56.27 12.02L59.08 11.33Q59.16 11.3 59.2 11.3Q59.24 11.29 59.28 11.29Q59.34 11.29 59.36 11.33Q59.38 11.37 59.38 11.42ZM67.72 20.99Q67.72 21.12 67.79 21.19Q67.85 21.26 68.01 21.3L69.39 21.45Q69.45 21.45 69.48 21.47Q69.5 21.49 69.5 21.53Q69.5 21.6 69.42 21.6H64.48Q64.46 21.6 64.43 21.58Q64.41 21.56 64.41 21.54Q64.41 21.51 64.44 21.49Q64.47 21.47 64.51 21.46L65.43 21.31Q65.57 21.28 65.63 21.21Q65.7 21.14 65.7 21.06V12.05Q65.7 11.97 65.66 11.91Q65.62 11.84 65.52 11.83L64.1 11.57Q64.07 11.56 64.05 11.54Q64.03 11.53 64.03 11.49Q64.03 11.47 64.06 11.45Q64.08 11.43 64.1 11.43H65.84L65.72 11.51V11.31Q65.72 10.92 65.57 10.52Q65.42 10.13 65.21 9.7Q65.01 9.28 64.85 8.79Q64.7 8.3 64.7 7.73Q64.7 6.41 65.5 5.63Q66.3 4.85 67.6 4.85Q68.4 4.85 68.95 5.12Q69.49 5.4 69.77 5.85Q70.04 6.3 70.04 6.84Q70.04 7.39 69.77 7.67Q69.5 7.94 69.09 7.94Q68.67 7.94 68.39 7.65Q68.1 7.37 68.1 6.84V5.95Q68.1 5.49 67.88 5.26Q67.67 5.04 67.2 5.04Q66.49 5.04 66.07 5.5Q65.65 5.97 65.65 6.79Q65.65 7.37 65.86 7.89Q66.06 8.41 66.37 8.88Q66.68 9.36 66.99 9.8Q67.3 10.24 67.51 10.65Q67.71 11.06 67.71 11.43V11.62L67.6 11.43H69.66Q69.72 11.43 69.75 11.44Q69.77 11.46 69.77 11.49Q69.77 11.56 69.7 11.6Q69.63 11.63 69.53 11.63H67.72Z"/></svg></a>
+    <nav class="nav" aria-label="Primary"><a class="ulink" href="#camera">The proof</a><a class="ulink" href="#tools">Tools</a><a class="ulink" href="#colophon">Colophon</a><a class="ulink" href="#pricing">Pricing</a></nav>
+    <div class="top-r">
+      <a class="btn btn-ink" href="#start" data-magnetic><span class="lbl"><span>Start a system, free</span><span>Takes four minutes</span></span></a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="sheetNav">Menu</button>
+    </div>
+  </div>
+</header>
+<nav class="sheet-nav" id="sheetNav" aria-label="Mobile">
+  <a href="#camera">The proof</a><a href="#tools">Tools</a><a href="#colophon">Colophon</a><a href="#pricing">Pricing</a>
+  <a class="btn btn-ink" href="#start">Start a system, free</a>
+</nav>
+
+<main>
+  <section class="hero wrap" aria-labelledby="h1">
+    <div class="rail label"><span>Kerf — Release 2.6</span><span>Fluid scales · Proofs · Kerning · Tokens</span><span>October 2026</span></div>
+    <h1 id="h1" aria-label="Set type once. Ship it everywhere.">Set type once. <span class="l2">Ship it <em>everywhere.</em></span></h1>
+    <div class="hero-row">
+      <p><b>Kerf is a browser app for web type systems.</b> Tune a fluid scale, proof it on your own copy, fix the kerning, and export tokens to CSS, Tailwind and Figma.</p>
+      <div class="ctas">
+        <a class="btn btn-ink" href="#start" data-magnetic><span class="lbl"><span>Start a system, free</span><span>No card, no install</span></span></a>
+        <a class="btn btn-line" href="#camera"><span class="lbl"><span>See one pair, up close</span><span>Scroll to zoom in</span></span></a>
+      </div>
+      <div class="spec" aria-label="This page: display 196 pixels over 17 pixel body">
+        <span class="aa" aria-hidden="true">A<i>a</i></span>
+        <dl><dt>Display</dt><dd>196 px</dd><dt>Text</dt><dd>17 px</dd><dt>Ratio</dt><dd>×11.5</dd></dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── signature: a camera move into one kerning pair ── -->
+  <section class="cam" id="camera" aria-label="A camera move from the whole Kerf app into one kerning pair">
+    <div class="cstage">
+      <div class="vp" id="vp" aria-hidden="true">
+        <div class="canvas" id="canvas">
+          <div class="appk">
+            <div class="k-top">
+              <div class="k-file"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" fill="#1B1A17"/><rect x="13" y="2" width="2.4" height="13.6" fill="#D23A1E"/></svg><b>Marlow &amp; Finch</b><span>/ Web type system</span><i>v4</i></div>
+              <div class="k-tabs"><span>Scale</span><span>Pairing</span><span class="on">Proof</span><span>Tokens</span></div>
+              <div class="k-act"><span class="av"><i>AL</i><i>JR</i><i>+2</i></span><span class="b">Share</span><span class="b ink">Export</span></div>
+            </div>
+            <aside class="k-left">
+              <div class="k-h"><span>Scale</span><span>fluid</span></div>
+              <div class="k-kv"><span>Base</span><b>16 → 18 px</b></div>
+              <div class="k-kv"><span>Ratio</span><b>1.200 → 1.333</b></div>
+              <div class="k-kv"><span>Viewport</span><b>360 → 1440</b></div>
+              <div class="k-steps">
+                <div class="k-step on"><span class="s" style="font-size:20px">Aa</span><span class="n">Display</span><b>48 → 128</b></div>
+                <div class="k-step"><span class="s" style="font-size:18px">Aa</span><span class="n">H1</span><b>40 → 96</b></div>
+                <div class="k-step"><span class="s" style="font-size:16px">Aa</span><span class="n">H2</span><b>33 → 72</b></div>
+                <div class="k-step"><span class="s" style="font-size:15px">Aa</span><span class="n">H3</span><b>28 → 54</b></div>
+                <div class="k-step"><span class="s" style="font-size:14px">Aa</span><span class="n">H4</span><b>23 → 40</b></div>
+                <div class="k-step"><span class="s" style="font-size:13px">Aa</span><span class="n">Body</span><b>16 → 18</b></div>
+                <div class="k-step"><span class="s" style="font-size:12px">Aa</span><span class="n">Small</span><b>14 → 15</b></div>
+                <div class="k-step"><span class="s" style="font-size:11px">Aa</span><span class="n">Caption</span><b>12 → 13</b></div>
+              </div>
+              <div class="k-faces">
+                <div class="k-h" style="padding-top:4px"><span>Faces</span><span>3</span></div>
+                <div class="k-face"><span style="font-family:var(--serif)">Fraunces</span><span>display</span></div>
+                <div class="k-face"><span>Instrument Sans</span><span>text</span></div>
+                <div class="k-face"><span style="font-family:var(--mono);font-size:11px">DM Mono</span><span>code</span></div>
+              </div>
+            </aside>
+            <div class="k-mid">
+              <div class="k-ruler"></div>
+              <div class="k-sheet">
+                <div class="k-kick"><span>No. 14 · Autumn 2026</span><span>Marlow &amp; Finch Review</span></div>
+                <div class="k-head"><span class="pair" id="pairProof"><span class="t">T</span><span class="a" id="pairA">a</span><i class="pm h" style="top:.8615em"></i><i class="pm h" style="top:.3795em"></i><i class="pm h" style="top:.1615em"></i><i class="pm v" id="pmL"></i><i class="pm v r" id="pmR"></i><i class="pm gap" id="pmGap" style="top:.93em;width:0"></i><span class="pm t under" id="pmTw" style="top:.93em;left:.6em"><b id="pmT">KERN 0</b></span><span class="pm t" style="top:.8615em;left:-.36em"><b>BASELINE</b></span><span class="pm t" style="top:.3795em;left:-.36em"><b>X-HEIGHT</b></span><span class="pm t" style="top:.1615em;left:-.36em"><b>CAP</b></span></span>ll water,<br>late light</div>
+                <p class="k-stand">On the last ferry of the season, the harbour pilots read the tide the way their grandfathers did: by the colour of the water.</p>
+                <div class="k-body">
+                  <p class="dc">The pilots of Marlow keep no logbook. What they know about the tide they keep in the hands, in the way a rope pays out against a cleat, in the colour the estuary turns an hour before the turn. Visitors ask how they learn it. They shrug and point at the water.</p>
+                  <p>By October most of the pleasure boats are gone. The harbour is left to the working hulls and to the light, which arrives late and low and lays itself across the mud flats like a sheet of brass.</p>
+                  <p>It was in this light that we met Ide Marrow, sixty-one, who has taken the evening ferry out past the bar every night for thirty-four years and has never once, she says, been late.</p>
+                  <p>“The tide is never late either,” she says. “We just stop paying attention to it.”</p>
+                </div>
+                <span class="k-mark" aria-hidden="true">#</span>
+              </div>
+            </div>
+            <aside class="k-right">
+              <div class="k-sec">
+                <div class="k-h"><span>Pair</span><span>Display · Fraunces</span></div>
+                <div class="k-pair"><span>T</span><span>a</span></div>
+                <div class="k-kern"><span style="color:var(--soft)">Kerning</span><i>−</i><b>−48</b><i>+</i></div>
+              </div>
+              <div class="k-sec">
+                <div class="k-h"><span>Checks</span><span>4</span></div>
+                <div class="k-check"><span class="ok">✓</span><span>Baseline grid</span><b>8 px</b></div>
+                <div class="k-check"><span class="ok">✓</span><span>Measure</span><b>64 ch</b></div>
+                <div class="k-check"><span class="no">!</span><span>Unkerned pairs</span><b>Wo · y.</b></div>
+                <div class="k-check"><span class="ok">✓</span><span>Contrast</span><b>12.9 : 1</b></div>
+              </div>
+              <div class="k-sec" style="border-bottom:0;flex:1">
+                <div class="k-h"><span>Tokens</span><span>CSS</span></div>
+<div class="k-code" id="tokBlock"><span class="p">:root</span> {
+  <span class="p">--step-display</span>: <span class="v">clamp(3rem,</span>
+      <span class="v">1.333rem + 7.407vw, 8rem)</span>;
+  <span class="p">--step-h1</span>: <span class="v">clamp(2.5rem,</span>
+      <span class="v">1.333rem + 5.185vw, 6rem)</span>;
+  <span class="p">--font-display</span>: <span class="v">"Fraunces"</span>;
+<span class="hl" id="tokKern">  --kern-Ta: -0.048em;</span>  <span class="p">--measure</span>: <span class="v">64ch</span>;
+}</div>
+              </div>
+            </aside>
+            <div class="k-status"><span>Baseline 8 px</span><span>Measure 64 ch</span><span>Contrast 12.9:1</span><span>Saved 2 min ago · 4 editors</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="ccap" aria-hidden="true">
+        <span class="no" id="camNo">01</span>
+        <div class="say" id="camSay">
+          <span class="on">The whole system on one sheet: scale, faces, proof and tokens.</span>
+          <span>One pair in the headline. <em>T</em> and <em>a</em>, unkerned, at 128 px.</span>
+          <span>Kerf measures the gap and closes it: <em>−48 units</em>, on the real metrics.</span>
+          <span>The fix becomes a token: <em>--kern-Ta</em>, in CSS, Tailwind and Figma.</span>
+          <span>Every page that uses the display step now gets it right.</span>
+        </div>
+        <div class="ticks" id="ticks"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+    <p class="sr">The Kerf app shows a type scale, a proof sheet and exported tokens. The camera zooms into the letters T and a in the proof headline, where Kerf draws the baseline, x-height and cap-height lines and applies a kerning value of minus 48 units, then pulls back to the token --kern-Ta: -0.048em.</p>
+  </section>
+
+  <!-- ── tools ── -->
+  <section class="sec wrap" id="tools" aria-labelledby="th">
+    <div class="head"><span class="label">(The tools)</span><h2 id="th" aria-label="Four tools, one sheet of type.">Four tools, <em>one sheet</em> of type.</h2></div>
+    <p class="lede">Every tool below is the real thing, cut down. Change a value and watch the numbers follow.</p>
+
+    <article class="spread">
+      <div class="txt">
+        <span class="big-n">1<sup>FLUID SCALE</sup></span>
+        <h3>The clamp() maths, written for you.</h3>
+        <p>Pick a base and a ratio for small and large screens. Kerf writes one <span class="mono">clamp()</span> per step, so type grows smoothly from 360 to 1440 pixels with no breakpoints.</p>
+      </div>
+      <div class="ui pane reveal">
+        <div class="pane-h">
+          <div class="chips" id="ratios" role="group" aria-label="Large-screen ratio">
+            <button class="chip" data-r="1.2" aria-pressed="false">1.200</button><button class="chip" data-r="1.25" aria-pressed="false">1.250</button><button class="chip" data-r="1.333" aria-pressed="true">1.333</button><button class="chip" data-r="1.414" aria-pressed="false">1.414</button>
+          </div>
+          <label class="rng" for="base">Base <input type="range" id="base" min="15" max="21" step="1" value="18"> <output id="baseOut" class="num">18 px</output></label>
+        </div>
+        <div class="gen-rows" id="genRows"></div>
+        <div class="pane-h" style="border-top:1px solid var(--line2);border-bottom:0"><span class="label">CSS</span><button class="copy" id="copyCss">Copy CSS</button></div>
+        <div class="gen-code" id="genCode"></div>
+      </div>
+    </article>
+
+    <div class="two">
+      <article class="spread">
+        <div class="txt">
+          <span class="big-n">2<sup>PROOFS</sup></span>
+          <h3>Proof on your own copy, not lorem ipsum.</h3>
+          <p>Paste a real headline. Kerf sets it at every step and flags a measure that runs too long.</p>
+        </div>
+        <div class="ui pane reveal">
+          <div class="pf">
+            <label class="label" for="pfIn">Your headline</label>
+            <input id="pfIn" value="Tall water, late light on the estuary" maxlength="90" autocomplete="off">
+            <div class="pf-out" id="pfOut">
+              <div class="pf-d" id="pfD"></div>
+              <div class="pf-h" id="pfH"></div>
+            </div>
+            <div class="pf-m"><span>Length <b id="pfLen">0</b> characters</span><span id="pfWarn"></span><button class="sw" id="balance" role="switch" aria-checked="true"><i></i>Balance lines</button></div>
+          </div>
+        </div>
+      </article>
+      <article class="spread">
+        <div class="txt">
+          <span class="big-n">3<sup>KERNING</sup></span>
+          <h3>The pairs your font forgot, found and fixed.</h3>
+          <p>Kerf checks the pairs that appear in your headings and suggests a value. Apply one and watch the gap close.</p>
+        </div>
+        <div class="ui pane reveal" id="kerns">
+          <div class="pane-h"><span class="label"><span id="kLeft">3</span> pairs to fix</span><button class="copy" id="applyAll">Apply all</button></div>
+          <div class="kp" data-k="-0.048"><div class="w">T<span class="g">a</span>ble</div><div class="meta"><span>Ta · −48</span><button class="copy">Apply</button></div></div>
+          <div class="kp" data-k="-0.036"><div class="w">W<span class="g">o</span>od</div><div class="meta"><span>Wo · −36</span><button class="copy">Apply</button></div></div>
+          <div class="kp" data-k="-0.052"><div class="w">Yes, say<span class="g">.</span></div><div class="meta"><span>y. · −52</span><button class="copy">Apply</button></div></div>
+        </div>
+      </article>
+    </div>
+
+    <article class="spread" style="margin-bottom:0">
+      <div class="txt">
+        <span class="big-n">4<sup>TOKENS</sup></span>
+        <h3>One export for the developer and the designer.</h3>
+        <p>The same values, three dialects. Kerf keeps Figma styles and CSS variables in step, so the handoff stops being a translation job.</p>
+      </div>
+      <div class="ui pane reveal">
+        <div class="pane-h"><div class="tabs" role="tablist" aria-label="Token format"><button role="tab" aria-selected="true" data-t="css">CSS</button><button role="tab" aria-selected="false" data-t="tw">Tailwind</button><button role="tab" aria-selected="false" data-t="figma">Figma JSON</button></div><button class="copy" id="copyTok">Copy</button></div>
+        <div class="tok" id="tok" role="tabpanel"></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ── colophon: proof without testimonials ── -->
+  <section class="sec wrap" id="colophon" aria-labelledby="ch" style="padding-top:0">
+    <div class="head"><span class="label">(Colophon)</span><h2 id="ch" aria-label="This page was set with Kerf.">This page was <em>set with</em> Kerf.</h2></div>
+    <div class="colo">
+      <figure class="reveal-img"><img src="images/typecase.webp" alt="An empty wooden printer's type case in soft window light" loading="lazy" decoding="async" width="1536" height="1024"><figcaption>Fig. 1 — Where kerning started</figcaption></figure>
+      <div class="txt">
+        <h3>Our own specimen, published the way yours will be.</h3>
+        <p>Every Kerf system gets a public specimen page your developers can read and your clients can sign off. Here is the one for this site.</p>
+        <dl>
+          <dt>Display</dt><dd><b>Fraunces 300</b>, 60 → 196 px</dd>
+          <dt>Text</dt><dd><b>Instrument Sans</b>, 17 px</dd>
+          <dt>Code</dt><dd><b>DM Mono</b>, 11–12 px</dd>
+          <dt>Ratio</dt><dd>×11.5 display to body</dd>
+          <dt>Pairs kerned</dt><dd class="num"><span data-count="14">14</span></dd>
+          <dt>Specimen</dt><dd><a class="ulink" href="#tools">kerf.app/s/kerf</a></dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── pricing ── -->
+  <section class="sec wrap" id="pricing" aria-labelledby="pricH" style="padding-top:0">
+    <div class="head" style="margin-bottom:0"><span class="label">(Pricing)</span>
+      <div class="head-r" style="display:flex;justify-content:space-between;align-items:end;gap:28px;flex-wrap:wrap">
+        <h2 id="pricH" style="flex:1 1 520px" aria-label="Free for one system. Paid when you share.">Free for one system. <em>Paid</em> when you share.</h2>
+        <div class="bill" role="group" aria-label="Billing period"><span class="pill" id="pill"></span><button aria-pressed="true" data-bill="m">Monthly</button><button aria-pressed="false" data-bill="y">Yearly<small>−20%</small></button></div>
+      </div>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Sketch</h3>
+        <div class="amt"><b>0</b><small>dollars<br>for good</small></div>
+        <p>One type system, every tool, CSS export.</p>
+        <ul><li>1 system, unlimited proofs</li><li>Fluid scale and kerning checks</li><li>CSS variables export</li></ul>
+        <a class="btn btn-line" href="#start" data-plan="Sketch">Start a system, free</a>
+      </div>
+      <div class="plan pick">
+        <h3>Studio <span>MOST PICKED</span></h3>
+        <div class="amt"><b id="pStudio" data-m="16" data-y="13"><span>16</span></b><small>per editor / month<br><span id="pStudioBill">billed monthly</span></small></div>
+        <p>For designers who hand type to developers every week.</p>
+        <ul><li>Unlimited systems</li><li>Tailwind and Figma export</li><li>Public specimen pages</li></ul>
+        <a class="btn btn-ink" href="#start" data-plan="Studio" data-magnetic><span class="lbl"><span>Try Studio for 14 days</span><span>No card until day 15</span></span></a>
+      </div>
+      <div class="plan">
+        <h3>Team</h3>
+        <div class="amt"><b id="pTeam" data-m="28" data-y="23"><span>28</span></b><small>per editor / month<br><span id="pTeamBill">billed monthly</span></small></div>
+        <p>For product teams with one type system and many hands.</p>
+        <ul><li>Two-way Figma sync</li><li>Review comments on proofs</li><li>SSO and version history</li></ul>
+        <a class="btn btn-line" href="#start" data-plan="Team">Start a Team trial</a>
+      </div>
+    </div>
+    <p class="note">Viewers are always free. Students and type-design courses get Studio at no cost.</p>
+  </section>
+
+  <!-- ── final CTA ── -->
+  <section class="sec wrap" id="start" aria-labelledby="sh" style="padding-top:0">
+    <div class="final">
+      <div class="copy-col">
+        <span class="label">(Start)</span>
+        <h2 id="sh" style="margin-top:20px" aria-label="Your first proof in four minutes.">Your first proof in <em>four minutes.</em></h2>
+        <form class="join" id="join" novalidate>
+          <div class="fld" id="fName"><label for="name">Your name</label><input id="name" autocomplete="name" placeholder="Ide Marrow"></div>
+          <div class="fld" id="fMail"><label for="mail">Email</label><input id="mail" type="email" autocomplete="email" placeholder="ide@studio.com"></div>
+          <div><span class="label" style="display:block;margin-bottom:10px" id="setLbl">What are you setting?</span>
+            <div class="chips" id="setting" role="group" aria-labelledby="setLbl"><button type="button" class="chip" aria-pressed="true">Product UI</button><button type="button" class="chip" aria-pressed="false">Editorial</button><button type="button" class="chip" aria-pressed="false">Brand system</button></div></div>
+          <div class="err" id="err" role="alert"></div>
+          <button class="btn btn-ink" type="submit" style="align-self:flex-start" data-magnetic><span class="lbl"><span id="subA">Start a system, free</span><span>Open my first sheet</span></span></button>
+        </form>
+        <div class="done" id="done" tabindex="-1" role="status">
+          <span class="label" id="doneRef"></span>
+          <h3 id="doneH"></h3>
+          <p id="doneP"></p>
+        </div>
+      </div>
+      <figure class="reveal-img"><img src="images/proofs.webp" alt="A stack of blank deckle-edged proof sheets with a red pencil" loading="lazy" decoding="async" width="1122" height="1402"></figure>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="fcols">
+    <div class="c"><span class="label">Kerf</span><span style="color:var(--soft)">Type systems for the web.<br>Made in Ghent by four typographers and a compiler.</span></div>
+    <div class="c"><span class="label">Product</span><a class="ulink" href="#camera">The proof</a><a class="ulink" href="#tools">Tools</a><a class="ulink" href="#pricing">Pricing</a></div>
+    <div class="c"><span class="label">Read</span><a class="ulink" href="#colophon">Colophon</a><a class="ulink" href="mailto:hello@kerf.app">hello@kerf.app</a></div>
+    <div class="c"><span class="label">Release 2.6</span><span style="color:var(--soft)">Kerning checks for italics.<br>Tailwind v4 export.</span></div>
+  </div>
+  <svg class="bigword" viewBox="-2 -4 238.6 108" aria-hidden="true"><path fill="currentColor" d="M26.29 67.29 69.57 14.57Q72.29 11.79 72.93 9.07Q73.57 6.36 72.46 4.32Q71.36 2.29 68.64 1.57L63.86 0.86Q63.5 0.79 63.36 0.68Q63.21 0.57 63.21 0.36Q63.21 0.21 63.39 0.11Q63.57 0 63.71 0H90.71Q90.93 0 91.04 0.11Q91.14 0.21 91.14 0.36Q91.14 0.57 91 0.71Q90.86 0.86 90.64 0.93Q88.5 1.29 86.46 2.18Q84.43 3.07 82.11 4.61Q79.79 6.14 77.04 8.64Q74.29 11.14 70.71 14.86L26.71 68.14ZM44.14 45.71 54.57 35.21 86.93 93.29Q88.5 96.21 90.25 97.46Q92 98.71 95.43 99Q95.71 99.07 95.86 99.21Q96 99.36 96 99.5Q96 99.79 95.86 99.89Q95.71 100 95.36 100H63.57Q63.36 100 63.21 99.89Q63.07 99.79 63.07 99.5Q63.07 99.29 63.25 99.18Q63.43 99.07 63.71 99.07L70.36 98.21Q71.64 98.07 71.96 97.14Q72.29 96.21 71.14 94.07ZM29.71 96.29Q29.71 97.14 30.32 97.57Q30.93 98 32.21 98.14L38.86 99.14Q39.29 99.14 39.43 99.25Q39.57 99.36 39.57 99.57Q39.57 99.71 39.43 99.86Q39.29 100 39 100H5.71Q5.43 100 5.29 99.86Q5.14 99.71 5.14 99.57Q5.14 99.21 5.86 99.14L12.5 98.14Q13.79 98 14.39 97.57Q15 97.14 15 96.29V3.71Q15 2.86 14.39 2.43Q13.79 2 12.5 1.86L5.86 0.86Q5.14 0.79 5.14 0.43Q5.14 0.21 5.29 0.11Q5.43 0 5.71 0H39Q39.29 0 39.43 0.11Q39.57 0.21 39.57 0.43Q39.57 0.79 38.86 0.86L32.21 1.86Q30.93 2 30.32 2.43Q29.71 2.86 29.71 3.71ZM149.36 62.36Q149.36 62.86 149 63.21Q148.64 63.57 148 63.57H103.93V62.5H135.57Q136.64 62.5 136.64 61.29Q136.64 49.43 132.86 43.43Q129.07 37.43 123.29 37.43Q118.21 37.43 114.64 40.54Q111.07 43.64 109.14 49.64Q107.21 55.64 107.21 64.21Q107.21 78.93 113.54 86.57Q119.86 94.21 129.86 94.21Q137 94.21 142.11 90.07Q147.21 85.93 148.21 78.79Q148.21 78.5 148.32 78.39Q148.43 78.29 148.5 78.29Q148.71 78.29 148.86 78.39Q149 78.5 148.93 78.93Q148.36 85.36 144.89 90.46Q141.43 95.57 135.89 98.5Q130.36 101.43 123.5 101.43Q115.14 101.43 108.82 97.64Q102.5 93.86 99 86.86Q95.5 79.86 95.5 70.43Q95.5 60.57 99.14 52.89Q102.79 45.21 109.36 40.82Q115.93 36.43 124.79 36.43Q132.29 36.43 137.79 39.79Q143.29 43.14 146.32 49Q149.36 54.86 149.36 62.36ZM170.93 65.79Q170.93 56.14 173.61 49.64Q176.29 43.14 180.46 39.86Q184.64 36.57 189.07 36.57Q194.14 36.57 196.89 39.61Q199.64 42.64 199.64 47.93Q199.64 52 197.75 54.07Q195.86 56.14 193 56.14Q190.29 56.14 188.89 54.61Q187.5 53.07 187.36 49.93V47.93Q187.29 45.43 186.29 44.21Q185.29 43 182.93 43Q180.14 43 177.57 45.57Q175 48.14 173.32 53.29Q171.64 58.43 171.64 66.07ZM171.64 37.93V62.5V96.07Q171.64 96.86 172.11 97.39Q172.57 97.93 173.43 98.14L180.5 99.14Q180.86 99.21 181 99.29Q181.14 99.36 181.14 99.57Q181.14 99.79 181 99.89Q180.86 100 180.5 100H152.57Q152.29 100 152.11 99.86Q151.93 99.71 151.93 99.57Q151.93 99.36 152.14 99.21Q152.36 99.07 152.79 99L157.29 98.43Q158.21 98.21 158.61 97.75Q159 97.29 159 96.64V43.43Q159 43.07 158.82 42.82Q158.64 42.57 158.21 42.57H152.5Q152.29 42.57 152.14 42.43Q152 42.29 152 42.14Q152 41.93 152.14 41.79Q152.29 41.64 152.64 41.57L169.79 37.36Q170.29 37.21 170.54 37.18Q170.79 37.14 171 37.14Q171.36 37.14 171.5 37.39Q171.64 37.64 171.64 37.93ZM221.79 96.29Q221.79 97.07 222.18 97.5Q222.57 97.93 223.5 98.14L231.93 99.07Q232.29 99.07 232.46 99.21Q232.64 99.36 232.64 99.57Q232.64 100 232.14 100H202Q201.86 100 201.71 99.89Q201.57 99.79 201.57 99.64Q201.57 99.43 201.75 99.32Q201.93 99.21 202.21 99.14L207.79 98.21Q208.64 98.07 209.04 97.64Q209.43 97.21 209.43 96.71V41.79Q209.43 41.29 209.18 40.89Q208.93 40.5 208.36 40.43L199.71 38.86Q199.5 38.79 199.39 38.68Q199.29 38.57 199.29 38.36Q199.29 38.21 199.43 38.11Q199.57 38 199.71 38H210.29L209.57 38.5V37.29Q209.57 34.86 208.64 32.46Q207.71 30.07 206.46 27.46Q205.21 24.86 204.29 21.89Q203.36 18.93 203.36 15.43Q203.36 7.36 208.21 2.61Q213.07 -2.14 221 -2.14Q225.93 -2.14 229.25 -0.46Q232.57 1.21 234.25 3.96Q235.93 6.71 235.93 10Q235.93 13.36 234.29 15.04Q232.64 16.71 230.14 16.71Q227.57 16.71 225.82 14.96Q224.07 13.21 224.07 10V4.57Q224.07 1.79 222.75 0.39Q221.43 -1 218.57 -1Q214.29 -1 211.71 1.86Q209.14 4.71 209.14 9.71Q209.14 13.21 210.39 16.39Q211.64 19.57 213.54 22.46Q215.43 25.36 217.32 28.04Q219.21 30.71 220.46 33.21Q221.71 35.71 221.71 38V39.14L221 38H233.57Q233.93 38 234.11 38.07Q234.29 38.14 234.29 38.36Q234.29 38.79 233.86 39Q233.43 39.21 232.79 39.21H221.79Z"/></svg>
+  <div class="fbot label"><span>© 2026 Kerf BV — an invented company</span><a class="ulink" href="#top">Back to top ↑</a></div>
+</footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+(() => {
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  /* smooth scroll on the GSAP ticker */
+  let lenis = null;
+  if (!reduce) {
+    lenis = new Lenis({ lerp: .085, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  }
+  const go = h => { const el = h === '#top' ? document.body : $(h); if (!el) return; lenis ? lenis.scrollTo(el, { offset: h === '#camera' ? 0 : -70, duration: 1.5, easing: t => 1 - Math.pow(2, -10 * t) }) : el.scrollIntoView(); };
+  const sheetNav = $('#sheetNav'), menuBtn = $('#menuBtn');
+  const closeSheet = () => { sheetNav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.textContent = 'Menu'; };
+  menuBtn.addEventListener('click', () => { const o = !sheetNav.classList.contains('open'); sheetNav.classList.toggle('open', o); menuBtn.setAttribute('aria-expanded', o); menuBtn.textContent = o ? 'Close' : 'Menu'; });
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => { const h = a.getAttribute('href'); if (h === '#') return; e.preventDefault(); closeSheet(); go(h); if (a.dataset.plan) pickPlan(a.dataset.plan); }));
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+  const top = $('#top'); const solid = () => top.classList.toggle('solid', scrollY > 30); addEventListener('scroll', solid, { passive: true }); solid();
+  let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2200); };
+  const copy = async (txt, msg) => { try { await navigator.clipboard.writeText(txt); toast(msg); } catch { toast('Select and copy: clipboard is blocked here'); } };
+
+  /* ── the camera ── */
+  const vp = $('#vp'), canvas = $('#canvas'), DW = 1280, DH = 780;
+  let vw = 0, vh = 0, s0 = 1;
+  const cam = { x: DW / 2, y: DH / 2, s: 1 };
+  const shots = {};
+  const rectIn = el => { const c = canvas.getBoundingClientRect(), r = el.getBoundingClientRect(), S = c.width / DW; return { x: (r.left - c.left) / S, y: (r.top - c.top) / S, w: r.width / S, h: r.height / S }; };
+  const measure = () => {
+    vw = vp.clientWidth; vh = vp.clientHeight; s0 = Math.min(vw / DW, vh / DH);
+    const p = rectIn($('#pairProof')), k = rectIn($('#tokBlock'));
+    shots.full = { x: DW / 2, y: DH / 2, s: 1 };
+    shots.wide = { x: DW / 2 - 40, y: DH / 2 - 30, s: 1.12 };
+    const narrow = vw < 600;
+    const pairS = Math.min(vw * (narrow ? .5 : .62) / p.w, vh * .7 / p.h) / s0;
+    shots.pair = { x: p.x + p.w * (narrow ? .3 : .5), y: p.y + p.h * .52, s: pairS };
+    shots.tok = { x: k.x + k.w * .5, y: k.y + k.h * .5, s: Math.min(vw * .8 / k.w, vh * .75 / k.h) / s0 };
+    apply();
+  };
+  const apply = () => { const S = s0 * cam.s; canvas.style.transform = `translate(${vw / 2 - cam.x * S}px,${vh / 2 - cam.y * S}px) scale(${S})`; };
+  const pairA = $('#pairA'), pmL = $('#pmL'), pmR = $('#pmR'), pmGap = $('#pmGap'), pmT = $('#pmT'), pmTw = $('#pmTw');
+  const kern = { v: 0 };
+  let tEdge = 0; // the T's advance edge, measured from the live glyphs
+  const paintKern = () => {
+    const em = kern.v / 1000, fs = parseFloat(getComputedStyle(pairA).fontSize);
+    pairA.style.marginLeft = em + 'em';
+    const x = tEdge + em * fs;
+    pmL.style.left = tEdge + 'px'; pmR.style.left = x + 'px'; pmGap.style.left = x + 'px'; pmGap.style.width = (-em * fs) + 'px'; pmTw.style.left = (tEdge + 4) + 'px';
+    pmT.textContent = `KERN ${Math.round(kern.v)}`;
+  };
+  const measurePair = () => { const m = pairA.style.marginLeft; pairA.style.marginLeft = '0'; tEdge = pairA.offsetLeft; pairA.style.marginLeft = m; paintKern(); };
+
+  const camTl = gsap.timeline({ paused: true });
+  const U = 1;
+  const camTo = (shot, at, dur, ease) => camTl.to(cam, { x: () => shots[shot].x, y: () => shots[shot].y, s: () => shots[shot].s, duration: dur, ease: ease || 'power3.inOut', onUpdate: apply }, at);
+  camTo('wide', 0, U * .9, 'power1.inOut');
+  camTo('pair', U * .9, U * 1.1, 'power3.inOut');
+  camTl.to('.pm', { opacity: 1, duration: .3, stagger: .03, ease: 'none' }, U * 1.9);
+  camTl.to(kern, { v: -48, duration: U * .8, ease: 'expo.out', onUpdate: paintKern }, U * 2.35);
+  camTo('tok', U * 3.15, U * 1, 'power3.inOut');
+  camTl.to('.pm', { opacity: 0, duration: .2, ease: 'none' }, U * 3.2);
+  camTl.fromTo('#tokKern', { backgroundColor: 'rgba(210,58,30,0)' }, { backgroundColor: 'rgba(210,58,30,.14)', duration: .3, ease: 'none' }, U * 3.9);
+  camTo('full', U * 4.15, U * .85, 'power3.inOut');
+  camTl.to({}, { duration: .2 }, U * 5);
+
+  const camNo = $('#camNo'), says = $$('#camSay span'), ticks = $$('#ticks i');
+  const steps = [0, U * .95, U * 2.1, U * 3.2, U * 4.2];
+  let cur = 0;
+  const showStep = p => {
+    const t = p * camTl.duration();
+    let i = 0; steps.forEach((s, k) => { if (t >= s) i = k; });
+    ticks.forEach((tk, k) => { const a = steps[k], b = steps[k + 1] ?? camTl.duration(); tk.style.setProperty('--f', Math.max(0, Math.min(1, (t - a) / (b - a)))); });
+    if (i !== cur) { says[cur].classList.remove('on'); says[i].classList.add('on'); cur = i; camNo.textContent = String(i + 1).padStart(2, '0'); }
+  };
+
+  document.fonts.ready.then(() => {
+    measurePair(); measure();
+    if (reduce) {
+      $('#camera').classList.add('static'); measure();
+      kern.v = -48; paintKern(); cam.x = shots.full.x; cam.y = shots.full.y; cam.s = 1; apply(); showStep(0);
+    } else {
+      ScrollTrigger.create({ trigger: '#camera', start: 'top top', end: 'bottom bottom', scrub: 1, animation: camTl, invalidateOnRefresh: true, onUpdate: s => showStep(s.progress), onRefreshInit: () => { cam.x = DW / 2; cam.y = DH / 2; cam.s = 1; measure(); } });
+      ScrollTrigger.addEventListener('refresh', () => apply());
+    }
+    intro();
+  });
+  addEventListener('resize', () => { if (reduce) measure(); });
+
+  /* ── intro + reveals ── */
+  function intro(){
+    if (reduce) return;
+    const split = SplitText.create('#h1', { type: 'lines', mask: 'lines' });
+    gsap.timeline({ defaults: { ease: 'expo.out' } })
+      .fromTo('.top', { opacity: 0 }, { opacity: 1, duration: .9, clearProps: 'opacity' }, 0)
+      .fromTo('.rail span', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .9, stagger: .06, clearProps: 'opacity,transform' }, .05)
+      .from(split.lines, { yPercent: 112, duration: 1.35, stagger: .11 }, .12)
+      .fromTo('.hero-row > *', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.1, stagger: .08, clearProps: 'opacity,transform' }, .6)
+      .fromTo('#vp', { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'power4.inOut', clearProps: 'clipPath' }, .5);
+    $$('h2').forEach(h => { const s = SplitText.create(h, { type: 'lines', mask: 'lines' }); gsap.from(s.lines, { yPercent: 112, duration: 1.25, stagger: .09, ease: 'expo.out', scrollTrigger: { trigger: h, start: 'top 86%', once: true } }); });
+    $$('.reveal').forEach(p => gsap.fromTo(p, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'power4.inOut', clearProps: 'clipPath', scrollTrigger: { trigger: p, start: 'top 84%', once: true } }));
+    $$('.reveal-img').forEach(f => { const img = f.querySelector('img'); gsap.timeline({ scrollTrigger: { trigger: f, start: 'top 82%', once: true } }).fromTo(f, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'power4.inOut', clearProps: 'clipPath' }, 0).fromTo(img, { scale: 1.18 }, { scale: 1, duration: 2.2, ease: 'expo.out', clearProps: 'transform' }, 0); });
+    $$('[data-count]').forEach(el => { const o = { v: 0 }, end = +el.dataset.count; gsap.to(o, { v: end, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 90%', once: true }, onUpdate: () => el.textContent = Math.round(o.v) }); });
+    ScrollTrigger.refresh();
+  }
+
+  /* ── 1. fluid scale generator ── */
+  const STEPS = [['Display', 6], ['H1', 5], ['H2', 4], ['H3', 3], ['H4', 2], ['Lead', 1], ['Body', 0], ['Small', -1]];
+  let rMax = 1.333, bMax = 18;
+  const rMin = 1.2, bMin = 16, vMin = 360, vMax = 1440;
+  const r3 = n => +n.toFixed(3);
+  const genRows = $('#genRows'), genCode = $('#genCode');
+  let cssOut = '';
+  const renderGen = () => {
+    const rows = STEPS.map(([n, i]) => {
+      const mn = bMin * Math.pow(rMin, i), mx = bMax * Math.pow(rMax, i);
+      const slope = (mx - mn) / (vMax - vMin), icpt = mn - slope * vMin;
+      return { n, mn, mx, css: `clamp(${r3(mn / 16)}rem, ${r3(icpt / 16)}rem + ${r3(slope * 100)}vw, ${r3(mx / 16)}rem)` };
+    });
+    genRows.innerHTML = rows.map(r => `<div class="gen-row"><span class="nm">${r.n}</span><span class="pv" style="font-size:${Math.min(r.mx, 72)}px">Tall water</span><span class="px num">${Math.round(r.mn)} <span>→</span> ${Math.round(r.mx)}</span></div>`).join('');
+    cssOut = ':root {\n' + rows.map(r => `  --step-${r.n.toLowerCase()}: ${r.css};`).join('\n') + '\n}';
+    genCode.innerHTML = cssOut.replace(/(--step-[a-z0-9]+)/g, '<b>$1</b>');
+  };
+  $('#ratios').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; $$('#ratios .chip').forEach(o => o.setAttribute('aria-pressed', o === b)); rMax = +b.dataset.r; renderGen(); });
+  $('#base').addEventListener('input', e => { bMax = +e.target.value; $('#baseOut').textContent = bMax + ' px'; renderGen(); });
+  $('#copyCss').addEventListener('click', () => copy(cssOut, 'Copied 8 clamp() steps'));
+  renderGen();
+
+  /* ── 2. proof on your copy ── */
+  const pfIn = $('#pfIn'), pfD = $('#pfD'), pfH = $('#pfH');
+  const renderPf = () => {
+    const v = pfIn.value.trim() || 'Type a headline';
+    pfD.textContent = v; pfH.textContent = v;
+    $('#pfLen').textContent = v.length;
+    $('#pfWarn').innerHTML = v.length > 60 ? '<span class="warn">Long for a display line: try under 60</span>' : v.length < 12 ? '<span>Short and loud: fine</span>' : '<span>Comfortable display length</span>';
+  };
+  pfIn.addEventListener('input', renderPf); renderPf();
+  const bal = $('#balance');
+  bal.addEventListener('click', () => { const on = bal.getAttribute('aria-checked') !== 'true'; bal.setAttribute('aria-checked', on); pfD.classList.toggle('nob', !on); pfH.style.textWrap = on ? 'balance' : 'wrap'; });
+
+  /* ── 3. kerning checks ── */
+  const left = () => $('#kLeft').textContent = $$('#kerns .kp:not(.done)').length;
+  const applyK = kp => {
+    if (kp.classList.contains('done')) return;
+    kp.classList.add('done');
+    const k = +kp.dataset.k, gs = kp.querySelectorAll('.g');
+    const g = gs[gs.length - 1];
+    if (reduce) g.style.marginLeft = k + 'em'; else gsap.fromTo(g, { marginLeft: '0em' }, { marginLeft: k + 'em', duration: 1.1, ease: 'expo.out' });
+    const b = kp.querySelector('.copy'); b.textContent = 'Applied'; b.disabled = true; left();
+  };
+  $$('#kerns .kp').forEach(kp => kp.querySelector('.copy').addEventListener('click', () => applyK(kp)));
+  $('#applyAll').addEventListener('click', () => { $$('#kerns .kp').forEach((kp, i) => setTimeout(() => applyK(kp), i * 160)); });
+
+  /* ── 4. tokens ── */
+  const TOK = {
+    css: `<b>:root</b> {\n  <b>--font-display</b>: "Fraunces", Georgia, serif;\n  <b>--font-text</b>: "Instrument Sans", system-ui, sans-serif;\n  <b>--step-display</b>: clamp(3rem, 1.333rem + 7.407vw, 8rem);\n  <b>--step-h1</b>: clamp(2.5rem, 1.333rem + 5.185vw, 6rem);\n  <b>--step-body</b>: clamp(1rem, 0.958rem + 0.185vw, 1.125rem);\n  <b>--leading-display</b>: 0.92;\n  <b>--tracking-display</b>: -0.035em;\n  <i>--kern-Ta: -0.048em;</i>\n}`,
+    tw: `<b>@theme</b> {\n  <b>--font-display</b>: "Fraunces", Georgia, serif;\n  <b>--text-display</b>: clamp(3rem, 1.333rem + 7.407vw, 8rem);\n  <b>--text-display--line-height</b>: 0.92;\n  <b>--text-display--letter-spacing</b>: -0.035em;\n  <b>--text-h1</b>: clamp(2.5rem, 1.333rem + 5.185vw, 6rem);\n  <i>--kern-Ta: -0.048em;</i>\n}`,
+    figma: `{\n  <b>"type/display"</b>: {\n    "fontFamily": "Fraunces", "fontWeight": 300,\n    "fontSize": { "min": 48, "max": 128 },\n    "lineHeight": "92%", "letterSpacing": "-3.5%"\n  },\n  <b>"type/h1"</b>: { "fontSize": { "min": 40, "max": 96 } },\n  <i>"kerning/Ta": -48</i>\n}`
+  };
+  const tok = $('#tok'); let tokNow = 'css';
+  const showTok = t => { tokNow = t; tok.innerHTML = TOK[t]; $$('.tabs [role=tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.t === t)); if (!reduce) gsap.fromTo(tok, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: .5, ease: 'expo.out', clearProps: 'opacity,transform' }); };
+  $$('.tabs [role=tab]').forEach(b => b.addEventListener('click', () => showTok(b.dataset.t)));
+  $('.tabs').addEventListener('keydown', e => { if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return; const ks = Object.keys(TOK); const n = ks[(ks.indexOf(tokNow) + (e.key === 'ArrowRight' ? 1 : 2)) % 3]; showTok(n); $(`.tabs [data-t="${n}"]`).focus(); });
+  $('#copyTok').addEventListener('click', () => { const d = document.createElement('div'); d.innerHTML = TOK[tokNow]; copy(d.textContent, 'Copied tokens'); });
+  tok.innerHTML = TOK.css;
+
+  /* ── pricing toggle ── */
+  const pill = $('#pill'), bills = $$('[data-bill]');
+  const place = () => { const on = bills.find(b => b.getAttribute('aria-pressed') === 'true'); pill.style.width = on.offsetWidth + 'px'; pill.style.transform = `translateX(${on.offsetLeft}px)`; };
+  let yearly = false;
+  bills.forEach(b => b.addEventListener('click', () => {
+    const y = b.dataset.bill === 'y'; if (y === yearly) return; yearly = y;
+    bills.forEach(o => o.setAttribute('aria-pressed', o === b)); place();
+    ['#pStudio', '#pTeam'].forEach(id => {
+      const el = $(id), old = el.querySelector('span'), nu = document.createElement('span');
+      nu.textContent = y ? el.dataset.y : el.dataset.m;
+      if (reduce) { old.replaceWith(nu); return; }
+      nu.style.position = 'absolute'; nu.style.left = 0; el.appendChild(nu);
+      gsap.timeline({ onComplete: () => { old.remove(); nu.style.position = ''; } })
+        .to(old, { yPercent: y ? -105 : 105, duration: .7, ease: 'expo.out' }, 0)
+        .fromTo(nu, { yPercent: y ? 105 : -105 }, { yPercent: 0, duration: .7, ease: 'expo.out' }, 0);
+    });
+    $('#pStudioBill').textContent = y ? 'billed yearly, $156' : 'billed monthly';
+    $('#pTeamBill').textContent = y ? 'billed yearly, $276' : 'billed monthly';
+  }));
+  document.fonts.ready.then(place); addEventListener('resize', place);
+
+  /* ── join form ── */
+  let plan = 'Sketch';
+  function pickPlan(p){ plan = p; $('#subA').textContent = p === 'Sketch' ? 'Start a system, free' : `Start my ${p} trial`; }
+  $('#setting').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; $$('#setting .chip').forEach(o => o.setAttribute('aria-pressed', o === b)); });
+  const ok = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  const mail = $('#mail'), name = $('#name'), err = $('#err');
+  mail.addEventListener('blur', () => { if (mail.value && !ok(mail.value.trim())) { $('#fMail').classList.add('bad'); err.textContent = 'That address is missing a piece. Check after the @.'; } });
+  [mail, name].forEach(i => i.addEventListener('input', () => { i.closest('.fld').classList.remove('bad'); if (!$$('.fld.bad').length) err.textContent = ''; }));
+  $('#join').addEventListener('submit', e => {
+    e.preventDefault();
+    const n = name.value.trim(), m = mail.value.trim();
+    if (!n) { $('#fName').classList.add('bad'); err.textContent = 'What should we call you on the sheet?'; name.focus(); return; }
+    if (!ok(m)) { $('#fMail').classList.add('bad'); err.textContent = m ? 'That address is missing a piece. Check after the @.' : 'We need an email to send your sheet to.'; mail.focus(); return; }
+    const what = $('#setting [aria-pressed="true"]').textContent;
+    const safe = s => s.replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+    $('#doneRef').textContent = `${plan} · Sheet ${Math.floor(1000 + Math.random() * 9000)}`;
+    $('#doneH').innerHTML = `Your sheet is ready, ${safe(n.split(' ')[0])}.`;
+    $('#doneP').innerHTML = `We sent the link to <b>${safe(m)}</b>. It opens with a ${what.toLowerCase()} starter scale, set in Fraunces and Instrument Sans until you swap them.`;
+    $('#join').style.display = 'none'; const d = $('#done'); d.classList.add('show'); d.focus({ preventScroll: true });
+    if (!reduce) gsap.fromTo('#done > *', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1, stagger: .08, ease: 'expo.out', clearProps: 'opacity,transform' });
+  });
+
+  /* magnetic primary CTAs */
+  if (fine && !reduce) $$('[data-magnetic]').forEach(el => {
+    el.addEventListener('mousemove', e => { const r = el.getBoundingClientRect(); gsap.to(el, { x: (e.clientX - r.left - r.width / 2) * .2, y: (e.clientY - r.top - r.height / 2) * .3, duration: .6, ease: 'expo.out' }); });
+    el.addEventListener('mouseleave', () => gsap.to(el, { x: 0, y: 0, duration: .8, ease: 'expo.out' }));
+  });
+})();
+</script>
+</body>
+</html>

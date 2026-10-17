@@ -15,8 +15,14 @@ A collection of websites in one repository, with a gallery page that links to ea
 | 07 | [Cadran](sites/cadran) | Five fragrances, one for each hour of light |
 | 08 | [Toller & Daughters](sites/toller-and-daughters) | Bellfounders since 1687 |
 | 09 | [Hero Experiment](sites/hero-experiment) | Twenty-one hero sections for invented brands |
+| 10 | [Runnel](sites/runnel) | A CI service that runs only the builds and tests a pull request could have changed |
+| 11 | [Kerf](sites/kerf) | A browser app for web type systems: fluid scales, proofs, kerning, tokens |
+| 12 | [Plumb](sites/plumb) | Cash forecasting with a command bar that runs what-if scenarios live |
+| 13 | [Emulsion](sites/emulsion) | Film looks for digital photographers; scrolling develops the photo |
+| 14 | [Northbound](sites/northbound) | Team retreats booked end to end; the trip assembles over the photo |
+| 15 | [Quorum](sites/quorum) | Scheduling across time zones that picks the fairest hour |
 
-Every business here is invented; Deosai is a real place. Each site is a separate Vite project using GSAP and Lenis, except Hero Experiment, which is plain HTML and is copied into the build as it is.
+Every business here is invented; Deosai is a real place. Each site is a separate Vite project using GSAP and Lenis, except Hero Experiment and the six software sites (Runnel to Quorum), which are plain HTML and are copied into the build as they are.
 
 ## Layout
 
